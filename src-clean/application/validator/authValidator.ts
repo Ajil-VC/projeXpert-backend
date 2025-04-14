@@ -1,0 +1,35 @@
+import * as yup from 'yup';
+
+export const signupSchema = yup.object({
+    email: yup.string().email('Invalid email format').required('Email is required')
+})
+
+export const otpValidationSchema = yup.object({
+    email: yup.string()
+        .email('Invalid email format')
+        .required('Email is required'),
+
+    otp: yup.string()
+        .length(5, 'OTP must be 5 characters long')
+        .matches(/^\d+$/, "OTP must be numeric")
+        .required('OTP is required')
+})
+
+export const registerSchema = yup.object({
+    email: yup.string()
+        .email('Invalid email format')
+        .required('Email is required'),
+
+    userName: yup.string().required('Name is required'),
+
+    passWord: yup.string().required('Password is required')
+})
+
+export const signinSchema = yup.object({
+
+    email: yup.string()
+        .email('Invalid email format')
+        .required('Email is required'),
+    passWord: yup.string().required('Password is required')
+
+})
