@@ -20,10 +20,7 @@ export const getInitData = async (req: Request, res: Response) => {
 
         if (userData) {
 
-            console.log(userData)
-            // const currentWorkSpace = userData.workspaceIds.find(ele => ele?.isDefault)
-
-            res.status(201).json({
+            res.status(200).json({
                 status: true,
                 user: {
                     name: userData.name,

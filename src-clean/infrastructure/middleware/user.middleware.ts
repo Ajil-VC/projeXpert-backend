@@ -16,13 +16,13 @@ declare global {
 export const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
 
     const authHeader = req.headers.authorization;
-
     if (authHeader?.startsWith('Bearer ')) {
         const token = authHeader.split(' ')[1];
-
+        
         if (!config.JWT_SECRETKEY) {
             throw new Error('JWT secret key is not defined.');
         }
+        
 
         jwt.verify(token, config.JWT_SECRETKEY, (err, user) => {
 
