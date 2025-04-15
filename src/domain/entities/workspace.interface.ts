@@ -7,6 +7,7 @@ export interface WorkSpace extends Document {
     owner: ObjectId;
     members: ObjectId[];
     isDefault: Boolean;
+    currentProject : ObjectId;  
 
     createdAt?: Date;
     updatedAt?: Date;
