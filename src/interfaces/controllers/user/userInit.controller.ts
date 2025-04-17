@@ -26,29 +26,12 @@ export const getInitData = async (req: Request, res: Response) => {
                     name: userData.name,
                     profileUrl: userData.profilePicUrl,
                     email: userData.email,
-                    plan: userData.plan,
+
                     role: userData.role,
                     workSpaces: userData.workspaceIds
                 }
             });
-            // res.status(201).json({
-                //         status: true,
-                //         token: registeredData.token,
-                //         user: {
-                //             name: registeredData.data.user.name,
-                //             profileUrl: registeredData.data.user.profilePicUrl,
-                //             email: registeredData.data.user.email,
-                //             plan: registeredData.data.user.plan,
-                //             role: registeredData.data.user.role,
-                //             workSpaces: registeredData.data.user.workspaceIds
-                //         },
-                //         workSpace: {
-                //             name: registeredData.data.workspace.name,
-                //             owner: registeredData.data.workspace.owner,
-                //             isDefault: registeredData.data.workspace.isDefault,
-                //             members: registeredData.data.workspace.members
-                //         }
-                //     });
+            
         }
 
     } catch (err) {

@@ -6,11 +6,12 @@ export interface Project extends Document {
     _id: ObjectId;
     name: String;
     workSpace: ObjectId;
-    owner: ObjectId;
+    companyId: ObjectId;
     members: ObjectId[];
-    status: String;
-    priority: String;
+    status: 'active' | 'archived' | 'completed';
+    priority: 'low' | 'medium' | 'high' | 'critical';
 
     createdAt?: Date;
     updatedAt?: Date;
+
 }

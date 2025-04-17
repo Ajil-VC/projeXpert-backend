@@ -6,11 +6,11 @@ const projectSchema = new Schema<Project>({
 
     name: { type: String, required: true },
     workSpace: { type: Schema.Types.ObjectId, required: true, ref: 'Workspace' },
-    owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     members: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],
+    companyId: { type: Schema.Types.ObjectId, ref: 'Company' },
     status: { type: String, enum: ['active', 'archived', 'completed'], default: 'active' },
     priority: {
         type: String, enum: ['low', 'medium', 'high', 'critical'],
@@ -18,3 +18,6 @@ const projectSchema = new Schema<Project>({
     },
 
 }, { timestamps: true })
+
+const projectModel = model<Project>('Project', projectSchema);
+export default projectModel;

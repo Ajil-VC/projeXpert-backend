@@ -2,43 +2,68 @@ import { IUserRepository } from "../../../domain/repositories/user.repo";
 import { ISecurePassword } from "../../../domain/services/securepassword.interface";
 import jwt from 'jsonwebtoken';
 import { config } from "../../../config/config";
+import { ICompanyRepository } from "../../../domain/repositories/company.repo";
+import { useCaseResult } from "../../shared/useCaseResult";
 
 
 export class RegisterUseCase {
 
     constructor(
         private securePassword: ISecurePassword,
-        private userRepo: IUserRepository
+        private userRepo: IUserRepository,
+        private companyRepo: ICompanyRepository
     ) { }
 
-    async execute(email: string, userName: string, passWord: string) {
+    async execute(email: string, companyName: string, passWord: string): Promise<useCaseResult> {
 
-        const hashedPassword = await this.securePassword.secure(passWord);
+        try {
 
-        const data = await this.userRepo.createUser(email, userName, hashedPassword);
+            const isUserExists = await this.userRepo.findByEmail(email);
+            if (isUserExists) return { status: false, message: 'Email already in use' };
 
-        if (data) {
+            const isCompanyExist = await this.companyRepo.findCompanyByEmail(email);
+            if (isCompanyExist) return { status: false, message: 'Email already registered' };
 
-            if (!config.JWT_SECRETKEY) {
-                throw new Error('JWT secret key is not defined.');
+            const companyIdStatus = await this.companyRepo.createCompany(companyName, email);
+
+            if (typeof companyIdStatus == 'string') return { status: false, message: 'Company couldnt create' };
+            let workSpaceId = await this.companyRepo.createWorkspace('Default', companyIdStatus.additional);
+            if (!workSpaceId || typeof workSpaceId !== 'string') return { status: false, message: 'Workspace probably have not created' };
+
+            const hashedPassword = await this.securePassword.secure(passWord);
+            if (!hashedPassword) return { status: false, message: 'Password couldnt secured' };
+
+            const userData = await this.userRepo.createUser(email, companyName, hashedPassword, 'admin', companyIdStatus.additional, workSpaceId);
+
+            if (userData) {
+
+                if (!config.JWT_SECRETKEY) {
+                    throw new Error('JWT secret key is not defined.');
+                }
+
+                const token = jwt.sign(
+                    {
+                        id: userData._id,
+                        email: userData.email,
+                        userName: userData.name,
+                        role: userData.role
+                    },
+                    config.JWT_SECRETKEY,
+                    { expiresIn: '1h' }
+                )
+
+                return { status: true, token, message: 'Company Registered Successfully', additional: userData };
+
             }
 
-            const token = jwt.sign(
-                {
-                    id: data.user._id,
-                    email: data.user.email,
-                    name: data.user.name,
-                    role: data.user.role
-                },
-                config.JWT_SECRETKEY,
-                { expiresIn: '1h' }
-            )
+            // If it reaches here we can revert the operations(Only optional).
+            return { status: true, message: 'Company Registration failed.' };
 
-            return { token, data }
-
+        } catch (err) {
+            console.error('Something went wrong while registering the company.', err);
+            return { status: false, message: 'Unknown_Error' };
         }
 
-        return false;
 
     }
 }

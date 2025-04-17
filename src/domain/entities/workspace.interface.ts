@@ -4,11 +4,13 @@ export interface WorkSpace extends Document {
 
     _id: ObjectId;
     name: String;
-    owner: ObjectId;
+    companyId: ObjectId;
     members: ObjectId[];
-    isDefault: Boolean;
-    currentProject : ObjectId;  
+
+    projects: ObjectId[];
+    currentProject: ObjectId;
 
     createdAt?: Date;
     updatedAt?: Date;
+
 }

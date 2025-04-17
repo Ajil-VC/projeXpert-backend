@@ -2,6 +2,7 @@
 export interface useCaseResult {
     status: boolean;
     message: string;
-    statusCode: number;
+    statusCode?: number;
     token?: string;
+    additional?: any;
 }

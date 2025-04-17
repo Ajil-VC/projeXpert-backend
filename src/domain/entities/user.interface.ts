@@ -6,13 +6,14 @@ export interface User extends Document {
     _id: ObjectId;
     name: String;
     email: String;
-    password?: String; //Optional for google auth users.
+    password: String;
     profilePicUrl: String;
     role: 'admin' | 'user';
-    isGoogleAccount: boolean;
-    googleId?: String; // Only for google auth
-    plan: 'Free' | 'Pro' | 'Enterprise';
+    companyId: ObjectId;
     workspaceIds: ObjectId[];
+    defaultWorkspace : ObjectId;
+    
+    forceChangePassword: boolean;
 
     createdAt?: Date;
     updatedAt?: Date;

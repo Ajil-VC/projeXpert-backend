@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-export const signupSchema = yup.object({
+export const companyRegisterSchema = yup.object({
     email: yup.string().email('Invalid email format').required('Email is required')
 })
 
@@ -20,7 +20,7 @@ export const registerSchema = yup.object({
         .email('Invalid email format')
         .required('Email is required'),
 
-    userName: yup.string().required('Name is required'),
+    companyName: yup.string().required('Name is required'),
 
     passWord: yup.string().required('Password is required')
 })

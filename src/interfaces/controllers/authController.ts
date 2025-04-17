@@ -10,6 +10,7 @@ import { VerifyOtpUseCase } from "../../application/usecase/auth/VerifyOtp.useca
 import { RegisterUseCase } from "../../application/usecase/auth/register.usecase";
 import { SecurePasswordImp } from "../../infrastructure/services/securepassword.serviceImp";
 import { SigninUseCase } from "../../application/usecase/auth/signin.usecase";
+import { CompanyRepositoryImp } from "../../infrastructure/repositories/company.repositoryImp";
 
 
 const otpRepository = new OtpRepoImp();
@@ -18,7 +19,8 @@ const emailService = new EmailServiceImp();
 const sendOtpUseCaseOb = new SendOtpUseCase(userRepository, otpRepository, emailService);
 const verifyOtpUseCaseOb = new VerifyOtpUseCase(otpRepository);
 const securePassWordOb = new SecurePasswordImp();
-const registerUseCaseOb = new RegisterUseCase(securePassWordOb, userRepository);
+const companyRepository = new CompanyRepositoryImp();
+const registerUseCaseOb = new RegisterUseCase(securePassWordOb, userRepository, companyRepository);
 const signinUseCaseOb = new SigninUseCase(userRepository, securePassWordOb);
 
 
@@ -73,9 +75,9 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 
         const { email, passWord } = req.body;
 
-        const result = await signinUseCaseOb.execute(email, passWord);
-        res.status(result.statusCode).json({ status: result.status, token: result.token });
-        console.log('Here result:', result);
+        // const result = await signinUseCaseOb.execute(email, passWord);
+        // res.status(result.statusCode).json({ status: result.status, token: result.token });
+        // console.log('Here result:', result);
 
     } catch (err) {
 
@@ -86,22 +88,46 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 }
 
 
-export const createProfile = async (req: Request, res: Response) => {
+export const createCompany = async (req: Request, res: Response) => {
 
     try {
 
-        const { email, userName, passWord } = req.body;
+        const { email, companyName, passWord } = req.body;
 
-        const registeredData = await registerUseCaseOb.execute(email, userName, passWord);
-        if (registeredData) {
+        const registrationStatus = await registerUseCaseOb.execute(email, companyName, passWord);
+        if (!registrationStatus.status) {
 
-            res.status(200).json({ status: true, token: registeredData.token })
+            switch (registrationStatus.message) {
+
+                case 'Email already in use':
+                    res.status(409).json({ status: false, message: 'Email already in use' });
+                    return;
+                case 'Email already registered':
+                    res.status(409).json({ status: false, message: 'Email already registered' });
+                    return;
+                case 'Company couldnt create':
+                    res.status(500).json({status:false, message : 'Company couldnt create'});
+                    return ;
+                case 'Workspace probably have not created':
+                    res.status(500).json({status :false, message :'Workspace probably have not created'});
+                    return;
+                case 'Password couldnt secured':
+                    res.status(500).json({status:false, message :'Password couldnt secured'});
+                    return;
+                default:
+                    res.status(500).json({ status: false, message: 'Unknown error on registration' });
+                    return;
+            }
+
         }
-       
+
+        res.status(200).json({ status: true, token: registrationStatus.token });
+        return;
 
     } catch (err) {
 
         console.error(`Something went wrong while creating profile. ${err}`);
         res.status(500).json({ status: false, message: 'Something went wrong while creating user profile.' });
+        return;
     }
 }

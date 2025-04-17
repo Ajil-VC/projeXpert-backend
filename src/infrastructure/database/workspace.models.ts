@@ -5,10 +5,11 @@ import { WorkSpace } from "../../domain/entities/workspace.interface";
 const workSpaceSchema = new Schema<WorkSpace>({
 
     name: { type: String, required: true },
-    owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     members: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    isDefault: { type: Boolean, default: false },
-    currentProject: { type: Schema.Types.ObjectId, ref: 'Project' }
+    companyId: { type: Schema.Types.ObjectId },
+    
+    projects : [{type : Schema.Types.ObjectId, ref: 'Project'}],    
+    currentProject: { type: Schema.Types.ObjectId, ref: 'Project' },
 
 }, { timestamps: true });
 

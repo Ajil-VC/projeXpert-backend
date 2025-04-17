@@ -10,9 +10,6 @@ const userSchema = new Schema<User>({
     password: { type: String },
     profilePicUrl: { type: String, default: '' },
     role: { type: String, enum: ['admin', 'user'], required: true, default: 'user' },
-    isGoogleAccount: { type: Boolean, default: false },
-    googleId: { type: String },
-    plan: { type: String, enum: ['Free', 'Pro', 'Enterprise'], default: 'Free' },
     workspaceIds: [{ type: Schema.Types.ObjectId, ref: 'Workspace' }]
 
 }, { timestamps: true })
