@@ -1,4 +1,5 @@
 import { Document, ObjectId } from "mongoose";
+import { Company } from "./company.interface";
 
 
 export interface User extends Document {
@@ -9,7 +10,7 @@ export interface User extends Document {
     password: String;
     profilePicUrl: String;
     role: 'admin' | 'user';
-    companyId: ObjectId;
+    companyId: ObjectId | Company;
     workspaceIds: ObjectId[];
     defaultWorkspace : ObjectId;
     

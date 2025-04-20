@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { config } from "../../../config/config";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { useCaseResult } from "../../shared/useCaseResult";
+import { Company } from "../../../domain/entities/company.interface";
 
 
 export class RegisterUseCase {
@@ -34,7 +35,8 @@ export class RegisterUseCase {
             if (!hashedPassword) return { status: false, message: 'Password couldnt secured' };
 
             const userData = await this.userRepo.createUser(email, companyName, hashedPassword, 'admin', companyIdStatus.additional, workSpaceId);
-
+            if(!userData) return { status: false, message: 'UUser Data not available' };
+            const company = userData.companyId as Company;
             if (userData) {
 
                 if (!config.JWT_SECRETKEY) {
@@ -46,7 +48,9 @@ export class RegisterUseCase {
                         id: userData._id,
                         email: userData.email,
                         userName: userData.name,
-                        role: userData.role
+                        role: userData.role,
+                        companyId: company._id
+
                     },
                     config.JWT_SECRETKEY,
                     { expiresIn: '1h' }

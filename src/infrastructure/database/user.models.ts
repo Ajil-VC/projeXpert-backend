@@ -1,16 +1,19 @@
 
-import { Schema, model } from "mongoose"; 
+import { Schema, model } from "mongoose";
 import { User } from "../../domain/entities/user.interface";
 
 
 const userSchema = new Schema<User>({
 
-    email: { type: String, required: true, unique: true },
     name: { type: String },
-    password: { type: String },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     profilePicUrl: { type: String, default: '' },
     role: { type: String, enum: ['admin', 'user'], required: true, default: 'user' },
-    workspaceIds: [{ type: Schema.Types.ObjectId, ref: 'Workspace' }]
+    companyId: { type: Schema.Types.ObjectId, ref: 'Company' },
+    workspaceIds: [{ type: Schema.Types.ObjectId, ref: 'Workspace' }],
+    defaultWorkspace: { type: Schema.Types.ObjectId, ref: 'Workspace' },
+    forceChangePassword: { type: Boolean, default: true }
 
 }, { timestamps: true })
 

@@ -1,22 +1,16 @@
 import { Request, Response } from "express";
 import { InitDashBoardUseCase } from "../../../application/usecase/workspaceUsecase/initDashboard.usecase";
-import { DecodeTokenImp } from "../../../infrastructure/services/decodeToken.serviceImp";
 import { userRepositoryImp } from "../../../infrastructure/repositories/user.repositoryImp";
 
 
-const decodeTokenOb = new DecodeTokenImp();
 const userRepoOb = new userRepositoryImp();
-const initDashBoardUseCaseOb = new InitDashBoardUseCase(decodeTokenOb, userRepoOb);
+const initDashBoardUseCaseOb = new InitDashBoardUseCase(userRepoOb);
 
 export const getInitData = async (req: Request, res: Response) => {
 
     try {
 
-        if (!req.headers.authorization) {
-            res.status(401).json({ error: 'Authorization header is missing' });
-            return;
-        }
-        const userData = await initDashBoardUseCaseOb.execute(req.headers.authorization)
+        const userData = await initDashBoardUseCaseOb.execute(req.user.email);
 
         if (userData) {
 
@@ -26,12 +20,12 @@ export const getInitData = async (req: Request, res: Response) => {
                     name: userData.name,
                     profileUrl: userData.profilePicUrl,
                     email: userData.email,
-
                     role: userData.role,
-                    workSpaces: userData.workspaceIds
+                    workSpaces: userData.workspaceIds,
+                    defaultWorkspace: userData.defaultWorkspace
                 }
             });
-            
+
         }
 
     } catch (err) {

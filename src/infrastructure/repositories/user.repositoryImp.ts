@@ -9,7 +9,11 @@ export class userRepositoryImp implements IUserRepository {
 
     async findByEmail(email: string): Promise<User | null> {
 
-        const isEmailExist: any = await userModel.findOne({ email: email }).populate('workspaceIds');
+        const isEmailExist: any = await userModel.findOne({ email: email })
+            .populate('workspaceIds')
+            .populate('companyId')
+            .populate('defaultWorkspace');
+
         if (isEmailExist) return isEmailExist;
 
         return null;
@@ -29,6 +33,7 @@ export class userRepositoryImp implements IUserRepository {
             password: passWord,
             role: role,
             companyId: new mongoose.Types.ObjectId(companyId),
+            defaultWorkspace: new mongoose.Types.ObjectId(workspaceId),
             workspaceIds: [new mongoose.Types.ObjectId(workspaceId)]
         });
 

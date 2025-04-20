@@ -3,6 +3,7 @@ import { ISecurePassword } from "../../../domain/services/securepassword.interfa
 import { useCaseResult } from "../../shared/useCaseResult";
 import { config } from "../../../config/config";
 import jwt from 'jsonwebtoken';
+import { Company } from "../../../domain/entities/company.interface";
 
 
 export class SigninUseCase {
@@ -30,12 +31,14 @@ export class SigninUseCase {
             throw new Error('JWT secret key is not defined.');
         }
 
+        const company = userData.companyId as Company;
         const token = jwt.sign(
             {
                 id: userData._id,
                 email: userData.email,
                 name: userData.name,
-                role: userData.role
+                role: userData.role,
+                companyId : company._id
             },
             config.JWT_SECRETKEY,
             { expiresIn: '1h' }

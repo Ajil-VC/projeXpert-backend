@@ -75,9 +75,10 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 
         const { email, passWord } = req.body;
 
-        // const result = await signinUseCaseOb.execute(email, passWord);
-        // res.status(result.statusCode).json({ status: result.status, token: result.token });
-        // console.log('Here result:', result);
+        const result = await signinUseCaseOb.execute(email, passWord);
+        if (typeof result.statusCode === 'undefined') throw new Error('Type mismatch might happened');
+        res.status(result.statusCode).json({ status: result.status, token: result.token });
+        console.log('Here result:', result);
 
     } catch (err) {
 
@@ -106,13 +107,13 @@ export const createCompany = async (req: Request, res: Response) => {
                     res.status(409).json({ status: false, message: 'Email already registered' });
                     return;
                 case 'Company couldnt create':
-                    res.status(500).json({status:false, message : 'Company couldnt create'});
-                    return ;
+                    res.status(500).json({ status: false, message: 'Company couldnt create' });
+                    return;
                 case 'Workspace probably have not created':
-                    res.status(500).json({status :false, message :'Workspace probably have not created'});
+                    res.status(500).json({ status: false, message: 'Workspace probably have not created' });
                     return;
                 case 'Password couldnt secured':
-                    res.status(500).json({status:false, message :'Password couldnt secured'});
+                    res.status(500).json({ status: false, message: 'Password couldnt secured' });
                     return;
                 default:
                     res.status(500).json({ status: false, message: 'Unknown error on registration' });
