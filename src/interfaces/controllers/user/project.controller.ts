@@ -3,11 +3,13 @@ import { GetWorkSpaceUseCase } from "../../../application/usecase/workspaceUseca
 import { WorkspaceRepoImp } from "../../../infrastructure/repositories/workspace.repositoryImp";
 import { createProjectUseCase } from "../../../application/usecase/projectUseCase/createProject.usecase";
 import { projectRepositoryImp } from "../../../infrastructure/repositories/project.repositoryImp";
+import { GetAllProjectsInWorkspaceUseCase } from "../../../application/usecase/projectUseCase/getAllProjectsInWorkspace.usecase";
 
 const workSpacdRepositoryOb = new WorkspaceRepoImp();
 const getWorkSpacesUsecaseOb = new GetWorkSpaceUseCase(workSpacdRepositoryOb);
 const projectRepositoryOb = new projectRepositoryImp();
 const createProjectUseCaseOb = new createProjectUseCase(projectRepositoryOb);
+const getProjectsInWorkSpaceOb = new GetAllProjectsInWorkspaceUseCase(projectRepositoryOb);
 
 export const getProjectsInitData = async (req: Request, res: Response): Promise<void> => {
 
@@ -46,5 +48,21 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
     } catch (err) {
         console.error('Something went wrong while creating project', err);
         res.status(500).json({ status: false, message: 'Something went wrong while creating project' });
+    }
+}
+
+
+export const getProjectData = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+
+        if(typeof req.query.workspace_id !== 'string') throw new Error('Workspace id is not valid string');
+        const data = await getProjectsInWorkSpaceOb.execute(req.query.workspace_id);
+        res.status(200).json({ status: true, projects: data });
+
+    } catch (err) {
+        console.error('Internal server error while fetching project details', err);
+        res.status(500).json({ status: false, message: 'Internal server error while feching project details.' });
+        return;
     }
 }
