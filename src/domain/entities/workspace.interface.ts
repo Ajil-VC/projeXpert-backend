@@ -8,7 +8,7 @@ export interface WorkSpace extends Document {
     members: ObjectId[];
 
     projects: ObjectId[];
-    currentProject: ObjectId;
+    currentProject?: ObjectId;
 
     createdAt?: Date;
     updatedAt?: Date;

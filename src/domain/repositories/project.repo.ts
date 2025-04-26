@@ -13,4 +13,14 @@ export interface IProjectRepository {
     ): Promise<Project>;
 
     getProjects(workSpaceId: String): Promise<Array<any>>;
+
+    addMemberToProject(projectId: string, email: string): Promise<Project>;
+
+    updateProject(projectId: string,
+        projectName: string,
+        status: string,
+        priority: string
+    ): Promise<any>;
+
+    deleteProject(projectId: string, workSpaceId: string): Promise<any>;
 }

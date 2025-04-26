@@ -4,12 +4,22 @@ import { WorkspaceRepoImp } from "../../../infrastructure/repositories/workspace
 import { createProjectUseCase } from "../../../application/usecase/projectUseCase/createProject.usecase";
 import { projectRepositoryImp } from "../../../infrastructure/repositories/project.repositoryImp";
 import { GetAllProjectsInWorkspaceUseCase } from "../../../application/usecase/projectUseCase/getAllProjectsInWorkspace.usecase";
+import { userRepositoryImp } from "../../../infrastructure/repositories/user.repositoryImp";
+import { AddMemberUseCase } from "../../../application/usecase/projectUseCase/addMember.usecase";
+import { EmailServiceImp } from "../../../infrastructure/services/email.serviceImp";
+import { UpdateProjectUseCase } from "../../../application/usecase/projectUseCase/updateProject.usecase";
+import { DeleteProjectUsecase } from "../../../application/usecase/projectUseCase/deleteProject.usecase";
 
 const workSpacdRepositoryOb = new WorkspaceRepoImp();
 const getWorkSpacesUsecaseOb = new GetWorkSpaceUseCase(workSpacdRepositoryOb);
-const projectRepositoryOb = new projectRepositoryImp();
+const userRepositoryOb = new userRepositoryImp();
+const projectRepositoryOb = new projectRepositoryImp(userRepositoryOb);
 const createProjectUseCaseOb = new createProjectUseCase(projectRepositoryOb);
 const getProjectsInWorkSpaceOb = new GetAllProjectsInWorkspaceUseCase(projectRepositoryOb);
+const emailServiceOb = new EmailServiceImp();
+const addMemberUsecaseOb = new AddMemberUseCase(userRepositoryOb, emailServiceOb, projectRepositoryOb);
+const updateProjectUseCaseOb = new UpdateProjectUseCase(projectRepositoryOb);
+const deleteProjectUsecaseOb = new DeleteProjectUsecase(projectRepositoryOb);
 
 export const getProjectsInitData = async (req: Request, res: Response): Promise<void> => {
 
@@ -56,7 +66,7 @@ export const getProjectData = async (req: Request, res: Response): Promise<void>
 
     try {
 
-        if(typeof req.query.workspace_id !== 'string') throw new Error('Workspace id is not valid string');
+        if (typeof req.query.workspace_id !== 'string') throw new Error('Workspace id is not valid string');
         const data = await getProjectsInWorkSpaceOb.execute(req.query.workspace_id);
         res.status(200).json({ status: true, projects: data });
 
@@ -65,4 +75,76 @@ export const getProjectData = async (req: Request, res: Response): Promise<void>
         res.status(500).json({ status: false, message: 'Internal server error while feching project details.' });
         return;
     }
+}
+
+export const addMember = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+
+        const { email, projectId, workSpaceId } = req.body;
+        const updatedProjectData = await addMemberUsecaseOb.execute(email, projectId, workSpaceId, req.user.companyId);
+        if (!updatedProjectData) throw new Error('Member not added');
+
+        res.status(200).json({
+            status: true, message: 'Member added to the project successfully', updatedProjectData
+        });
+
+    } catch (err) {
+
+        console.error('Internal server error while adding members into the project', err);
+        res.status(500).json({ status: false, message: 'Internal server error while adding members into the project' });
+        return;
+    }
+}
+
+
+export const updateProject = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+
+        const { _id, name, status, priority, members } = req.body.projectData;
+        const workSpaceId = req.body.workSpaceId;
+
+        const result = await updateProjectUseCaseOb.execute(_id, name, status, priority);
+        console.log(result, "Result in controller.");
+        if (!result) {
+            res.status(500).json({ status: false, message: 'Something went wrong while updating project' });
+            return;
+        }
+
+        const projectsInWorkspace = await getProjectsInWorkSpaceOb.execute(workSpaceId);
+        if (!projectsInWorkspace) throw new Error('Projects couldnt retrieve');
+
+        res.status(200).json({ status: true, data: projectsInWorkspace });
+        return;
+
+    } catch (err) {
+        console.error('Error occured while updating project', err);
+        res.status(500).json({ status: false, message: 'Something went wrong while updating project', err });
+        return;
+    }
+}
+
+
+export const deleteProject = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+
+        const projectId = req.params.projectId;
+        const workSpaceId = req.params.workSpaceId;
+
+        const result = await deleteProjectUsecaseOb.execute(projectId, workSpaceId);
+        if (result) {
+            res.status(200).json({ status: true, message: 'Project deleted successfully' });
+            return;
+        }
+        res.status(500).json({ status: false, message: 'Project couldnt delete successfully' });
+        return;
+
+    } catch (err) {
+        console.error("Error occured while deleting project", err);
+        res.status(500).json({ status: false, message: "Error occured while deleting project" })
+        return;
+    }
+    
 }

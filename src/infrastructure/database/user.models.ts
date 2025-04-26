@@ -5,7 +5,7 @@ import { User } from "../../domain/entities/user.interface";
 
 const userSchema = new Schema<User>({
 
-    name: { type: String },
+    name: { type: String, default: 'New User' },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     profilePicUrl: { type: String, default: '' },
