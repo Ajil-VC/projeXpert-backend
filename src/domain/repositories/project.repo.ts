@@ -16,11 +16,13 @@ export interface IProjectRepository {
 
     addMemberToProject(projectId: string, email: string): Promise<Project>;
 
+    removeMemberFromProject(projectId: string, userId: string): Promise<boolean>;
+
     updateProject(projectId: string,
         projectName: string,
         status: string,
         priority: string
-    ): Promise<any>;
+    ): Promise<boolean>;
 
     deleteProject(projectId: string, workSpaceId: string): Promise<any>;
 }

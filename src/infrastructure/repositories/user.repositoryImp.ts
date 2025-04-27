@@ -7,6 +7,28 @@ import userModel from "../database/user.models";
 
 export class userRepositoryImp implements IUserRepository {
 
+
+    async updateRole(members: Array<{ email: string; role: string; }>, adminEmail: string): Promise<boolean> {
+
+        try {
+
+            for (const user of members) {
+                if (user.email !== adminEmail) {
+
+                    await userModel.updateOne({ email: user.email }, { role: user.role });
+                }
+            }
+
+            return true;
+
+        } catch (err) {
+            console.error('Error while updating user role', err);
+            return false;
+        }
+
+    }
+
+
     async findByEmail(email: string): Promise<User | null> {
 
         const isEmailExist: any = await userModel.findOne({ email: email })
@@ -26,7 +48,7 @@ export class userRepositoryImp implements IUserRepository {
         role: 'admin' | 'user' = 'user',
         companyId: string,
         workspaceId: string,
-        forceChangePassword : boolean = true): Promise<User | null> {
+        forceChangePassword: boolean = true): Promise<User | null> {
 
         const newUser = new userModel({
             name: userName,

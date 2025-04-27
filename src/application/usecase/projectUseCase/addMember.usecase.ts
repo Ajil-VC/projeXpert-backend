@@ -13,6 +13,7 @@ export class AddMemberUseCase {
         private projectRepo: IProjectRepository,
         private securePassword: ISecurePassword
     ) { }
+    
     async execute(email: string, projectId: string, workSpaceId: string, companyId: string): Promise<Project | null> {
 
         const isUserExist = await this.userRepo.findByEmail(email);

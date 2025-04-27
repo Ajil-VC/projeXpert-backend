@@ -10,6 +10,17 @@ export class projectRepositoryImp implements IProjectRepository {
 
     constructor(private userRepo: IUserRepository) { }
 
+    async removeMemberFromProject(projectId: string, userId: string): Promise<boolean> {
+
+        const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const userIdOb = new mongoose.Types.ObjectId(userId);
+
+        const result = await projectModel.updateOne({ _id: projectIdOb }, { $pull: { members: userIdOb } })
+        if (!result.acknowledged) throw new Error('User couldnt remove from the array.');
+
+        return true;
+    }
+
 
     async deleteProject(projectId: string, workSpaceId: string): Promise<any> {
 
@@ -51,8 +62,8 @@ export class projectRepositoryImp implements IProjectRepository {
             { $set: { name: projectName, status: status, priority: priority } }
         );
 
-        if (!updatedResult) throw new Error('couldnt update the project');
-        return updatedResult;
+        if (!updatedResult.acknowledged) throw new Error('couldnt update the project');
+        return true;
     }
 
     async addMemberToProject(projectId: string, email: string): Promise<Project> {

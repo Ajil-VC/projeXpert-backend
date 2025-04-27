@@ -12,9 +12,11 @@ export interface IUserRepository {
         role: 'admin' | 'user',
         companyId: string,
         workspaceId: string,
-        forceChangePassword : boolean
+        forceChangePassword: boolean
     ): Promise<User | null>
 
     findUserById(userId: string): Promise<User | null>
+
+    updateRole(members: Array<{ email: string, role: string }>, adminEmail :string): Promise<boolean>;
 
 }
