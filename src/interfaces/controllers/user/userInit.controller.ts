@@ -22,7 +22,8 @@ export const getInitData = async (req: Request, res: Response) => {
                     email: userData.email,
                     role: userData.role,
                     workSpaces: userData.workspaceIds,
-                    defaultWorkspace: userData.defaultWorkspace
+                    defaultWorkspace: userData.defaultWorkspace,
+                    forceChangePassword: userData.forceChangePassword
                 }
             });
 

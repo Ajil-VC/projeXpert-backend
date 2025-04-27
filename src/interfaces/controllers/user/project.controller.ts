@@ -9,6 +9,7 @@ import { AddMemberUseCase } from "../../../application/usecase/projectUseCase/ad
 import { EmailServiceImp } from "../../../infrastructure/services/email.serviceImp";
 import { UpdateProjectUseCase } from "../../../application/usecase/projectUseCase/updateProject.usecase";
 import { DeleteProjectUsecase } from "../../../application/usecase/projectUseCase/deleteProject.usecase";
+import { SecurePasswordImp } from "../../../infrastructure/services/securepassword.serviceImp";
 
 const workSpacdRepositoryOb = new WorkspaceRepoImp();
 const getWorkSpacesUsecaseOb = new GetWorkSpaceUseCase(workSpacdRepositoryOb);
@@ -17,7 +18,8 @@ const projectRepositoryOb = new projectRepositoryImp(userRepositoryOb);
 const createProjectUseCaseOb = new createProjectUseCase(projectRepositoryOb);
 const getProjectsInWorkSpaceOb = new GetAllProjectsInWorkspaceUseCase(projectRepositoryOb);
 const emailServiceOb = new EmailServiceImp();
-const addMemberUsecaseOb = new AddMemberUseCase(userRepositoryOb, emailServiceOb, projectRepositoryOb);
+const securePasswordOb = new SecurePasswordImp();
+const addMemberUsecaseOb = new AddMemberUseCase(userRepositoryOb, emailServiceOb, projectRepositoryOb, securePasswordOb);
 const updateProjectUseCaseOb = new UpdateProjectUseCase(projectRepositoryOb);
 const deleteProjectUsecaseOb = new DeleteProjectUsecase(projectRepositoryOb);
 
@@ -146,5 +148,5 @@ export const deleteProject = async (req: Request, res: Response): Promise<void> 
         res.status(500).json({ status: false, message: "Error occured while deleting project" })
         return;
     }
-    
+
 }

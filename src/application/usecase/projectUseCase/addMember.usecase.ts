@@ -3,13 +3,15 @@ import otpGenerator from 'otp-generator';
 import { IEmailService } from "../../../domain/services/email.interface";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { Project } from "../../../domain/entities/project.interface";
+import { ISecurePassword } from "../../../domain/services/securepassword.interface";
 
 export class AddMemberUseCase {
 
     constructor(
         private userRepo: IUserRepository,
         private sendEmail: IEmailService,
-        private projectRepo: IProjectRepository
+        private projectRepo: IProjectRepository,
+        private securePassword: ISecurePassword
     ) { }
     async execute(email: string, projectId: string, workSpaceId: string, companyId: string): Promise<Project | null> {
 
@@ -18,11 +20,13 @@ export class AddMemberUseCase {
 
             const otp = otpGenerator.generate(6, {
                 digits: true,
-                lowerCaseAlphabets: true,
+                lowerCaseAlphabets: false,
                 upperCaseAlphabets: true,
-                specialChars: true
+                specialChars: false
             })
-            const createdUser = await this.userRepo.createUser(email, 'New User', otp, 'user', companyId, workSpaceId);
+            const hashedPassword = await this.securePassword.secure(otp);
+            console.log(`Current password of new User : ${otp}`);
+            const createdUser = await this.userRepo.createUser(email, 'New User', hashedPassword, 'user', companyId, workSpaceId, true);
             if (!createdUser) throw new Error('User couldnt create.');
 
             const isMailSent = await this.sendEmail.send(email, 'Projexpert Password', `Your password is: ${otp}`);

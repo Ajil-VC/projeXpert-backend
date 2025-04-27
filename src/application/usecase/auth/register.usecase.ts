@@ -34,7 +34,15 @@ export class RegisterUseCase {
             const hashedPassword = await this.securePassword.secure(passWord);
             if (!hashedPassword) return { status: false, message: 'Password couldnt secured' };
 
-            const userData = await this.userRepo.createUser(email, companyName, hashedPassword, 'admin', companyIdStatus.additional, workSpaceId);
+            const userData = await this.userRepo.createUser(
+                email, 
+                companyName, 
+                hashedPassword, 
+                'admin', 
+                companyIdStatus.additional, 
+                workSpaceId,
+                false
+            );
             if(!userData) return { status: false, message: 'UUser Data not available' };
             const company = userData.companyId as Company;
             if (userData) {

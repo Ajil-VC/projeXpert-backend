@@ -33,3 +33,11 @@ export const signinSchema = yup.object({
     passWord: yup.string().required('Password is required')
 
 })
+
+export const passWordChangeSchema = yup.object({
+
+    passWord: yup.string()
+        .required('Password is required')
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+            "Password must contain uppercase, lowercase, number,and special charecter")
+})

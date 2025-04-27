@@ -1,6 +1,5 @@
 
 import { User } from "../entities/user.interface";
-import { WorkSpace } from "../entities/workspace.interface";
 
 export interface IUserRepository {
 
@@ -12,7 +11,8 @@ export interface IUserRepository {
         passWord: string | undefined,
         role: 'admin' | 'user',
         companyId: string,
-        workspaceId: string
+        workspaceId: string,
+        forceChangePassword : boolean
     ): Promise<User | null>
 
     findUserById(userId: string): Promise<User | null>
