@@ -1,6 +1,6 @@
 
 
-import mongoose from "mongoose";
+import mongoose, { model } from "mongoose";
 import { User } from "../../domain/entities/user.interface";
 import { IUserRepository } from "../../domain/repositories/user.repo";
 import userModel from "../database/user.models";
@@ -34,7 +34,13 @@ export class userRepositoryImp implements IUserRepository {
         const isEmailExist: any = await userModel.findOne({ email: email })
             .populate('workspaceIds')
             .populate('companyId')
-            .populate('defaultWorkspace');
+            .populate({
+                path: 'defaultWorkspace',
+                populate: {
+                    path: 'projects',
+                    model: 'Project'
+                }
+            }).exec();
 
         if (isEmailExist) return isEmailExist;
 
