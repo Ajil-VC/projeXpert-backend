@@ -38,7 +38,8 @@ export class SigninUseCase {
                 email: userData.email,
                 name: userData.name,
                 role: userData.role,
-                companyId : company._id
+                companyId : company._id,
+                systemRole : userData.systemRole
             },
             config.JWT_SECRETKEY,
             { expiresIn: '1h' }

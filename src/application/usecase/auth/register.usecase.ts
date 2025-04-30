@@ -35,15 +35,16 @@ export class RegisterUseCase {
             if (!hashedPassword) return { status: false, message: 'Password couldnt secured' };
 
             const userData = await this.userRepo.createUser(
-                email, 
-                companyName, 
-                hashedPassword, 
-                'admin', 
-                companyIdStatus.additional, 
+                email,
+                companyName,
+                hashedPassword,
+                'admin',
+                companyIdStatus.additional,
                 workSpaceId,
-                false
+                false,
+                'company-user'
             );
-            if(!userData) return { status: false, message: 'UUser Data not available' };
+            if (!userData) return { status: false, message: 'UUser Data not available' };
             const company = userData.companyId as Company;
             if (userData) {
 
@@ -57,7 +58,8 @@ export class RegisterUseCase {
                         email: userData.email,
                         userName: userData.name,
                         role: userData.role,
-                        companyId: company._id
+                        companyId: company._id,
+                        systemRole : userData.systemRole
 
                     },
                     config.JWT_SECRETKEY,

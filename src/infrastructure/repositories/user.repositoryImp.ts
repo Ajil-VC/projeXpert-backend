@@ -54,7 +54,8 @@ export class userRepositoryImp implements IUserRepository {
         role: 'admin' | 'user' = 'user',
         companyId: string,
         workspaceId: string,
-        forceChangePassword: boolean = true): Promise<User | null> {
+        forceChangePassword: boolean = true,
+        systemRole: 'platform-admin' | 'company-user' = 'company-user'): Promise<User | null> {
 
         const newUser = new userModel({
             name: userName,
@@ -64,7 +65,8 @@ export class userRepositoryImp implements IUserRepository {
             companyId: new mongoose.Types.ObjectId(companyId),
             defaultWorkspace: new mongoose.Types.ObjectId(workspaceId),
             workspaceIds: [new mongoose.Types.ObjectId(workspaceId)],
-            forceChangePassword
+            forceChangePassword,
+            systemRole: systemRole
         });
 
         const userData = await newUser.save();

@@ -33,7 +33,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
         if (err) return res.status(403).json({ status: false, message: 'Error while verifying jwt.' });
 
         req.user = decoded;
-        console.log('rwqidsf',req.user)
+        console.log('Authentication: ',req.user)
         next();
     });
 

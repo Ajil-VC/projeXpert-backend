@@ -140,8 +140,7 @@ export const createCompany = async (req: Request, res: Response) => {
 export const changePassword = async (req: Request, res: Response) => {
 
     try {
-        console.log(req.body);
-        console.log(req.user)
+
         const result = await changePsWdUseCaseOb.execute(req.user.email, req.body.passWord);
         console.log(result, 'Res');
         if (!result) throw new Error('Internal error while changng password');

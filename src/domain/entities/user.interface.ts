@@ -16,6 +16,8 @@ export interface User extends Document {
     
     forceChangePassword: boolean;
 
+    systemRole : 'platform-admin' | 'company-user';
+
     createdAt?: Date;
     updatedAt?: Date;
 
