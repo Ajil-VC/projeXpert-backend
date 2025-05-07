@@ -12,11 +12,11 @@ export interface User extends Document {
     role: 'admin' | 'user';
     companyId: ObjectId | Company;
     workspaceIds: ObjectId[];
-    defaultWorkspace : ObjectId;
-    
+    defaultWorkspace: ObjectId;
+    lastActiveProjectId?: ObjectId | null;
     forceChangePassword: boolean;
 
-    systemRole : 'platform-admin' | 'company-user';
+    systemRole: 'platform-admin' | 'company-user';
 
     createdAt?: Date;
     updatedAt?: Date;

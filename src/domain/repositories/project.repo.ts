@@ -14,6 +14,8 @@ export interface IProjectRepository {
 
     getProjects(workSpaceId: String): Promise<Array<any>>;
 
+    getCurProject(workspaceId : string, projectId : string):Promise<any>;
+
     addMemberToProject(projectId: string, email: string): Promise<Project>;
 
     removeMemberFromProject(projectId: string, userId: string): Promise<boolean>;

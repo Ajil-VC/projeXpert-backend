@@ -7,7 +7,7 @@ export class DeleteProjectUsecase {
     async execute(projectId: string, workSpaceId: string): Promise<boolean> {
 
         const result = await this.projectRepo.deleteProject(projectId, workSpaceId);
-        console.log(result, '4 yes')
+
         if (result) {
             return true;
         }

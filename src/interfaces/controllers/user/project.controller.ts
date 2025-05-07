@@ -11,6 +11,7 @@ import { UpdateProjectUseCase } from "../../../application/usecase/projectUseCas
 import { DeleteProjectUsecase } from "../../../application/usecase/projectUseCase/deleteProject.usecase";
 import { SecurePasswordImp } from "../../../infrastructure/services/securepassword.serviceImp";
 import { RemoveMemberUseCase } from "../../../application/usecase/projectUseCase/removeMember.usecase";
+import { GetProjectUseCase } from "../../../application/usecase/projectUseCase/getProject.usecase";
 
 const workSpacdRepositoryOb = new WorkspaceRepoImp();
 const getWorkSpacesUsecaseOb = new GetWorkSpaceUseCase(workSpacdRepositoryOb);
@@ -24,6 +25,7 @@ const addMemberUsecaseOb = new AddMemberUseCase(userRepositoryOb, emailServiceOb
 const updateProjectUseCaseOb = new UpdateProjectUseCase(projectRepositoryOb, userRepositoryOb);
 const deleteProjectUsecaseOb = new DeleteProjectUsecase(projectRepositoryOb);
 const removeMemberUsecaseOb = new RemoveMemberUseCase(projectRepositoryOb);
+const getCurProjectUsecaseOb = new GetProjectUseCase(projectRepositoryOb);
 
 export const getProjectsInitData = async (req: Request, res: Response): Promise<void> => {
 
@@ -81,6 +83,33 @@ export const getProjectData = async (req: Request, res: Response): Promise<void>
     }
 }
 
+export const getProject = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+
+        const projectId = req.query.project_id;
+        const workspaceId = req.query.workspace_id;
+
+        
+        if (typeof projectId !== 'string' || typeof workspaceId !== 'string') {
+            throw new Error('project id or workspace id is not valid string');
+        }
+        const result = await getCurProjectUsecaseOb.execute(workspaceId, projectId);
+
+        if(!result) throw new Error('Somthing went wrong while fetching project data.');
+
+        res.status(200).json({status : true, result});
+        return;
+
+    } catch (err) {
+
+        console.error('Internal server error while fetching project details', err);
+        res.status(500).json({ status: false, message: 'Internal server error while feching project details.' });
+        return;
+
+    }
+}
+
 export const addMember = async (req: Request, res: Response): Promise<void> => {
 
     try {
@@ -109,7 +138,7 @@ export const removeMember = async (req: Request, res: Response): Promise<void> =
         const { userId, projectId } = req.body;
 
         const result = await removeMemberUsecaseOb.execute(projectId, userId, req.user.id);
-        if(!result) throw new Error('Couldnt remove user from projecdt');
+        if (!result) throw new Error('Couldnt remove user from projecdt');
 
         res.status(200).json({ status: true, message: 'Member removed from project' });
         return;

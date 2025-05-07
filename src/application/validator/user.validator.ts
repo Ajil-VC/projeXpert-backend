@@ -6,4 +6,9 @@ export const projectCreationSchema = yup.object({
     workSpace: yup.string().required('Password is required'),
     priority: yup.string()
 
+});
+
+export const createEpicSchema = yup.object({
+    epicName: yup.string().required('Epic name is required'),
+    projectId: yup.string().required('projectId is required')
 })

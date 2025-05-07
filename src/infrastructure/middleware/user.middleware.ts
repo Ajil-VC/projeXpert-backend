@@ -35,6 +35,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
         req.user = decoded;
         console.log('Authentication: ',req.user)
         next();
+        
     });
 
 }

@@ -25,7 +25,7 @@ const companyRepository = new CompanyRepositoryImp();
 const registerUseCaseOb = new RegisterUseCase(securePassWordOb, userRepository, companyRepository);
 const signinUseCaseOb = new SigninUseCase(userRepository, securePassWordOb);
 const authRepository = new AuthRepositoryImp();
-const changePsWdUseCaseOb = new ChangePsdUseCase(securePassWordOb, authRepository);
+const changePsWdUseCaseOb = new ChangePsdUseCase(securePassWordOb, authRepository, userRepository);
 
 
 export const sendOtpToMail = async (req: Request, res: Response): Promise<void> => {
@@ -81,7 +81,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 
         const result = await signinUseCaseOb.execute(email, passWord);
         if (typeof result.statusCode === 'undefined') throw new Error('Type mismatch might happened');
-        res.status(result.statusCode).json({ status: result.status, token: result.token });
+        res.status(result.statusCode).json({ status: result.status, token: result.token, forceChangePassword: result.additional });
 
     } catch (err) {
 
@@ -141,9 +141,13 @@ export const changePassword = async (req: Request, res: Response) => {
 
     try {
 
-        const result = await changePsWdUseCaseOb.execute(req.user.email, req.body.passWord);
-        console.log(result, 'Res');
-        if (!result) throw new Error('Internal error while changng password');
+        const result = await changePsWdUseCaseOb.execute(req.user.email, req.body.oldPassword, req.body.passWord);
+       console.log(result,'resul  t')
+        if (!result) {
+
+            res.status(404).json({ status: false, message: 'Try again, default password might be wrong.' });
+            return;
+        };
 
         res.status(200).json({ status: true, message: 'Success' });
         return;

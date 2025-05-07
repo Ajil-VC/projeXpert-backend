@@ -38,13 +38,13 @@ export class SigninUseCase {
                 email: userData.email,
                 name: userData.name,
                 role: userData.role,
-                companyId : company._id,
-                systemRole : userData.systemRole
+                companyId: company._id,
+                systemRole: userData.systemRole
             },
             config.JWT_SECRETKEY,
             { expiresIn: '1h' }
         )
 
-        return { status: true, message: 'Token Created', statusCode: 200, token: token };
+        return { status: true, message: 'Token Created', statusCode: 200, token: token, additional: userData.forceChangePassword };
     }
 }

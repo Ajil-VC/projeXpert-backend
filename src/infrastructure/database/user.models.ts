@@ -13,6 +13,9 @@ const userSchema = new Schema<User>({
     companyId: { type: Schema.Types.ObjectId, ref: 'Company' },
     workspaceIds: [{ type: Schema.Types.ObjectId, ref: 'Workspace' }],
     defaultWorkspace: { type: Schema.Types.ObjectId, ref: 'Workspace' },
+
+    lastActiveProjectId: { type: Schema.Types.ObjectId, ref: 'Project', default: null },
+
     forceChangePassword: { type: Boolean, default: true },
     systemRole: { type: String, enum: ['platform-admin', 'company-user'], default: 'company-user', required: true }
 

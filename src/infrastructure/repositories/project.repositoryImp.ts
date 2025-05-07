@@ -4,11 +4,35 @@ import projectModel from "../database/project.models";
 import { Project } from "../../domain/entities/project.interface";
 import workSpaceModel from "../database/workspace.models";
 import { IUserRepository } from "../../domain/repositories/user.repo";
+import userModel from "../database/user.models";
 
 
 export class projectRepositoryImp implements IProjectRepository {
 
     constructor(private userRepo: IUserRepository) { }
+
+    async getCurProject(workspaceId: string, projectId: string): Promise<any> {
+
+        const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const workSpaceIdOb = new mongoose.Types.ObjectId(workspaceId);
+
+        const workSpace = await workSpaceModel.findById(workSpaceIdOb)
+            .populate({ path: 'projects' }).exec();
+
+        const unknownData = workSpace?.projects as unknown;
+        const workspaceWithProjects = unknownData as Array<Project>
+        if(!workspaceWithProjects) throw new Error('Projects not available.');
+
+        for(let project of workspaceWithProjects){
+            const proId = project._id as unknown;
+            if(projectIdOb.equals(new mongoose.Types.ObjectId(proId as string))){
+                return project;
+            }
+        }
+
+        return null;
+
+    }
 
     async removeMemberFromProject(projectId: string, userId: string): Promise<boolean> {
 
@@ -18,6 +42,14 @@ export class projectRepositoryImp implements IProjectRepository {
         const result = await projectModel.updateOne({ _id: projectIdOb }, { $pull: { members: userIdOb } })
         if (!result.acknowledged) throw new Error('User couldnt remove from the array.');
 
+        const userData = await userModel.findById({ _id: userIdOb });
+        if (!userData) throw new Error('Project might be still there in user data');
+
+        const projIdInUser = userData.lastActiveProjectId;
+        if (projIdInUser && projIdInUser.toString() === projectId) {
+            userData.lastActiveProjectId = null;
+            await userData.save()
+        }
         return true;
     }
 
@@ -28,8 +60,10 @@ export class projectRepositoryImp implements IProjectRepository {
         const workSpaceIdOb = new mongoose.Types.ObjectId(workSpaceId);
 
         await projectModel.deleteOne({ _id: projectIdOb });
-        const workSpace = await workSpaceModel.findOne({ _id: workSpaceIdOb });
 
+
+
+        const workSpace = await workSpaceModel.findOne({ _id: workSpaceIdOb });
         if (!workSpace) throw new Error('Something went wrong');
         const currentPro = workSpace.currentProject as unknown;
         const currentProId = new mongoose.Types.ObjectId(currentPro as string);
@@ -72,6 +106,12 @@ export class projectRepositoryImp implements IProjectRepository {
 
         const user = await this.userRepo.findByEmail(email);
         if (!user) throw new Error('User couldnt find');
+
+        if (!user.lastActiveProjectId) {
+            user.lastActiveProjectId = projectIdOb as unknown as mongoose.Schema.Types.ObjectId;
+            await user.save();
+        }
+
         await projectModel.updateOne({ _id: projectIdOb }, { $addToSet: { members: user._id } });
 
         const updatedProject = await projectModel.findById(projectIdOb).populate({ path: 'members' }).exec();
@@ -128,6 +168,14 @@ export class projectRepositoryImp implements IProjectRepository {
         if (!createdProject) throw new Error('Project couldnt created.Internal error');
 
         await workSpaceModel.updateOne({ _id: workSpaceId }, { $push: { projects: createdProject._id } });
+
+        const userData = await userModel.findById({ _id: memberId });
+        if (!userData) throw new Error('User data couldnt find.');
+
+        if (!userData.lastActiveProjectId) {
+            userData.lastActiveProjectId = createdProject._id;
+            await userData.save();
+        }
 
         return createdProject;
     }
