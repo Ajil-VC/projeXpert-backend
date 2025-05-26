@@ -12,6 +12,8 @@ import { DeleteProjectUsecase } from "../../../application/usecase/projectUseCas
 import { SecurePasswordImp } from "../../../infrastructure/services/securepassword.serviceImp";
 import { RemoveMemberUseCase } from "../../../application/usecase/projectUseCase/removeMember.usecase";
 import { GetProjectUseCase } from "../../../application/usecase/projectUseCase/getProject.usecase";
+import { BacklogRepositoryImp } from "../../../infrastructure/repositories/backlog.repositoryImp";
+import { GetTasksUseCase } from "../../../application/usecase/backlogUseCase/getTasks.usecase";
 
 const workSpacdRepositoryOb = new WorkspaceRepoImp();
 const getWorkSpacesUsecaseOb = new GetWorkSpaceUseCase(workSpacdRepositoryOb);
@@ -26,6 +28,9 @@ const updateProjectUseCaseOb = new UpdateProjectUseCase(projectRepositoryOb, use
 const deleteProjectUsecaseOb = new DeleteProjectUsecase(projectRepositoryOb);
 const removeMemberUsecaseOb = new RemoveMemberUseCase(projectRepositoryOb);
 const getCurProjectUsecaseOb = new GetProjectUseCase(projectRepositoryOb);
+
+const backlogRepositoryOb = new BacklogRepositoryImp();
+const getTasksUseCaseOb = new GetTasksUseCase(backlogRepositoryOb);
 
 export const getProjectsInitData = async (req: Request, res: Response): Promise<void> => {
 
@@ -90,15 +95,16 @@ export const getProject = async (req: Request, res: Response): Promise<void> => 
         const projectId = req.query.project_id;
         const workspaceId = req.query.workspace_id;
 
-        
+
         if (typeof projectId !== 'string' || typeof workspaceId !== 'string') {
             throw new Error('project id or workspace id is not valid string');
         }
         const result = await getCurProjectUsecaseOb.execute(workspaceId, projectId);
+        if (!result) throw new Error('Somthing went wrong while fetching project data.');
 
-        if(!result) throw new Error('Somthing went wrong while fetching project data.');
+        const tasks = await getTasksUseCaseOb.execute(projectId, req.user.role, req.user.id);
 
-        res.status(200).json({status : true, result});
+        res.status(200).json({ status: true, result, tasks });
         return;
 
     } catch (err) {

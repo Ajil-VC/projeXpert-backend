@@ -2,9 +2,159 @@ import mongoose from "mongoose";
 import { Task } from "../../domain/entities/task.interface";
 import { IBacklogRepository } from "../../domain/repositories/backlog.repo";
 import taskModel from "../database/task.models";
+import { Team } from "../../domain/entities/team.interface";
+import SprintModel from "../database/sprint.models";
+import { Sprint } from "../../domain/entities/sprint.interface";
 
 
 export class BacklogRepositoryImp implements IBacklogRepository {
+
+
+    async changeTaskStatus(taskId: string, status: string): Promise<any> {
+
+        const taskIdOb = new mongoose.Types.ObjectId(taskId);
+        const updatedTask = await taskModel.updateOne({ _id: taskIdOb }, { $set: { status: status } }, { new: true });
+        if(!updatedTask){
+
+            throw new Error("Task couldnt update");
+        }
+        return updatedTask;
+    }
+
+
+    async dragDropUpdation(prevContainerId: string, containerId: string, movedTaskId: string): Promise<any> {
+
+        const movedTaskIdOb = new mongoose.Types.ObjectId(movedTaskId);
+        let containerIdOb = null;
+        let updatedSprint = null;
+        let prevContainerIdOb = null;
+
+        if (containerId !== 'backlog-drop-list') {
+            containerId = containerId.split('-')[1];
+            containerIdOb = new mongoose.Types.ObjectId(containerId);
+
+            //Adding moved task to the array of sprint document
+            updatedSprint = await SprintModel.updateOne({ _id: containerIdOb }, { $addToSet: { tasks: movedTaskIdOb } });
+            if (!updatedSprint) {
+                throw new Error('Error occured while trying to updated the sprint document');
+            }
+        }
+        if (prevContainerId !== 'backlog-drop-list') {
+            prevContainerId = prevContainerId.split('-')[1];
+            prevContainerIdOb = new mongoose.Types.ObjectId(prevContainerId);
+            updatedSprint = await SprintModel.updateOne({ _id: prevContainerIdOb }, { $pull: { tasks: movedTaskIdOb } });
+        }
+        const updatedData = await taskModel.findOneAndUpdate(
+            { _id: movedTaskIdOb }, { sprintId: containerIdOb }, { new: true })
+
+        if (!updatedData) throw new Error('Error occured while updating task');
+        return updatedData;
+    }
+
+
+    async getSprints(projectId: string): Promise<any> {
+
+        const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const availableSprints: Sprint[] = await SprintModel.find({ projectId: projectIdOb })
+            .populate({
+                path: 'tasks', model: 'Task',
+                populate: {
+                    path: 'assignedTo',
+                    model: 'User',
+                    select: '_id name email profilePicUrl role createdAt updatedAt'
+                }
+            }).exec();
+        if (!availableSprints) throw new Error('Error occured while fetching sprints');
+        return availableSprints;
+    }
+
+
+    async createSprint(projectId: string, issueIds: Array<string>, userId: string): Promise<any> {
+
+        const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const issueIdsOb = issueIds.map(issueId => new mongoose.Types.ObjectId(issueId));
+        const userIdOb = new mongoose.Types.ObjectId(userId);
+
+
+        const availableSprints: Sprint[] = await SprintModel.find({ projectId: projectIdOb });
+        const ob = { name: 'Sprint 1', sprintCount: 1 };
+
+        if (availableSprints.length > 0) {
+            const lastSprintCount = Math.max(...availableSprints.map(s => s.sprintCount));
+            ob.sprintCount = lastSprintCount + 1;
+            ob.name = `Sprint ${ob.sprintCount}`;
+        }
+
+        const newSprint = new SprintModel({
+            name: ob.name,
+            sprintCount: ob.sprintCount,
+            projectId: projectIdOb,
+            createdBy: userIdOb,
+            tasks: issueIdsOb
+        });
+
+        const createdSprint = await newSprint.save();
+        if (!createdSprint) throw new Error('Error occured while creating sprint');
+        const updatedTask = await Promise.all(
+            issueIdsOb.map((issueId) =>
+                taskModel.findByIdAndUpdate(issueId, { sprintId: createdSprint._id }, { new: true })
+                    .populate({
+                        path: 'assignedTo',
+                        select: '_id name email profilePicUrl role createdAt updatedAt'
+                    }).exec()
+            ));
+        createdSprint.tasks = updatedTask as Array<Task>;
+        return createdSprint;
+    }
+
+
+
+    async assignIssue(issueId: string, userId: string): Promise<Task | null> {
+
+        const issueIdOb = new mongoose.Types.ObjectId(issueId);
+
+        let userIdOb;
+        if (userId === '' || !userId) {
+            userIdOb = null;
+        } else {
+            userIdOb = new mongoose.Types.ObjectId(userId);
+        }
+
+        const issueData = await taskModel
+            .findByIdAndUpdate(issueIdOb, { assignedTo: userIdOb }, { new: true })
+            .populate({ path: 'assignedTo' });
+        if (!issueData) {
+            return null;
+        }
+        issueData.assignedTo = issueData.assignedTo as unknown as Team;
+        return issueData;
+    }
+
+
+    async createIssue(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<any> {
+
+        const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const epicIdOb = epicId ? new mongoose.Types.ObjectId(epicId) : null;
+
+        let sprintId = taskGroup === 'backlog' ? null : new mongoose.Types.ObjectId(taskGroup);
+
+        const newTask = new taskModel({
+            title: issueName,
+            type: issueType,
+            status: 'in-progress',
+            epicId: epicIdOb,
+            sprintId: sprintId,
+            projectId: projectIdOb
+        });
+
+        const createdTask = await newTask.save();
+        if (taskGroup !== 'backlog') {
+            await SprintModel.findByIdAndUpdate(sprintId, { $push: { tasks: createdTask._id } });
+        }
+        if (!createdTask) throw new Error('Error occured while creating task');
+        return createdTask;
+
+    }
 
 
     async getTasks(projectId: string, userRole: string, userId: string): Promise<any> {
@@ -16,7 +166,8 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         if (userRole === 'user') {
             query.assignedTo = userIdOb;
         }
-        const tasks = await taskModel.find(query);
+        const tasks = await taskModel.find(query)
+            .populate({ path: 'assignedTo' });
         return tasks;
 
     }
@@ -34,7 +185,6 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         });
 
         const createdTask = await newTask.save();
-        console.log(createdTask, 'createted task');
         if (!createdTask) return null;
 
         return createdTask;

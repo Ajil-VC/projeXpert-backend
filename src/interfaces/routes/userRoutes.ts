@@ -5,9 +5,23 @@ import { passWordChangeSchema, signinSchema } from '../../application/validator/
 import { changePassword, signIn } from '../controllers/authController';
 import { getInitData } from '../controllers/user/userInit.controller';
 import { authenticateAsAdmin, authenticateUser } from '../../infrastructure/middleware/user.middleware';
-import { addMember, createProject, deleteProject, getProject, getProjectData, getProjectsInitData, removeMember, updateProject } from '../controllers/user/project.controller';
-import { createEpicSchema, projectCreationSchema } from '../../application/validator/user.validator';
-import { createEpic, getTasks } from '../controllers/user/backlog.controller';
+
+import {
+    addMember, createProject, deleteProject,
+    getProject, getProjectData, getProjectsInitData,
+    removeMember, updateProject
+} from '../controllers/user/project.controller';
+
+import {
+    assignIssueSchema, createEpicSchema,
+    createIssueSchema, createSprintSchema,
+    dragDropSchema,
+    projectCreationSchema,
+    taskStatusUpdateSchema
+} from '../../application/validator/user.validator';
+
+import { assignIssue, changeTaskStatus, createEpic, createIssue, createSprint, dragDropUpdate, getSprints, getTasks } from '../controllers/user/backlog.controller';
+import { getTeam } from '../controllers/user/team.controller';
 
 const userRouter = express.Router();
 userRouter.use(express.urlencoded({ extended: true }));
@@ -27,6 +41,14 @@ userRouter.put('/update-project', authenticateAsAdmin, updateProject);
 userRouter.delete('/delete-project/:projectId/:workSpaceId', authenticateAsAdmin, deleteProject);
 
 userRouter.post('/create-epic', authenticateAsAdmin, validateBody(createEpicSchema), createEpic);
+userRouter.post('/create-issue', authenticateAsAdmin, validateBody(createIssueSchema), createIssue);
+userRouter.post('/create-sprint', authenticateAsAdmin, validateBody(createSprintSchema), createSprint);
+userRouter.get('/get-sprints/:projectId', authenticateUser, getSprints);
 userRouter.get('/tasks', authenticateUser, getTasks);
+
+userRouter.get('/team', authenticateAsAdmin, getTeam);
+userRouter.patch('/assign-issue', authenticateAsAdmin, validateBody(assignIssueSchema), assignIssue);
+userRouter.put('/update-task', authenticateAsAdmin, validateBody(dragDropSchema), dragDropUpdate);
+userRouter.put('/change-taskstatus', authenticateAsAdmin, validateBody(taskStatusUpdateSchema), changeTaskStatus);
 
 export default userRouter;
