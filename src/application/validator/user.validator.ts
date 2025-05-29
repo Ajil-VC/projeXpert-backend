@@ -39,4 +39,15 @@ export const dragDropSchema = yup.object({
 export const taskStatusUpdateSchema = yup.object({
     taskId: yup.string().required('task id required'),
     status: yup.string().required('status required')
+});
+
+export const startSprintSchema = yup.object({
+    sprintId: yup.string().required('Sprint id required'),
+    sprintName: yup.string().required('Sprint name required'),
+    duration: yup.number().required('duration required'), 
+    startDate: yup.date().required('Date required')
+});
+
+export const createWorkspaceSchema = yup.object({
+    workspaceName: yup.string().required('workspaceName is required')
 })

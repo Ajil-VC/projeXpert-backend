@@ -28,6 +28,8 @@ export class CompanyRepositoryImp implements ICompanyRepository {
             if (!companyData) return { status: false, message: 'No company data found' };
             companyData.workspaces.push(createdWorkSpace._id);
             await companyData.save();
+
+      
             return String(createdWorkSpace._id);
 
         } catch (err) {

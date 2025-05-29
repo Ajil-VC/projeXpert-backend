@@ -15,13 +15,16 @@ import {
 import {
     assignIssueSchema, createEpicSchema,
     createIssueSchema, createSprintSchema,
+    createWorkspaceSchema,
     dragDropSchema,
     projectCreationSchema,
+    startSprintSchema,
     taskStatusUpdateSchema
 } from '../../application/validator/user.validator';
 
-import { assignIssue, changeTaskStatus, createEpic, createIssue, createSprint, dragDropUpdate, getSprints, getTasks } from '../controllers/user/backlog.controller';
+import { assignIssue, changeTaskStatus, createEpic, createIssue, createSprint, dragDropUpdate, getSprints, getTasks, startSprint } from '../controllers/user/backlog.controller';
 import { getTeam } from '../controllers/user/team.controller';
+import { createWorkspace } from '../controllers/user/workspace.controller';
 
 const userRouter = express.Router();
 userRouter.use(express.urlencoded({ extended: true }));
@@ -34,6 +37,7 @@ userRouter.get('/projects-initials', authenticateUser, getProjectsInitData);
 userRouter.post('/create-project', validateBody(projectCreationSchema), authenticateAsAdmin, createProject);
 userRouter.get('/init-projects', authenticateAsAdmin, getProjectData);
 userRouter.get('/get-project', authenticateUser, getProject);
+userRouter.post('/create-workspace',authenticateAsAdmin, validateBody(createWorkspaceSchema), createWorkspace);
 
 userRouter.post('/add-member', authenticateAsAdmin, addMember);
 userRouter.patch('/remove-member', authenticateAsAdmin, removeMember);
@@ -50,5 +54,7 @@ userRouter.get('/team', authenticateAsAdmin, getTeam);
 userRouter.patch('/assign-issue', authenticateAsAdmin, validateBody(assignIssueSchema), assignIssue);
 userRouter.put('/update-task', authenticateAsAdmin, validateBody(dragDropSchema), dragDropUpdate);
 userRouter.put('/change-taskstatus', authenticateAsAdmin, validateBody(taskStatusUpdateSchema), changeTaskStatus);
+
+userRouter.put('/start-sprint', authenticateAsAdmin, validateBody(startSprintSchema), startSprint);
 
 export default userRouter;

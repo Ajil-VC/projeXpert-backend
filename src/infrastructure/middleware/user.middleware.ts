@@ -18,7 +18,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
         res.status(401).json({ status: false, message: 'Unauthorized: Token missing or invalid token' });
-        return 
+        return
     }
 
     const token = authHeader.split(' ')[1];
@@ -33,9 +33,9 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
         if (err) return res.status(403).json({ status: false, message: 'Error while verifying jwt.' });
 
         req.user = decoded;
-        console.log('Authentication: ',req.user)
+        console.log('Authentication: ', req.user)
         next();
-        
+
     });
 
 }
@@ -45,7 +45,7 @@ export const authenticateAsAdmin = async (req: Request, res: Response, next: Nex
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
         res.status(401).json({ status: false, message: 'Unauthorized: Token missing or invalid token' });
-        return 
+        return
     }
 
     const token = authHeader.split(' ')[1];
@@ -63,7 +63,7 @@ export const authenticateAsAdmin = async (req: Request, res: Response, next: Nex
 
         if (req.user.role !== 'admin') {
             res.status(403).json({ status: false, message: 'Access denied: Admins only' });
-            return 
+            return
         }
         next();
     });

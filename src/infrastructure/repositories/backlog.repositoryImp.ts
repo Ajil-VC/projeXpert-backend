@@ -10,11 +10,34 @@ import { Sprint } from "../../domain/entities/sprint.interface";
 export class BacklogRepositoryImp implements IBacklogRepository {
 
 
+    async startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<any> {
+
+        const sprintIdOb = new mongoose.Types.ObjectId(sprintId);
+        const endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + duration - 1);
+        const updatedSprint = await SprintModel.findByIdAndUpdate({ _id: sprintIdOb }, {
+            $set: {
+                name: sprintName,
+                startDate: startDate,
+                endDate: endDate,
+                status: 'active'
+            }
+        }, { new: true }).populate({ path: 'tasks' });
+
+        if (!updatedSprint) {
+            throw new Error('Sprint not found');
+        }
+
+        return updatedSprint;
+
+    }
+
+
     async changeTaskStatus(taskId: string, status: string): Promise<any> {
 
         const taskIdOb = new mongoose.Types.ObjectId(taskId);
         const updatedTask = await taskModel.updateOne({ _id: taskIdOb }, { $set: { status: status } }, { new: true });
-        if(!updatedTask){
+        if (!updatedTask) {
 
             throw new Error("Task couldnt update");
         }

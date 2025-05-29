@@ -18,4 +18,6 @@ export interface IBacklogRepository {
     dragDropUpdation(prevContainerId: string, containerId: string, movedTaskId: string): Promise<any>;
 
     changeTaskStatus(taskId: string, status: string): Promise<any>;
+
+    startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<any>;
 }

@@ -9,6 +9,7 @@ import { GetSprintsUseCase } from "../../../application/usecase/backlogUseCase/g
 import { get } from "http";
 import { DragDropUseCase } from "../../../application/usecase/backlogUseCase/dragDrop.usecase";
 import { ChangeTaskStatus } from "../../../application/usecase/backlogUseCase/changeTaskStatus.usecase";
+import { StartSprintUsecase } from "../../../application/usecase/backlogUseCase/startSprint.usecase";
 
 
 const backlogRepositoryOb = new BacklogRepositoryImp();
@@ -20,6 +21,7 @@ const createSprintUseCaseOb = new CreateSprintUsecase(backlogRepositoryOb);
 const getSprintsUseCaseOb = new GetSprintsUseCase(backlogRepositoryOb);
 const dragDropUseCaseOb = new DragDropUseCase(backlogRepositoryOb);
 const taskStatusChangeUseCaseOb = new ChangeTaskStatus(backlogRepositoryOb);
+const startSprintUsecaseOb = new StartSprintUsecase(backlogRepositoryOb);
 
 export const createEpic = async (req: Request, res: Response): Promise<void> => {
 
@@ -187,6 +189,32 @@ export const changeTaskStatus = async (req: Request, res: Response): Promise<voi
     } catch (err) {
         console.error('Internal server error while updating task status', err);
         res.status(500).json({ status: false, message: 'Internal server error while updating task status' });
+        return;
+    }
+}
+
+export const startSprint = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+
+        const { sprintId, sprintName, duration, startDate } = req.body;
+        if (!sprintId || !sprintName || !duration || !startDate) {
+            res.status(400).json({ status: false, message: 'sprint id, sprintname, duration and startdate are required' });
+            return;
+        }
+
+        const result = await startSprintUsecaseOb.execute(sprintId, sprintName, duration, startDate);
+        console.log(result,'He');
+        if (!result) {
+            throw new Error('Something went wrong while updating sprint.');
+        }
+
+        res.status(200).json({status:true, message : 'Sprint started successfully', result});
+        return;
+
+    } catch (err) {
+        console.error('Internal server error while starting sprint', err);
+        res.status(500).json({ status: false, message: 'Internal server error while starting sprint' });
         return;
     }
 }
