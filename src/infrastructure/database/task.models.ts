@@ -11,7 +11,7 @@ const TaskSchema = new Schema<Task>({
     priority: { type: String, enum: ['low', 'medium', 'high', 'critical'], default: 'medium' },
     assignedTo: { type: Schema.Types.ObjectId, default: null, ref: 'User' },
     epicId: { type: Schema.Types.ObjectId, default: null },
-    sprintId: { type: Schema.Types.ObjectId, default: null },
+    sprintId: { type: Schema.Types.ObjectId, default: null, ref: 'Sprint' },
     parentId: { type: Schema.Types.ObjectId },
     projectId: { type: Schema.Types.ObjectId }
 

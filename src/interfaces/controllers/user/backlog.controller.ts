@@ -82,9 +82,17 @@ export const getSprints = async (req: Request, res: Response): Promise<void> => 
     try {
         const projectId = req.params.projectId;
         if (typeof projectId !== 'string') throw new Error('Project id is not valid string');
+        const userRole = req.user.role;
+        const userId = req.user.id;
+        //THIs controller is for returning all the sprints in the project.
 
-        const result = await getSprintsUseCaseOb.execute(projectId);
+        //In this section  im sending the active and completed sprint data.
+        const isKanbanRequest = req.path.startsWith('/get-sprints/kanban');
+
+        const result = await getSprintsUseCaseOb.execute(projectId, userRole, userId, isKanbanRequest);
         if (!result) throw new Error('Error while getting sprints');
+
+
         res.status(200).json({ status: true, result });
         return;
 
@@ -95,6 +103,7 @@ export const getSprints = async (req: Request, res: Response): Promise<void> => 
 }
 
 
+
 export const getTasks = async (req: Request, res: Response): Promise<void> => {
 
     try {
@@ -103,7 +112,9 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
 
         if (typeof projectId !== 'string') throw new Error('Project id is not valid string');
 
-        const result = await getTasksUseCaseOb.execute(projectId, req.user.role, req.user.id);
+        //Using this variable to retrieve all the assigned tasks to send to kanban
+        const isKanbanRequest = req.path.startsWith('/tasks/kanban');
+        const result = await getTasksUseCaseOb.execute(projectId, req.user.role, req.user.id, isKanbanRequest);
 
         res.status(200).json({ status: true, result });
         return;
@@ -204,12 +215,12 @@ export const startSprint = async (req: Request, res: Response): Promise<void> =>
         }
 
         const result = await startSprintUsecaseOb.execute(sprintId, sprintName, duration, startDate);
-        console.log(result,'He');
+        console.log(result, 'He');
         if (!result) {
             throw new Error('Something went wrong while updating sprint.');
         }
 
-        res.status(200).json({status:true, message : 'Sprint started successfully', result});
+        res.status(200).json({ status: true, message: 'Sprint started successfully', result });
         return;
 
     } catch (err) {

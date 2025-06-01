@@ -11,6 +11,7 @@ export const config = {
     MONGO_URI: process.env.MONGO_URI,
     FROM_EMAIL: process.env.FROM_EMAIL,
     APP_PASSWORD: process.env.APP_PASSWORD,
-    JWT_SECRETKEY: process.env.JWT_SECRETKEY
+    JWT_SECRETKEY: process.env.JWT_SECRETKEY,
+    FRONTEND_URL: process.env.FRONTEND_URL
 
 }

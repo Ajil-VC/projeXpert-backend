@@ -44,10 +44,23 @@ export const taskStatusUpdateSchema = yup.object({
 export const startSprintSchema = yup.object({
     sprintId: yup.string().required('Sprint id required'),
     sprintName: yup.string().required('Sprint name required'),
-    duration: yup.number().required('duration required'), 
+    duration: yup.number().required('duration required'),
     startDate: yup.date().required('Date required')
 });
 
 export const createWorkspaceSchema = yup.object({
     workspaceName: yup.string().required('workspaceName is required')
+});
+
+
+export const startConversationSchema = yup.object({
+    userId: yup.string().required('User Id is required'),
+    projectId: yup.string().required('Project Id is required')
+});
+
+export const sendMessageSchema = yup.object({
+    projecId: yup.string().required('Project Id required'), 
+    convoId : yup.string().required('Conversation id required'), 
+    recieverId : yup.string().required('Reciever Id required'), 
+    message: yup.string().required('Message required')
 })

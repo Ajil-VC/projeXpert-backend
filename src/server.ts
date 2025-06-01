@@ -6,12 +6,18 @@ import cors from 'cors';
 import { config } from './config/config';
 import userRouter from './interfaces/routes/userRoutes';
 import companyRouter from './interfaces/routes/companyRoutes';
+import { setupSocket } from './config/socket'; 
 
+import http from 'http';
 
 const app = express();
 
+//This section is settin socket.
+const server = http.createServer(app);
+setupSocket(server);
+
 app.use(cors({
-    origin: 'http://localhost:4200',
+    origin: config.FRONTEND_URL,
     credentials: true
 }))
 app.use(express.json());
@@ -23,6 +29,6 @@ app.use('/api/v1/company', companyRouter);
 app.use('/api/v1/user', userRouter);
 // app.use('/api/v1/admin',adminRouter);
 
-app.listen(config.PORT, () => {
+server.listen(config.PORT, () => {
     console.log(`Hmmm, ProjeXpert is listening at http://localhost:${config.PORT}`);
 })

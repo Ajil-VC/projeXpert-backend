@@ -78,6 +78,10 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     async getSprints(projectId: string): Promise<any> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
+
+        //Here you need to check whether the user is member of the project.
+        //Otherwise the user might be able to send api request from postman and get the data.
+
         const availableSprints: Sprint[] = await SprintModel.find({ projectId: projectIdOb })
             .populate({
                 path: 'tasks', model: 'Task',
@@ -145,7 +149,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
 
         const issueData = await taskModel
             .findByIdAndUpdate(issueIdOb, { assignedTo: userIdOb }, { new: true })
-            .populate({ path: 'assignedTo' });
+            .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' });
         if (!issueData) {
             return null;
         }
@@ -164,7 +168,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         const newTask = new taskModel({
             title: issueName,
             type: issueType,
-            status: 'in-progress',
+            status: 'todo',
             epicId: epicIdOb,
             sprintId: sprintId,
             projectId: projectIdOb
@@ -190,7 +194,8 @@ export class BacklogRepositoryImp implements IBacklogRepository {
             query.assignedTo = userIdOb;
         }
         const tasks = await taskModel.find(query)
-            .populate({ path: 'assignedTo' });
+            .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
+            .populate({ path: 'sprintId' });
         return tasks;
 
     }

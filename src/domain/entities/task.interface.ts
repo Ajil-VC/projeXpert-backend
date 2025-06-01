@@ -1,5 +1,6 @@
 import { Document, ObjectId } from "mongoose";
 import { Team } from "./team.interface";
+import { Sprint } from "./sprint.interface";
 
 export interface Task extends Document {
 
@@ -11,7 +12,7 @@ export interface Task extends Document {
     priority: 'low' | 'medium' | 'high' | 'critical';
     assignedTo: ObjectId | Team;
     epicId: ObjectId;       // Refers to a parent epic if any
-    sprintId: ObjectId;     // Logical grouping for sprints
+    sprintId: ObjectId | Sprint;     // Logical grouping for sprints
     sprintNumber: Number; //Only for sprints
     parentId: ObjectId;     // for subtasks
     projectId: ObjectId;

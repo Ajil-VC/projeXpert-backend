@@ -13,10 +13,11 @@ export const getInitData = async (req: Request, res: Response) => {
         const userData = await initDashBoardUseCaseOb.execute(req.user.email, req.user.id, req.user.role);
 
         if (userData) {
-  
+
             res.status(200).json({
                 status: true,
                 user: {
+                    _id: userData._id,
                     name: userData.name,
                     profileUrl: userData.profilePicUrl,
                     email: userData.email,

@@ -18,6 +18,8 @@ import {
     createWorkspaceSchema,
     dragDropSchema,
     projectCreationSchema,
+    sendMessageSchema,
+    startConversationSchema,
     startSprintSchema,
     taskStatusUpdateSchema
 } from '../../application/validator/user.validator';
@@ -25,6 +27,7 @@ import {
 import { assignIssue, changeTaskStatus, createEpic, createIssue, createSprint, dragDropUpdate, getSprints, getTasks, startSprint } from '../controllers/user/backlog.controller';
 import { getTeam } from '../controllers/user/team.controller';
 import { createWorkspace } from '../controllers/user/workspace.controller';
+import { getChats, getMessages, sendMessage, startConversation } from '../controllers/user/chat.controller';
 
 const userRouter = express.Router();
 userRouter.use(express.urlencoded({ extended: true }));
@@ -37,7 +40,7 @@ userRouter.get('/projects-initials', authenticateUser, getProjectsInitData);
 userRouter.post('/create-project', validateBody(projectCreationSchema), authenticateAsAdmin, createProject);
 userRouter.get('/init-projects', authenticateAsAdmin, getProjectData);
 userRouter.get('/get-project', authenticateUser, getProject);
-userRouter.post('/create-workspace',authenticateAsAdmin, validateBody(createWorkspaceSchema), createWorkspace);
+userRouter.post('/create-workspace', authenticateAsAdmin, validateBody(createWorkspaceSchema), createWorkspace);
 
 userRouter.post('/add-member', authenticateAsAdmin, addMember);
 userRouter.patch('/remove-member', authenticateAsAdmin, removeMember);
@@ -48,13 +51,20 @@ userRouter.post('/create-epic', authenticateAsAdmin, validateBody(createEpicSche
 userRouter.post('/create-issue', authenticateAsAdmin, validateBody(createIssueSchema), createIssue);
 userRouter.post('/create-sprint', authenticateAsAdmin, validateBody(createSprintSchema), createSprint);
 userRouter.get('/get-sprints/:projectId', authenticateUser, getSprints);
+userRouter.get('/get-sprints/kanban/:projectId', authenticateUser, getSprints);
 userRouter.get('/tasks', authenticateUser, getTasks);
+userRouter.get('/tasks/kanban', authenticateUser, getTasks);
 
-userRouter.get('/team', authenticateAsAdmin, getTeam);
+userRouter.get('/team', authenticateUser, getTeam);
 userRouter.patch('/assign-issue', authenticateAsAdmin, validateBody(assignIssueSchema), assignIssue);
 userRouter.put('/update-task', authenticateAsAdmin, validateBody(dragDropSchema), dragDropUpdate);
-userRouter.put('/change-taskstatus', authenticateAsAdmin, validateBody(taskStatusUpdateSchema), changeTaskStatus);
+userRouter.put('/change-taskstatus', authenticateUser, validateBody(taskStatusUpdateSchema), changeTaskStatus);
 
 userRouter.put('/start-sprint', authenticateAsAdmin, validateBody(startSprintSchema), startSprint);
+
+userRouter.post('/start-conversation', authenticateUser, validateBody(startConversationSchema), startConversation);
+userRouter.get('/get-chats/:projectId', authenticateUser, getChats);
+userRouter.get('/get-messages/:convoId', authenticateUser, getMessages);
+userRouter.post('/send-message', authenticateUser, validateBody(sendMessageSchema), sendMessage);
 
 export default userRouter;
