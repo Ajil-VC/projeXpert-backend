@@ -3,6 +3,8 @@ import { User } from "../entities/user.interface";
 
 export interface IUserRepository {
 
+    changeUserStatus(userId: string, status: boolean): Promise<any>;
+
     findByEmail(email: string): Promise<User | null>
 
     createUser(

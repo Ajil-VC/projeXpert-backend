@@ -13,7 +13,7 @@ export class SigninUseCase {
         private vPassword: ISecurePassword
     ) { }
 
-    async execute(email: string, passWord: string): Promise<useCaseResult> {
+    async execute(email: string, passWord: string): Promise<any> {
 
         const userData = await this.userRepo.findByEmail(email);
         if (!userData) {
@@ -38,13 +38,27 @@ export class SigninUseCase {
                 email: userData.email,
                 name: userData.name,
                 role: userData.role,
+                isBlocked: userData.isBlocked,
                 companyId: company._id,
                 systemRole: userData.systemRole
             },
             config.JWT_SECRETKEY,
-            { expiresIn: '1h' }
+            { expiresIn: '15m' }
+        );
+
+        const refreshToken = jwt.sign(
+            { userId: userData._id },
+            config.REFRESH_TOKEN_SECRET,
+            { expiresIn: "7d" }
         )
 
-        return { status: true, message: 'Token Created', statusCode: 200, token: token, additional: userData.forceChangePassword };
+        return { 
+            status: true, 
+            message: 'Token Created', 
+            statusCode: 200, 
+            token: token, 
+            additional: userData,
+            refreshToken 
+        };
     }
 }

@@ -16,6 +16,8 @@ export interface User extends Document {
     lastActiveProjectId?: ObjectId | null;
     forceChangePassword: boolean;
 
+    isBlocked: boolean;
+
     systemRole: 'platform-admin' | 'company-user';
 
     createdAt?: Date;

@@ -13,6 +13,7 @@ import { SigninUseCase } from "../../application/usecase/auth/signin.usecase";
 import { CompanyRepositoryImp } from "../../infrastructure/repositories/company.repositoryImp";
 import { AuthRepositoryImp } from "../../infrastructure/repositories/auth.repositoryImp";
 import { ChangePsdUseCase } from "../../application/usecase/auth/changePswd.usecase";
+import { RefreshTokenUseCase } from "../../application/usecase/auth/refreshToken.usecase";
 
 
 const otpRepository = new OtpRepoImp();
@@ -26,6 +27,7 @@ const registerUseCaseOb = new RegisterUseCase(securePassWordOb, userRepository, 
 const signinUseCaseOb = new SigninUseCase(userRepository, securePassWordOb);
 const authRepository = new AuthRepositoryImp();
 const changePsWdUseCaseOb = new ChangePsdUseCase(securePassWordOb, authRepository, userRepository);
+const refreshTokenUsecaseOb = new RefreshTokenUseCase(userRepository);
 
 
 export const sendOtpToMail = async (req: Request, res: Response): Promise<void> => {
@@ -78,10 +80,22 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
     try {
 
         const { email, passWord } = req.body;
-
         const result = await signinUseCaseOb.execute(email, passWord);
+
         if (typeof result.statusCode === 'undefined') throw new Error('Type mismatch might happened');
-        res.status(result.statusCode).json({ status: result.status, token: result.token, forceChangePassword: result.additional });
+
+        res.cookie('refreshToken', result.refreshToken, {
+            httpOnly: true,
+            secure: false, //If it is https set it as true.
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        })
+
+        res.status(result.statusCode).json({
+            status: result.status,
+            token: result.token,
+            forceChangePassword: result.additional.forceChangePassword
+        });
 
     } catch (err) {
 
@@ -142,7 +156,7 @@ export const changePassword = async (req: Request, res: Response) => {
     try {
 
         const result = await changePsWdUseCaseOb.execute(req.user.email, req.body.oldPassword, req.body.passWord);
-       console.log(result,'resul  t')
+        console.log(result, 'resul  t')
         if (!result) {
 
             res.status(404).json({ status: false, message: 'Try again, default password might be wrong.' });
@@ -154,5 +168,60 @@ export const changePassword = async (req: Request, res: Response) => {
     } catch (err) {
         console.error('Internal error while changing password', err);
         res.status(500).json({ status: false, message: 'Failed' });
+    }
+}
+
+export const isVerified = async (req: Request, res: Response) => {
+
+    try {
+
+        if (req.user) {
+            res.status(200).json({ status: true, user: req.user });
+            return;
+        } else {
+            res.status(401).json({ status: false });
+            return;
+        }
+
+    } catch (err) {
+
+        console.error('Internal error while authenticating user', err);
+        res.status(500).json({ status: false, message: 'Not authenticated' });
+    }
+}
+
+export const refreshToken = async (req: Request, res: Response) => {
+
+    try {
+
+
+        const refreshToken = req.cookies.refreshToken;
+
+        if (!refreshToken) {
+            res.status(401).json({ message: 'No refresh token provided' });
+            return
+        }
+
+        const result = await refreshTokenUsecaseOb.execute(refreshToken);
+        if (!result || !result.statusCode) {
+            throw new Error('Couldnt create new token');
+        } else if (!result.status) {
+            res.status(result.statusCode).json({ status: result.statusCode, message: result.message });
+            return;
+        } else {
+
+            res.status(result.statusCode).json({
+                status: result.status,
+                token: result.token,
+                forceChangePassword: result.additional
+            });
+
+        }
+
+
+    } catch (err) {
+        console.error('Internal error while refreshing token', err);
+        res.status(500).json({ status: false, message: 'Token couldnt refresh' });
+
     }
 }

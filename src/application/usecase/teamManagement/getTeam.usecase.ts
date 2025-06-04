@@ -5,12 +5,12 @@ export class GetTeamMembers {
 
     constructor(private teamRepo: ITeamRepository) { }
 
-    async execute(projectId : string): Promise<any> {
+    async execute(projectId: string, userId: string): Promise<any> {
 
-        const result = await this.teamRepo.getTeamMembers(projectId);
-        if(!result) {
+        const result = await this.teamRepo.getTeamMembers(projectId, userId);
+        if (!result) {
             throw new Error("No team members found");
-        }   
+        }
 
         return result;
     }

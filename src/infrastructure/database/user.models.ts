@@ -14,6 +14,7 @@ const userSchema = new Schema<User>({
     workspaceIds: [{ type: Schema.Types.ObjectId, ref: 'Workspace' }],
     defaultWorkspace: { type: Schema.Types.ObjectId, ref: 'Workspace' },
 
+    isBlocked: { type: Boolean, default: false },
     lastActiveProjectId: { type: Schema.Types.ObjectId, ref: 'Project', default: null },
 
     forceChangePassword: { type: Boolean, default: true },

@@ -40,4 +40,9 @@ export const passWordChangeSchema = yup.object({
         .required('Password is required')
         .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
             "Password must contain uppercase, lowercase, number,and special charecter")
+});
+
+export const changeUserStatusSchema = yup.object({
+    userId: yup.string().required('UserId required.'),
+    status: yup.boolean().required('status required')
 })

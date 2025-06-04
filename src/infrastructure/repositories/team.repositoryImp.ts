@@ -4,15 +4,28 @@ import projectModel from "../database/project.models";
 import { User } from "../../domain/entities/user.interface";
 import { Team } from "../../domain/entities/team.interface";
 import taskModel from "../database/task.models";
+import userModel from "../database/user.models";
 
 
 export class TeamRepositoryImp implements ITeamRepository {
 
     constructor() { }
 
-    async getTeamMembers(projectId: string): Promise<any> {
+    async getTeamMembers(projectId: string, userId: string): Promise<any> {
 
-        const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const userIdOb = new mongoose.Types.ObjectId(userId);
+        let projectIdOb;
+        if (!projectId) {
+
+            const user = await userModel.findOne({ _id: userIdOb });
+            const defaultWorkspace = user?.defaultWorkspace;
+            const project = await projectModel.findOne({ members: userId, workSpace: defaultWorkspace });
+            projectIdOb = project?._id;
+            
+        } else {
+
+            projectIdOb = new mongoose.Types.ObjectId(projectId);
+        }
 
         const projectData = await projectModel.findById(projectIdOb)
             .populate({ path: 'members' });
@@ -29,7 +42,7 @@ export class TeamRepositoryImp implements ITeamRepository {
 
             }
         });
-        
+
         return members;
 
     }

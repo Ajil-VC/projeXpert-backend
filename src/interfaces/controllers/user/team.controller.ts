@@ -11,9 +11,10 @@ export const getTeam = async (req: Request, res: Response): Promise<void> => {
     try {
 
         const projectId = req.query.projectId;
+
         if (typeof projectId !== 'string') throw new Error('Project Id is not valid string.');
         
-        const result = await getTeamMemberUsecaseOb.execute(projectId);
+        const result = await getTeamMemberUsecaseOb.execute(projectId, req.user.id);
         if (!result) {
             res.status(404).json({ status: false, message: 'No team members found' });
             return;

@@ -30,9 +30,17 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
 
     jwt.verify(token, config.JWT_SECRETKEY, (err, decoded: any) => {
 
-        if (err) return res.status(403).json({ status: false, message: 'Error while verifying jwt.' });
+        if (err) {
+            res.status(401).json({ status: false, message: 'Invalid or expired token.' });
+            return
+        }
 
         req.user = decoded;
+
+        if (req.user.isBlocked) {
+            res.status(403).json({ status: false, message: 'User account is blocked.' });
+            return;
+        }
         console.log('Authentication: ', req.user)
         next();
 
@@ -57,9 +65,14 @@ export const authenticateAsAdmin = async (req: Request, res: Response, next: Nex
 
     jwt.verify(token, config.JWT_SECRETKEY, (err, decoded: any) => {
 
-        if (err) return res.status(403).json({ status: false, message: 'Invalide Token' });
+        if (err) return res.status(401).json({ status: false, message: 'Invalid or expired token.' });
 
         req.user = decoded;
+
+        if (req.user.isBlocked) {
+            res.status(403).json({ status: false, message: 'User account is blocked.' });
+            return;
+        }
 
         if (req.user.role !== 'admin') {
             res.status(403).json({ status: false, message: 'Access denied: Admins only' });

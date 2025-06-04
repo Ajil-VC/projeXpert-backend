@@ -44,7 +44,7 @@ export class RegisterUseCase {
                 false,
                 'company-user'
             );
-            if (!userData) return { status: false, message: 'UUser Data not available' };
+            if (!userData) return { status: false, message: 'User Data not available' };
             const company = userData.companyId as Company;
             if (userData) {
 

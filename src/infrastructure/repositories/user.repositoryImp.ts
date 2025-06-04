@@ -8,6 +8,20 @@ import userModel from "../database/user.models";
 export class userRepositoryImp implements IUserRepository {
 
 
+    async changeUserStatus(userId: string, status: boolean): Promise<any> {
+
+        const userIdOb = new mongoose.Types.ObjectId(userId);
+
+        const userData = await userModel.updateOne({ _id: userIdOb }, { $set: { isBlocked: status } });
+
+        if (userData.modifiedCount === 0) {
+            throw new Error('Status couldnt udpate.');
+        }
+
+        return userData;
+    }
+
+
     async updateRole(members: Array<{ email: string; role: string; }>, adminEmail: string): Promise<boolean> {
 
         try {
@@ -76,7 +90,17 @@ export class userRepositoryImp implements IUserRepository {
     }
 
     async findUserById(userId: string): Promise<User | null> {
-        throw new Error("Method not implemented.");
+
+        const userIdOb = new mongoose.Types.ObjectId(userId);
+
+        const userData: any = await userModel.findOne({ _id: userIdOb })
+            .populate('workspaceIds')
+            .populate('companyId')
+            .exec();
+
+        if (!userData) return null;
+        return userData;
+
     }
 
 }

@@ -12,6 +12,7 @@ export const config = {
     FROM_EMAIL: process.env.FROM_EMAIL,
     APP_PASSWORD: process.env.APP_PASSWORD,
     JWT_SECRETKEY: process.env.JWT_SECRETKEY,
+    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || 'falbackValueForRefreshToken',
     FRONTEND_URL: process.env.FRONTEND_URL
 
 }
