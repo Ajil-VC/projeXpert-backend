@@ -1,16 +1,13 @@
 import { Request, Response } from "express";
-import { CreateWorkspaceUsecase } from "../../../application/usecase/workspaceUsecase/createWorkspace.usecase";
-import { WorkspaceRepoImp } from "../../../infrastructure/repositories/workspace.repositoryImp";
+import { createWorkspaceUsecase } from "../../../config/Dependency/user/workspace.di";
 
-const workspaceImpOb = new WorkspaceRepoImp();
-const createWorkspaceUsecaseOb = new CreateWorkspaceUsecase(workspaceImpOb);
 
 export const createWorkspace = async (req: Request, res: Response): Promise<void> => {
     try {
 
         const { workspaceName } = req.body;
 
-        const result = await createWorkspaceUsecaseOb.execute(workspaceName, req.user.companyId);
+        const result = await createWorkspaceUsecase.execute(workspaceName, req.user.companyId);
         if (!result) {
             throw new Error('Error occured while trying to create workspace');
         }

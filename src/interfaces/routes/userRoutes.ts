@@ -52,7 +52,7 @@ userRouter.delete('/delete-project/:projectId/:workSpaceId', authenticateAsAdmin
 userRouter.post('/create-epic', authenticateAsAdmin, validateBody(createEpicSchema), createEpic);
 userRouter.post('/create-issue', authenticateAsAdmin, validateBody(createIssueSchema), createIssue);
 userRouter.post('/create-sprint', authenticateAsAdmin, validateBody(createSprintSchema), createSprint);
-userRouter.get('/get-sprints/:projectId', authenticateUser, getSprints);
+userRouter.get('/get-sprints/:projectId', authenticateAsAdmin, getSprints);
 userRouter.get('/get-sprints/kanban/:projectId', authenticateUser, getSprints);
 userRouter.get('/tasks', authenticateUser, getTasks);
 userRouter.get('/tasks/kanban', authenticateUser, getTasks);

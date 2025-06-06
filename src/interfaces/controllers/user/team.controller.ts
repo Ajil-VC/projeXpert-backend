@@ -1,10 +1,5 @@
 import { Request, Response } from "express";
-import { TeamRepositoryImp } from "../../../infrastructure/repositories/team.repositoryImp";
-import { GetTeamMembers } from "../../../application/usecase/teamManagement/getTeam.usecase";
-
-
-const teamRepositoryOb = new TeamRepositoryImp();
-const getTeamMemberUsecaseOb = new GetTeamMembers(teamRepositoryOb);
+import { getTeammembersUsecase } from "../../../config/Dependency/user/team.di";
 
 export const getTeam = async (req: Request, res: Response): Promise<void> => {
 
@@ -13,8 +8,8 @@ export const getTeam = async (req: Request, res: Response): Promise<void> => {
         const projectId = req.query.projectId;
 
         if (typeof projectId !== 'string') throw new Error('Project Id is not valid string.');
-        
-        const result = await getTeamMemberUsecaseOb.execute(projectId, req.user.id);
+
+        const result = await getTeammembersUsecase.execute(projectId, req.user.id);
         if (!result) {
             res.status(404).json({ status: false, message: 'No team members found' });
             return;

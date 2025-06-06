@@ -1,18 +1,13 @@
 import { Request, Response } from "express";
-import { ChatUseCase } from "../../../application/usecase/chatUseCase/startConversation.usecase";
-import { ChatRepositoryImp } from "../../../infrastructure/repositories/chat.repositoryImp";
-import { GetChats } from "../../../application/usecase/chatUseCase/getChats.usecase";
-import { GetMessagesUseCase } from "../../../application/usecase/chatUseCase/getMessages.usecase";
-import { SendMessageUsecase } from "../../../application/usecase/chatUseCase/sendMessage.usecase";
 
-import { getUserSocket, getAllUsers } from "../../../infrastructure/services/socket.manager";
+import { chatUsecase } from "../../../config/Dependency/user/chat.di";
+import { getChatsUsecase } from "../../../config/Dependency/user/chat.di";
+import { getMessagesUsecase } from "../../../config/Dependency/user/chat.di";
+import { sendMessagesUsecase } from "../../../config/Dependency/user/chat.di";
+
+import { getUserSocket } from "../../../infrastructure/services/socket.manager";
 import { getIO } from "../../../config/socket";
 
-const chatRepoImp = new ChatRepositoryImp();
-const chatUseCaseOb = new ChatUseCase(chatRepoImp);
-const getChatsUseCaseOb = new GetChats(chatRepoImp);
-const getMessagesUsecaseOb = new GetMessagesUseCase(chatRepoImp);
-const sendMessageUsecaseOb = new SendMessageUsecase(chatRepoImp);
 
 export const startConversation = async (req: Request, res: Response): Promise<void> => {
 
@@ -29,7 +24,7 @@ export const startConversation = async (req: Request, res: Response): Promise<vo
             return;
         }
 
-        const result = await chatUseCaseOb.execute(userId, req.user.id, projectId);
+        const result = await chatUsecase.execute(userId, req.user.id, projectId);
         if (!result) {
             throw new Error('Couldnt start the conversation.');
         }
@@ -49,7 +44,7 @@ export const startConversation = async (req: Request, res: Response): Promise<vo
 export const getChats = async (req: Request, res: Response): Promise<void> => {
     try {
 
-        const result = await getChatsUseCaseOb.execute(req.user.id, req.params.projectId);
+        const result = await getChatsUsecase.execute(req.user.id, req.params.projectId);
 
         if (!result) {
             throw new Error('Couldnt retrieve the chats.');
@@ -70,7 +65,7 @@ export const getMessages = async (req: Request, res: Response): Promise<void> =>
 
     try {
 
-        const result = await getMessagesUsecaseOb.execute(req.params.convoId);
+        const result = await getMessagesUsecase.execute(req.params.convoId);
         if (!result) {
             throw new Error('Couldnt retrieve the messages.');
         }
@@ -92,15 +87,15 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
         const io = getIO();
 
         const { projecId, convoId, recieverId, message } = req.body;
-        const result = await sendMessageUsecaseOb.execute(projecId, convoId, req.user.id, recieverId, message);
+        const result = await sendMessagesUsecase.execute(projecId, convoId, req.user.id, recieverId, message);
 
         if (!result) {
             throw new Error('Couldnt send the message.');
         }
 
         const recieverSocketId = getUserSocket(recieverId);
-        if(recieverSocketId){
-            io.to(recieverSocketId).emit('receive-message',result)
+        if (recieverSocketId) {
+            io.to(recieverSocketId).emit('receive-message', result)
         }
 
         res.status(201).json({ status: true, message: 'Message sent', result });

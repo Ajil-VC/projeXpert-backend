@@ -1,33 +1,15 @@
 
 import { Request, Response } from "express";
 
-import { SendOtpUseCase } from "../../application/usecase/auth/sendOtp.usecase";
-import { OtpRepoImp } from "../../infrastructure/repositories/otp.repositoryImp";
-import { userRepositoryImp } from "../../infrastructure/repositories/user.repositoryImp";
+import { sendOtpUsecase } from "../../config/Dependency/auth/auth.di";
+import { verifyOtpUsecase } from "../../config/Dependency/auth/auth.di";
+import { signinUsecase } from "../../config/Dependency/auth/auth.di";
+import { registerUsecase } from "../../config/Dependency/auth/auth.di";
+import { changePasswordUsecase } from "../../config/Dependency/auth/auth.di";
+import { refreshTokenUsecase } from "../../config/Dependency/auth/auth.di";
+
+
 import { useCaseResult } from "../../application/shared/useCaseResult";
-import { EmailServiceImp } from "../../infrastructure/services/email.serviceImp";
-import { VerifyOtpUseCase } from "../../application/usecase/auth/VerifyOtp.usecase";
-import { RegisterUseCase } from "../../application/usecase/auth/register.usecase";
-import { SecurePasswordImp } from "../../infrastructure/services/securepassword.serviceImp";
-import { SigninUseCase } from "../../application/usecase/auth/signin.usecase";
-import { CompanyRepositoryImp } from "../../infrastructure/repositories/company.repositoryImp";
-import { AuthRepositoryImp } from "../../infrastructure/repositories/auth.repositoryImp";
-import { ChangePsdUseCase } from "../../application/usecase/auth/changePswd.usecase";
-import { RefreshTokenUseCase } from "../../application/usecase/auth/refreshToken.usecase";
-
-
-const otpRepository = new OtpRepoImp();
-const userRepository = new userRepositoryImp();
-const emailService = new EmailServiceImp();
-const sendOtpUseCaseOb = new SendOtpUseCase(userRepository, otpRepository, emailService);
-const verifyOtpUseCaseOb = new VerifyOtpUseCase(otpRepository);
-const securePassWordOb = new SecurePasswordImp();
-const companyRepository = new CompanyRepositoryImp();
-const registerUseCaseOb = new RegisterUseCase(securePassWordOb, userRepository, companyRepository);
-const signinUseCaseOb = new SigninUseCase(userRepository, securePassWordOb);
-const authRepository = new AuthRepositoryImp();
-const changePsWdUseCaseOb = new ChangePsdUseCase(securePassWordOb, authRepository, userRepository);
-const refreshTokenUsecaseOb = new RefreshTokenUseCase(userRepository);
 
 
 export const sendOtpToMail = async (req: Request, res: Response): Promise<void> => {
@@ -37,7 +19,7 @@ export const sendOtpToMail = async (req: Request, res: Response): Promise<void> 
         const email: string = req.body.email;
 
 
-        const result: useCaseResult = await sendOtpUseCaseOb.execute(email);
+        const result: useCaseResult = await sendOtpUsecase.execute(email);
         if (!result.status) {
             res.status(409).json({ result });
             return;
@@ -60,7 +42,7 @@ export const validateOtp = async (req: Request, res: Response): Promise<void> =>
         const email = req.body.email;
         const otpFromUser = req.body.otp + '';
 
-        const isVerified = await verifyOtpUseCaseOb.execute(email, otpFromUser);
+        const isVerified = await verifyOtpUsecase.execute(email, otpFromUser);
 
         if (isVerified) {
             res.status(200).json({ message: "otp Validated", status: true });
@@ -80,7 +62,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
     try {
 
         const { email, passWord } = req.body;
-        const result = await signinUseCaseOb.execute(email, passWord);
+        const result = await signinUsecase.execute(email, passWord);
 
         if (typeof result.statusCode === 'undefined') throw new Error('Type mismatch might happened');
 
@@ -90,7 +72,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
             sameSite: 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
-
+        
         res.status(result.statusCode).json({
             status: result.status,
             token: result.token,
@@ -112,7 +94,7 @@ export const createCompany = async (req: Request, res: Response) => {
 
         const { email, companyName, passWord } = req.body;
 
-        const registrationStatus = await registerUseCaseOb.execute(email, companyName, passWord);
+        const registrationStatus = await registerUsecase.execute(email, companyName, passWord);
         if (!registrationStatus.status) {
 
             switch (registrationStatus.message) {
@@ -155,7 +137,7 @@ export const changePassword = async (req: Request, res: Response) => {
 
     try {
 
-        const result = await changePsWdUseCaseOb.execute(req.user.email, req.body.oldPassword, req.body.passWord);
+        const result = await changePasswordUsecase.execute(req.user.email, req.body.oldPassword, req.body.passWord);
         console.log(result, 'resul  t')
         if (!result) {
 
@@ -202,7 +184,7 @@ export const refreshToken = async (req: Request, res: Response) => {
             return
         }
 
-        const result = await refreshTokenUsecaseOb.execute(refreshToken);
+        const result = await refreshTokenUsecase.execute(refreshToken);
         if (!result || !result.statusCode) {
             throw new Error('Couldnt create new token');
         } else if (!result.status) {

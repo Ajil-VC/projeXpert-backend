@@ -1,16 +1,13 @@
 import { Request, Response } from "express";
-import { InitDashBoardUseCase } from "../../../application/usecase/workspaceUsecase/initDashboard.usecase";
-import { userRepositoryImp } from "../../../infrastructure/repositories/user.repositoryImp";
 
+import { initDashboardUsecase } from "../../../config/Dependency/user/userInit.di";
 
-const userRepoOb = new userRepositoryImp();
-const initDashBoardUseCaseOb = new InitDashBoardUseCase(userRepoOb);
 
 export const getInitData = async (req: Request, res: Response) => {
 
     try {
 
-        const userData = await initDashBoardUseCaseOb.execute(req.user.email, req.user.id, req.user.role);
+        const userData = await initDashboardUsecase.execute(req.user.email, req.user.id, req.user.role);
 
         if (userData) {
 

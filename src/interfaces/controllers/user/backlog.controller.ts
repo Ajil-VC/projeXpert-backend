@@ -1,34 +1,22 @@
 import { Request, Response } from "express";
-import { CreateEpicUsecase } from "../../../application/usecase/backlogUseCase/createEpic.usecase";
-import { BacklogRepositoryImp } from "../../../infrastructure/repositories/backlog.repositoryImp";
-import { GetTasksUseCase } from "../../../application/usecase/backlogUseCase/getTasks.usecase";
-import { CreateIssueUsecase } from "../../../application/usecase/backlogUseCase/createIssue.usecase";
-import { AssignIssueUseCase } from "../../../application/usecase/backlogUseCase/assignIssue.usecase";
-import { CreateSprintUsecase } from "../../../application/usecase/backlogUseCase/createSprint.usecase";
-import { GetSprintsUseCase } from "../../../application/usecase/backlogUseCase/getSprint.usecase";
-import { get } from "http";
-import { DragDropUseCase } from "../../../application/usecase/backlogUseCase/dragDrop.usecase";
-import { ChangeTaskStatus } from "../../../application/usecase/backlogUseCase/changeTaskStatus.usecase";
-import { StartSprintUsecase } from "../../../application/usecase/backlogUseCase/startSprint.usecase";
 
+import { createEpicUsecase } from "../../../config/Dependency/user/backlog.di";
+import { createIssueUsecase } from "../../../config/Dependency/user/backlog.di";
+import { createSprintUsecase } from "../../../config/Dependency/user/backlog.di";
+import { getSprintsUsecase } from "../../../config/Dependency/user/backlog.di";
+import { getTasksUsecase } from "../../../config/Dependency/user/backlog.di";
+import { assignIssueUsecase } from "../../../config/Dependency/user/backlog.di";
+import { dragDropUsecase } from "../../../config/Dependency/user/backlog.di";
+import { changeTaskStatusUsecase } from "../../../config/Dependency/user/backlog.di";
+import { startSprintUsecase } from "../../../config/Dependency/user/backlog.di";
 
-const backlogRepositoryOb = new BacklogRepositoryImp();
-const getTasksUseCaseOb = new GetTasksUseCase(backlogRepositoryOb);
-const createEpicUseCaseOb = new CreateEpicUsecase(backlogRepositoryOb);
-const createIssueUseCaseOb = new CreateIssueUsecase(backlogRepositoryOb);
-const assignIssueUseCaseOb = new AssignIssueUseCase(backlogRepositoryOb);
-const createSprintUseCaseOb = new CreateSprintUsecase(backlogRepositoryOb);
-const getSprintsUseCaseOb = new GetSprintsUseCase(backlogRepositoryOb);
-const dragDropUseCaseOb = new DragDropUseCase(backlogRepositoryOb);
-const taskStatusChangeUseCaseOb = new ChangeTaskStatus(backlogRepositoryOb);
-const startSprintUsecaseOb = new StartSprintUsecase(backlogRepositoryOb);
 
 export const createEpic = async (req: Request, res: Response): Promise<void> => {
 
     try {
 
         const { epicName, projectId } = req.body;
-        const result = await createEpicUseCaseOb.execute(epicName, projectId);
+        const result = await createEpicUsecase.execute(epicName, projectId);
         if (!result) throw new Error('Error while creating task');
 
         res.status(201).json({ status: true, result });
@@ -47,7 +35,7 @@ export const createIssue = async (req: Request, res: Response): Promise<void> =>
     try {
 
         const { projectId, issueType, issueName, taskGroup, epicId } = req.body;
-        const result = await createIssueUseCaseOb.execute(projectId, issueType, issueName, taskGroup, epicId);
+        const result = await createIssueUsecase.execute(projectId, issueType, issueName, taskGroup, epicId);
 
         if (!result) throw new Error('Error occured while creating issue');
 
@@ -65,7 +53,7 @@ export const createSprint = async (req: Request, res: Response): Promise<void> =
 
     try {
         const { projectId, issueIds } = req.body;
-        const result = await createSprintUseCaseOb.execute(projectId, issueIds, req.user.id);
+        const result = await createSprintUsecase.execute(projectId, issueIds, req.user.id);
 
         if (!result) throw new Error('Error occured while creating sprint');
 
@@ -89,7 +77,7 @@ export const getSprints = async (req: Request, res: Response): Promise<void> => 
         //In this section  im sending the active and completed sprint data.
         const isKanbanRequest = req.path.startsWith('/get-sprints/kanban');
 
-        const result = await getSprintsUseCaseOb.execute(projectId, userRole, userId, isKanbanRequest);
+        const result = await getSprintsUsecase.execute(projectId, userRole, userId, isKanbanRequest);
         if (!result) throw new Error('Error while getting sprints');
 
 
@@ -114,7 +102,7 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
 
         //Using this variable to retrieve all the assigned tasks to send to kanban
         const isKanbanRequest = req.path.startsWith('/tasks/kanban');
-        const result = await getTasksUseCaseOb.execute(projectId, req.user.role, req.user.id, isKanbanRequest);
+        const result = await getTasksUsecase.execute(projectId, req.user.role, req.user.id, isKanbanRequest);
 
         res.status(200).json({ status: true, result });
         return;
@@ -134,7 +122,7 @@ export const assignIssue = async (req: Request, res: Response): Promise<void> =>
             return;
         }
 
-        const result = await assignIssueUseCaseOb.execute(issueId, assigneeId);
+        const result = await assignIssueUsecase.execute(issueId, assigneeId);
         if (!result) {
             res.status(404).json({ status: false, message: 'No issue found with this id' });
             return;
@@ -159,7 +147,7 @@ export const dragDropUpdate = async (req: Request, res: Response): Promise<void>
             return;
         }
 
-        const result = await dragDropUseCaseOb.execute(prevContainerId, containerId, movedTaskId);
+        const result = await dragDropUsecase.execute(prevContainerId, containerId, movedTaskId);
 
         if (!result) {
             res.status(404).json({ status: false, message: 'Couldnt udpate dragged data.' });
@@ -189,7 +177,7 @@ export const changeTaskStatus = async (req: Request, res: Response): Promise<voi
             return;
         }
 
-        const result = await taskStatusChangeUseCaseOb.execute(taskId, status);
+        const result = await changeTaskStatusUsecase.execute(taskId, status);
         if (!result) {
             throw new Error('Something went wront while updating task status ');
         }
@@ -214,7 +202,7 @@ export const startSprint = async (req: Request, res: Response): Promise<void> =>
             return;
         }
 
-        const result = await startSprintUsecaseOb.execute(sprintId, sprintName, duration, startDate);
+        const result = await startSprintUsecase.execute(sprintId, sprintName, duration, startDate);
         console.log(result, 'He');
         if (!result) {
             throw new Error('Something went wrong while updating sprint.');

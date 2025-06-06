@@ -4,11 +4,11 @@ import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.r
 
 export class AdminInitUseCase {
 
-    constructor(private adminRepo : IAdminRepository) { }
+    constructor(private adminRepo: IAdminRepository) { }
     async execute(): Promise<any> {
 
         const result = await this.adminRepo.getAllCompanyDetails();
-        if(!result){
+        if (!result) {
             throw new Error('Couldnt retrieve company details.');
         }
 

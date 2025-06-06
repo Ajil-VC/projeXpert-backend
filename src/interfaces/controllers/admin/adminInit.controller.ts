@@ -1,20 +1,17 @@
 import { Request, Response } from "express";
-import { AdminInitUseCase } from "../../../application/usecase/admin/admininit.usecase";
-import { AdminRepositoryImp } from "../../../infrastructure/repositories/adminRepo/admin.repository";
+import { adminInitUsecase } from "../../../config/Dependency/admin/adminInit.di";
 
-const adminRepositoryOb = new AdminRepositoryImp();
-const adminInitUsecaseOb = new AdminInitUseCase(adminRepositoryOb);
 
 export const platFormData = async (req: Request, res: Response) => {
 
     try {
 
-        const result = await adminInitUsecaseOb.execute();
+        const result = await adminInitUsecase.execute();
         if (!result) {
             res.status(404).json({ status: false, message: 'Couldnt retirieve company details.' });
             return;
         }
-        
+
         res.status(200).json({ status: true, message: 'Data retrieved.', result });
         return;
 

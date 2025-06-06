@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { useCaseResult } from "../../application/shared/useCaseResult";
 import { Company } from "../../domain/entities/company.interface";
 import { ICompanyRepository } from "../../domain/repositories/company.repo";
@@ -7,6 +7,31 @@ import workSpaceModel from "../database/workspace.models";
 
 
 export class CompanyRepositoryImp implements ICompanyRepository {
+
+
+    async findCompanyById(companyId: string): Promise<any> {
+
+        const companyIdOb = new mongoose.Types.ObjectId(companyId);
+        const companyData = await companyModel.findOne({ _id: companyIdOb });
+        if (!companyData) {
+            throw new Error('Couldnt find companydata');
+        }
+        return companyData;
+    }
+
+    async changeCompanyStatus(companyId: string, status: boolean): Promise<any> {
+
+        const companyIdOb = new mongoose.Types.ObjectId(companyId);
+        const result = await companyModel.updateOne({ _id: companyIdOb }, { $set: { isBlocked: status } });
+
+        if (result.modifiedCount === 0) {
+
+            throw new Error('Status couldnt udpate.');
+        }
+
+        return result;
+
+    }
 
 
     async createWorkspace(name: string, companyId: string): Promise<string | useCaseResult> {
@@ -29,7 +54,7 @@ export class CompanyRepositoryImp implements ICompanyRepository {
             companyData.workspaces.push(createdWorkSpace._id);
             await companyData.save();
 
-      
+
             return String(createdWorkSpace._id);
 
         } catch (err) {

@@ -45,4 +45,9 @@ export const passWordChangeSchema = yup.object({
 export const changeUserStatusSchema = yup.object({
     userId: yup.string().required('UserId required.'),
     status: yup.boolean().required('status required')
-})
+});
+
+export const changeCompanyStatusSchema = yup.object({
+    companyId: yup.string().required('companyId required.'),
+    status: yup.string().required('status required.'),
+});

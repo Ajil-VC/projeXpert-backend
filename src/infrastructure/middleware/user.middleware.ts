@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import { config } from "../../config/config";
+import { isCompanyBlocked } from "../../config/Dependency/auth/auth.di";
+import { Company } from "../../domain/entities/company.interface";
+import { isUserBlocked } from "../../config/Dependency/auth/auth.di";
 
 
 // Extend the Request interface to include the user property
@@ -28,7 +31,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
     }
 
 
-    jwt.verify(token, config.JWT_SECRETKEY, (err, decoded: any) => {
+    jwt.verify(token, config.JWT_SECRETKEY, async (err, decoded: any) => {
 
         if (err) {
             res.status(401).json({ status: false, message: 'Invalid or expired token.' });
@@ -36,6 +39,26 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
         }
 
         req.user = decoded;
+
+        const [userData, companyData] = await Promise.all([
+            isUserBlocked.execute(req.user.id),
+            isCompanyBlocked.execute(req.user.companyId) as Promise<Company>
+        ]);
+
+        if (userData.isBlocked) {
+            res.status(403).json({ status: false, message: 'User account is blocked.' })
+            return;
+        }
+
+        if (!req.user.companyId || !companyData) {
+            res.status(401).json({ status: false, message: 'Company data not available.' });
+            return;
+        }
+
+        if (companyData.isBlocked) {
+            res.status(403).json({ status: false, message: 'Company blocked' });
+            return;
+        }
 
         if (req.user.isBlocked) {
             res.status(403).json({ status: false, message: 'User account is blocked.' });
@@ -63,11 +86,24 @@ export const authenticateAsAdmin = async (req: Request, res: Response, next: Nex
     }
 
 
-    jwt.verify(token, config.JWT_SECRETKEY, (err, decoded: any) => {
+    jwt.verify(token, config.JWT_SECRETKEY, async (err, decoded: any) => {
 
         if (err) return res.status(401).json({ status: false, message: 'Invalid or expired token.' });
 
         req.user = decoded;
+
+
+        const companyData = await isCompanyBlocked.execute(req.user.companyId) as Company;
+
+        if (!req.user.companyId || !companyData) {
+            res.status(403).json({ status: false, message: 'Company data not available.' });
+            return;
+        }
+
+        if (companyData.isBlocked) {
+            res.status(403).json({ status: false, message: 'Company blocked' });
+            return;
+        }
 
         if (req.user.isBlocked) {
             res.status(403).json({ status: false, message: 'User account is blocked.' });

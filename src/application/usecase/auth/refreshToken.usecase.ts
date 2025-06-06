@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { config } from '../../../config/config';
 import { useCaseResult } from '../../shared/useCaseResult';
 import { IUserRepository } from '../../../domain/repositories/user.repo';
+import { Company } from '../../../domain/entities/company.interface';
 
 
 export class RefreshTokenUseCase {
@@ -9,7 +10,6 @@ export class RefreshTokenUseCase {
     constructor(private userRepo: IUserRepository) { }
 
     async execute(refreshToken: string): Promise<useCaseResult> {
-
         const userPayload = jwt.verify(refreshToken, config.REFRESH_TOKEN_SECRET);
 
         if (!userPayload || typeof userPayload === 'string' || !('userId' in userPayload)) {
@@ -30,6 +30,7 @@ export class RefreshTokenUseCase {
             throw new Error('JWT secret key is not defined.');
         }
 
+        userData.companyId = userData.companyId as Company;
         const token = jwt.sign(
             {
                 id: userData._id,
@@ -37,7 +38,7 @@ export class RefreshTokenUseCase {
                 name: userData.name,
                 role: userData.role,
                 isBlocked: userData.isBlocked,
-                companyId: userData.companyId,
+                companyId: userData.companyId._id,
                 systemRole: userData.systemRole
             },
             config.JWT_SECRETKEY as string,
