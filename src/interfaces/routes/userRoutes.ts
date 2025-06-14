@@ -13,7 +13,7 @@ import {
 } from '../controllers/user/project.controller';
 
 import {
-    assignIssueSchema, createEpicSchema,
+    assignIssueSchema, completeSprintSchema, createEpicSchema,
     createIssueSchema, createSprintSchema,
     createWorkspaceSchema,
     dragDropSchema,
@@ -24,7 +24,7 @@ import {
     taskStatusUpdateSchema
 } from '../../application/validator/user.validator';
 
-import { assignIssue, changeTaskStatus, createEpic, createIssue, createSprint, dragDropUpdate, getSprints, getTasks, startSprint } from '../controllers/user/backlog.controller';
+import { assignIssue, changeTaskStatus, completeSprint, createEpic, createIssue, createSprint, dragDropUpdate, getSprints, getTasks, startSprint, updateTaskDetails } from '../controllers/user/backlog.controller';
 import { getTeam } from '../controllers/user/team.controller';
 import { createWorkspace } from '../controllers/user/workspace.controller';
 import { getChats, getMessages, sendMessage, startConversation } from '../controllers/user/chat.controller';
@@ -61,8 +61,10 @@ userRouter.get('/team', authenticateUser, getTeam);
 userRouter.patch('/assign-issue', authenticateAsAdmin, validateBody(assignIssueSchema), assignIssue);
 userRouter.put('/update-task', authenticateAsAdmin, validateBody(dragDropSchema), dragDropUpdate);
 userRouter.put('/change-taskstatus', authenticateUser, validateBody(taskStatusUpdateSchema), changeTaskStatus);
+userRouter.put('/update-task-details', authenticateUser, updateTaskDetails);
 
 userRouter.put('/start-sprint', authenticateAsAdmin, validateBody(startSprintSchema), startSprint);
+userRouter.put('/complete-sprint', authenticateUser, validateBody(completeSprintSchema), completeSprint);
 
 userRouter.post('/start-conversation', authenticateUser, validateBody(startConversationSchema), startConversation);
 userRouter.get('/get-chats/:projectId', authenticateUser, getChats);

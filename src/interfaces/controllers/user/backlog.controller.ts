@@ -9,6 +9,8 @@ import { assignIssueUsecase } from "../../../config/Dependency/user/backlog.di";
 import { dragDropUsecase } from "../../../config/Dependency/user/backlog.di";
 import { changeTaskStatusUsecase } from "../../../config/Dependency/user/backlog.di";
 import { startSprintUsecase } from "../../../config/Dependency/user/backlog.di";
+import { updateTaskDetailsUse } from "../../../config/Dependency/user/task.di";
+import { completeSprintUse } from "../../../config/Dependency/user/task.di";
 
 
 export const createEpic = async (req: Request, res: Response): Promise<void> => {
@@ -92,6 +94,7 @@ export const getSprints = async (req: Request, res: Response): Promise<void> => 
 
 
 
+
 export const getTasks = async (req: Request, res: Response): Promise<void> => {
 
     try {
@@ -165,6 +168,30 @@ export const dragDropUpdate = async (req: Request, res: Response): Promise<void>
     }
 }
 
+export const updateTaskDetails = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+
+        const { taskData, assigneeId } = req.body;
+        console.log(taskData, assigneeId);
+
+        const result = await updateTaskDetailsUse.execute(taskData, assigneeId);
+        if (!result) {
+            throw new Error('Couldnt update task details.');
+        }
+
+        res.status(200).json({ status: false, message: 'Task details updated', result });
+        return;
+
+    } catch (err) {
+
+        console.error('Internal server error while updating task details', err);
+        res.status(500).json({ status: false, message: 'Internal server error while updating task details' });
+        return;
+
+    }
+}
+
 
 export const changeTaskStatus = async (req: Request, res: Response): Promise<void> => {
 
@@ -215,5 +242,27 @@ export const startSprint = async (req: Request, res: Response): Promise<void> =>
         console.error('Internal server error while starting sprint', err);
         res.status(500).json({ status: false, message: 'Internal server error while starting sprint' });
         return;
+    }
+}
+
+
+export const completeSprint = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+        const { completingSprintId, movingSprintId, projectId } = req.body
+
+        const result = await completeSprintUse.execute(completingSprintId, movingSprintId, projectId);
+        if (!result) {
+            throw new Error('Sprint couldnt complete.');
+        }
+        res.status(200).json({ status: true, message: "Sprint completed.", result });
+        return;
+
+    } catch (err) {
+
+        console.error('Internal server error while completing sprint', err);
+        res.status(500).json({ status: false, message: 'Internal server error while completing sprint' });
+        return;
+
     }
 }

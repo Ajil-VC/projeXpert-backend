@@ -13,7 +13,7 @@ export class SigninUseCase {
         private vPassword: ISecurePassword
     ) { }
 
-    async execute(email: string, passWord: string): Promise<any> {
+    async execute(email: string, passWord: string): Promise<useCaseResult> {
 
         const userData = await this.userRepo.findByEmail(email);
         if (!userData) {

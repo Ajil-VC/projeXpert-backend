@@ -5,4 +5,5 @@ export interface useCaseResult {
     statusCode?: number;
     token?: string;
     additional?: any;
+    refreshToken?: any;
 }

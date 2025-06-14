@@ -48,6 +48,11 @@ export const startSprintSchema = yup.object({
     startDate: yup.date().required('Date required')
 });
 
+export const completeSprintSchema = yup.object({
+    completingSprintId: yup.string().required('Completing sprint id required'),
+    projectId: yup.string().required('project id required.')
+})
+
 export const createWorkspaceSchema = yup.object({
     workspaceName: yup.string().required('workspaceName is required')
 });
@@ -59,8 +64,8 @@ export const startConversationSchema = yup.object({
 });
 
 export const sendMessageSchema = yup.object({
-    projecId: yup.string().required('Project Id required'), 
-    convoId : yup.string().required('Conversation id required'), 
-    recieverId : yup.string().required('Reciever Id required'), 
+    projecId: yup.string().required('Project Id required'),
+    convoId: yup.string().required('Conversation id required'),
+    recieverId: yup.string().required('Reciever Id required'),
     message: yup.string().required('Message required')
-})
+});

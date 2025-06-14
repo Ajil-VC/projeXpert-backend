@@ -33,10 +33,11 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async changeTaskStatus(taskId: string, status: string): Promise<any> {
+    async changeTaskStatus(taskId: string, status: string): Promise<Task> {
 
         const taskIdOb = new mongoose.Types.ObjectId(taskId);
-        const updatedTask = await taskModel.updateOne({ _id: taskIdOb }, { $set: { status: status } }, { new: true });
+        const updatedTask = await taskModel.findByIdAndUpdate(taskIdOb, { $set: { status: status } }, { new: true });
+
         if (!updatedTask) {
 
             throw new Error("Task couldnt update");
@@ -96,7 +97,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async createSprint(projectId: string, issueIds: Array<string>, userId: string): Promise<any> {
+    async createSprint(projectId: string, issueIds: Array<string>, userId: string): Promise<Sprint> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
         const issueIdsOb = issueIds.map(issueId => new mongoose.Types.ObjectId(issueId));
@@ -158,7 +159,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async createIssue(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<any> {
+    async createIssue(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<Task> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
         const epicIdOb = epicId ? new mongoose.Types.ObjectId(epicId) : null;
@@ -179,6 +180,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
             await SprintModel.findByIdAndUpdate(sprintId, { $push: { tasks: createdTask._id } });
         }
         if (!createdTask) throw new Error('Error occured while creating task');
+
         return createdTask;
 
     }

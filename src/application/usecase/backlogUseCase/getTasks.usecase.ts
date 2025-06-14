@@ -20,15 +20,15 @@ export class GetTasksUseCase {
             const tasksInActiveSprint = (result as Array<Task>).filter(task => {
 
                 if (userRole === 'admin') {
-                    return (task.sprintId && 'status' in task.sprintId && task.sprintId.status !== 'not-started')
+                    return (task.sprintId && 'status' in task.sprintId && task.sprintId.status === 'active')
                 } else {
 
-                    if (task.sprintId && 'status' in task.sprintId && task.sprintId.status !== 'not-started') {
+                    if (task.sprintId && 'status' in task.sprintId && task.sprintId.status === 'active') {
                         return (task.assignedTo !== null && '_id' in task.assignedTo && String(task.assignedTo._id) === userId);
                     }
                 }
             });
-            
+
             return tasksInActiveSprint;
 
         }

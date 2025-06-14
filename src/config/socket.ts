@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { addUser, removeUser } from '../infrastructure/services/socket.manager';
+import { addUser, getUserSocket, removeUser } from '../infrastructure/services/socket.manager';
 import { config } from './config';
 import jwt from 'jsonwebtoken';
 
@@ -56,7 +56,31 @@ export const setupSocket = (server: any) => {
         const userId = socket.data.user?.id;
         if (userId) {
             addUser(userId, socket.id);
+            console.log(`User ${userId} connected with socket ${socket.id}`);
         }
+
+        socket.on('video-signal', (data) => {
+            const { to, type, offer, answer, candidate } = data;
+console.log(to,'This is the to data')
+            const targetSocketId = getUserSocket(to);
+            if (!targetSocketId) {
+                console.warn(`Target user ${to} is not connected`);
+                return;
+            }
+
+            // Forward the signal to the intended user
+            getIO().to(targetSocketId).emit('video-signal', {
+                from: userId,
+                to,
+                type,
+                offer,
+                answer,
+                candidate,
+                caller: socket.data.user,
+            });
+
+            console.log(`Relayed ${type} signal from ${userId} to ${to}`);
+        });
 
         socket.on('disconnect', () => {
             removeUser(socket.id);
