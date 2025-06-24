@@ -7,6 +7,7 @@ import { sendMessagesUsecase } from "../../../config/Dependency/user/chat.di";
 
 import { getUserSocket } from "../../../infrastructure/services/socket.manager";
 import { getIO } from "../../../config/socket";
+import { notification } from "../../../config/Dependency/user/notification.di";
 
 
 export const startConversation = async (req: Request, res: Response): Promise<void> => {
@@ -88,14 +89,18 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
 
         const { projecId, convoId, recieverId, message } = req.body;
         const result = await sendMessagesUsecase.execute(projecId, convoId, req.user.id, recieverId, message);
+        const createdNotification = await notification.execute(req.user.id, recieverId, 'message', `You got a message from ${req.user.email}`, '');
 
         if (!result) {
             throw new Error('Couldnt send the message.');
         }
-
+        
         const recieverSocketId = getUserSocket(recieverId);
-        if (recieverSocketId) {
-            io.to(recieverSocketId).emit('receive-message', result)
+        const senderSocketId = getUserSocket(req.user.id);
+        if (recieverSocketId && senderSocketId) {
+            io.to(recieverSocketId).emit('receive-message', result);
+            io.to(senderSocketId).emit('receive-message', result);
+            io.to(recieverSocketId).emit('notification', createdNotification);
         }
 
         res.status(201).json({ status: true, message: 'Message sent', result });

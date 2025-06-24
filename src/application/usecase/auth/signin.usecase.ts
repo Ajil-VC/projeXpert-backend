@@ -3,7 +3,7 @@ import { ISecurePassword } from "../../../domain/services/securepassword.interfa
 import { useCaseResult } from "../../shared/useCaseResult";
 import { config } from "../../../config/config";
 import jwt from 'jsonwebtoken';
-import { Company } from "../../../domain/entities/company.interface";
+import { Company } from "../../../infrastructure/database/models/company.interface";
 
 
 export class SigninUseCase {
@@ -19,7 +19,7 @@ export class SigninUseCase {
         if (!userData) {
             return { status: false, message: 'Invalid credentials.', statusCode: 401 };
         }
-
+        
         const isPassWordValid = await this.vPassword.validatePassword(passWord, userData?.password as string);
 
         if (!isPassWordValid) {

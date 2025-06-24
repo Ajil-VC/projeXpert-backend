@@ -9,7 +9,12 @@ export interface Message extends Document {
     receiverId: ObjectId,
     projectId: ObjectId,
     message: string,
-    seen: boolean
+    seen: boolean,
+
+    type: 'text' | 'call',
+    callStatus: 'started' | 'ended' | 'missed',
+    duration: Number,
+
     createdAt?: Date;
     updatedAt?: Date;
 

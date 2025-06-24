@@ -1,3 +1,4 @@
+import { Message } from "../../infrastructure/database/models/message.interface";
 
 
 export interface IChatRepository {
@@ -9,4 +10,6 @@ export interface IChatRepository {
     getMessages(convoId: string): Promise<any>;
 
     sendMessage(projecId: string, convoId: string, senderId: string, recieverId: string, message: string): Promise<any>;
+
+    saveVideoCallRecord(projectId: string, convoId: string, senderId: string, recieverId: string, type: string, msgId: string | null): Promise<Message | null>;
 }

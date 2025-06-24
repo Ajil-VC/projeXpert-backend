@@ -1,5 +1,5 @@
 
-import { Project } from "../entities/project.interface";
+import { Project } from "../../infrastructure/database/models/project.interface";
 
 
 export interface IProjectRepository {

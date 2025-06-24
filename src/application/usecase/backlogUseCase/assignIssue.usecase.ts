@@ -1,13 +1,16 @@
-import { Task } from "../../../domain/entities/task.interface";
+import { Task } from "../../../infrastructure/database/models/task.interface";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
+import { TaskMapper } from "../../../interfaces/mappers/task/task.mapper";
+import { TaskResponseDetailedDTO } from "../../../interfaces/dtos/task/taskResponseDTO";
 
 
 export class AssignIssueUseCase {
     constructor(private backlogRep: IBacklogRepository) { }
 
-    async execute(issueId: string, userId: string): Promise<Task | null> {
+    async execute(issueId: string, userId: string): Promise<TaskResponseDetailedDTO | null> {
 
         const result = await this.backlogRep.assignIssue(issueId, userId);
+
         if (!result) {
             throw new Error("Failed to assign issue");
         }

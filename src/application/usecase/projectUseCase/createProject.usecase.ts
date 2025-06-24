@@ -1,4 +1,4 @@
-import { Project } from "../../../domain/entities/project.interface";
+import { Project } from "../../../infrastructure/database/models/project.interface";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { DecodedData } from "../../shared/decodedData";
 

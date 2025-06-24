@@ -1,4 +1,4 @@
-import { Sprint } from "../../../domain/entities/sprint.interface";
+import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 
 

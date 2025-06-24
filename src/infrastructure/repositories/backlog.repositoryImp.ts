@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { Task } from "../../domain/entities/task.interface";
+import { Task } from "../database/models/task.interface";
 import { IBacklogRepository } from "../../domain/repositories/backlog.repo";
 import taskModel from "../database/task.models";
-import { Team } from "../../domain/entities/team.interface";
+import { Team } from "../database/models/team.interface";
 import SprintModel from "../database/sprint.models";
-import { Sprint } from "../../domain/entities/sprint.interface";
+import { Sprint } from "../database/models/sprint.interface";
 
 
 export class BacklogRepositoryImp implements IBacklogRepository {
@@ -141,10 +141,9 @@ export class BacklogRepositoryImp implements IBacklogRepository {
 
         const issueIdOb = new mongoose.Types.ObjectId(issueId);
 
-        let userIdOb;
-        if (userId === '' || !userId) {
-            userIdOb = null;
-        } else {
+        let userIdOb: mongoose.Types.ObjectId | null = null;
+
+        if (userId && mongoose.Types.ObjectId.isValid(userId)) {
             userIdOb = new mongoose.Types.ObjectId(userId);
         }
 
@@ -154,6 +153,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         if (!issueData) {
             return null;
         }
+
         issueData.assignedTo = issueData.assignedTo as unknown as Team;
         return issueData;
     }

@@ -2,7 +2,7 @@ import { IUserRepository } from "../../../domain/repositories/user.repo";
 import otpGenerator from 'otp-generator';
 import { IEmailService } from "../../../domain/services/email.interface";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
-import { Project } from "../../../domain/entities/project.interface";
+import { Project } from "../../../infrastructure/database/models/project.interface";
 import { ISecurePassword } from "../../../domain/services/securepassword.interface";
 
 export class AddMemberUseCase {

@@ -1,6 +1,6 @@
 
 import {Schema, model } from 'mongoose';
-import { Otp } from '../../domain/entities/otp.interface';
+import { Otp } from './models/otp.interface';
 
 
 const otpSchema = new Schema<Otp>({

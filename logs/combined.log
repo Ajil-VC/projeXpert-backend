@@ -1,0 +1,51 @@
+2025-06-15T16:37:43.953Z info: ::1 - - [15/Jun/2025:16:37:43 +0000] "OPTIONS /api/v1/user/team?projectId=680e0c92a83b9a0fc468dad0 HTTP/1.1" 204 0 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+2025-06-15T16:37:44.002Z info: ::1 - - [15/Jun/2025:16:37:44 +0000] "GET /api/v1/user/team?projectId=680e0c92a83b9a0fc468dad0 HTTP/1.1" 401 54 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+2025-06-15T16:37:44.228Z info: ::1 - - [15/Jun/2025:16:37:44 +0000] "OPTIONS /api/v1/user/refresh-token HTTP/1.1" 204 0 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+2025-06-15T16:37:44.498Z info: ::1 - - [15/Jun/2025:16:37:44 +0000] "POST /api/v1/user/refresh-token HTTP/1.1" 201 406 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+2025-06-15T16:37:44.593Z info: ::1 - - [15/Jun/2025:16:37:44 +0000] "GET /api/v1/user/team?projectId=680e0c92a83b9a0fc468dad0 HTTP/1.1" 304 - "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+2025-06-15T16:37:49.092Z info: ::1 - - [15/Jun/2025:16:37:49 +0000] "OPTIONS /api/v1/user/tasks?projectId=680e0c92a83b9a0fc468dad0 HTTP/1.1" 204 0 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+2025-06-15T16:37:49.125Z info: ::1 - - [15/Jun/2025:16:37:49 +0000] "OPTIONS /api/v1/user/get-sprints/680e0c92a83b9a0fc468dad0 HTTP/1.1" 204 0 "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+2025-06-15T16:37:49.270Z info: ::1 - - [15/Jun/2025:16:37:49 +0000] "GET /api/v1/user/tasks?projectId=680e0c92a83b9a0fc468dad0 HTTP/1.1" 304 - "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+2025-06-15T16:37:49.393Z info: ::1 - - [15/Jun/2025:16:37:49 +0000] "GET /api/v1/user/get-sprints/680e0c92a83b9a0fc468dad0 HTTP/1.1" 304 - "http://localhost:4200/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+2025-06-17T06:41:31.968Z error: TypeError: Cannot read properties of undefined (reading 'forceChangePassword')
+    at signIn (/app/src/interfaces/controllers/authController.ts:81:52)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-17T06:45:19.219Z error: TypeError: Cannot read properties of undefined (reading 'forceChangePassword')
+    at signIn (/app/src/interfaces/controllers/authController.ts:81:52)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-17T06:50:30.753Z error: TypeError: Cannot read properties of undefined (reading 'forceChangePassword')
+    at signIn (/app/src/interfaces/controllers/authController.ts:81:52)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-17T07:24:00.686Z error: TypeError: Cannot read properties of undefined (reading 'forceChangePassword')
+    at signIn (/app/src/interfaces/controllers/authController.ts:81:52)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-17T07:39:04.004Z error: TypeError: Cannot read properties of null (reading '_id')
+    at SigninUseCase.execute (/app/src/application/usecase/auth/signin.usecase.ts:42:36)
+    at async signIn (/app/src/interfaces/controllers/authController.ts:66:24)
+2025-06-17T07:39:46.150Z error: TypeError: Cannot read properties of null (reading '_id')
+    at SigninUseCase.execute (/app/src/application/usecase/auth/signin.usecase.ts:42:36)
+    at async signIn (/app/src/interfaces/controllers/authController.ts:66:24)
+2025-06-17T07:40:05.929Z error: TypeError: Cannot read properties of null (reading '_id')
+    at SigninUseCase.execute (/app/src/application/usecase/auth/signin.usecase.ts:42:36)
+    at async signIn (/app/src/interfaces/controllers/authController.ts:66:24)
+2025-06-17T07:41:05.953Z error: TypeError: Cannot read properties of null (reading '_id')
+    at SigninUseCase.execute (/app/src/application/usecase/auth/signin.usecase.ts:42:36)
+    at async signIn (/app/src/interfaces/controllers/authController.ts:66:24)
+2025-06-17T07:46:57.680Z error: TypeError: Cannot read properties of undefined (reading 'forceChangePassword')
+    at signIn (/app/src/interfaces/controllers/authController.ts:81:52)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-17T07:52:40.714Z error: TypeError: Cannot read properties of undefined (reading 'forceChangePassword')
+    at signIn (/app/src/interfaces/controllers/authController.ts:81:52)
+2025-06-17T07:54:53.369Z error: TypeError: Cannot read properties of undefined (reading 'forceChangePassword')
+    at signIn (/app/src/interfaces/controllers/authController.ts:81:52)
+2025-06-17T07:58:34.515Z error: TypeError: Cannot read properties of null (reading '_id')
+    at SigninUseCase.execute (/app/src/application/usecase/auth/signin.usecase.ts:42:36)
+    at async signIn (/app/src/interfaces/controllers/authController.ts:66:24)
+2025-06-18T03:27:18.544Z error: MongooseError: Operation `users.findOne()` buffering timed out after 10000ms
+    at Timeout.<anonymous> (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:187:23)
+    at listOnTimeout (node:internal/timers:569:17)
+    at processTimers (node:internal/timers:512:7)
+2025-06-18T05:14:13.791Z error: MongooseError: Operation `users.findOne()` buffering timed out after 10000ms
+    at Timeout.<anonymous> (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:187:23)
+    at listOnTimeout (node:internal/timers:569:17)
+    at processTimers (node:internal/timers:512:7)

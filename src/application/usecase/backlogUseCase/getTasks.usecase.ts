@@ -1,4 +1,4 @@
-import { Task } from "../../../domain/entities/task.interface";
+import { Task } from "../../../infrastructure/database/models/task.interface";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 
 

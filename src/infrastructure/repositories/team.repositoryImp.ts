@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import { ITeamRepository } from "../../domain/repositories/team.repo";
 import projectModel from "../database/project.models";
-import { User } from "../../domain/entities/user.interface";
-import { Team } from "../../domain/entities/team.interface";
+import { User } from "../database/models/user.interface";
+import { Team } from "../database/models/team.interface";
 import taskModel from "../database/task.models";
 import userModel from "../database/user.models";
 
@@ -21,7 +21,8 @@ export class TeamRepositoryImp implements ITeamRepository {
             const defaultWorkspace = user?.defaultWorkspace;
             const project = await projectModel.findOne({ members: userId, workSpace: defaultWorkspace });
             projectIdOb = project?._id;
-            
+
+
         } else {
 
             projectIdOb = new mongoose.Types.ObjectId(projectId);
@@ -31,6 +32,7 @@ export class TeamRepositoryImp implements ITeamRepository {
             .populate({ path: 'members' });
 
         const membersPopulated = projectData?.members as unknown as Array<User>;
+
         const members: Team[] = membersPopulated.map(user => {
             return {
                 _id: user._id,

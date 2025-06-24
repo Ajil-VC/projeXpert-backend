@@ -1,5 +1,5 @@
 
-import { Otp } from "../entities/otp.interface";
+import { Otp } from "../../infrastructure/database/models/otp.interface";
 
 export interface IOtpRepository {
 

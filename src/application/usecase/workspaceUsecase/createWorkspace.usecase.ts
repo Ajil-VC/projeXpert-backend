@@ -12,7 +12,7 @@ export class CreateWorkspaceUsecase{
         if(!result){
             throw new Error('Something went wrong while creating workspace');
         }
-
+        
         return result;
     }
 }

@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { config } from "../../../config/config";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { useCaseResult } from "../../shared/useCaseResult";
-import { Company } from "../../../domain/entities/company.interface";
+import { Company } from "../../../infrastructure/database/models/company.interface";
 
 
 export class RegisterUseCase {

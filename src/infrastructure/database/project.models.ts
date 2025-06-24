@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose"
-import { Project } from "../../domain/entities/project.interface"
+import { Project } from "./models/project.interface"
 
 
 const projectSchema = new Schema<Project>({

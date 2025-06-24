@@ -1,4 +1,4 @@
-import { Company } from "../../../domain/entities/company.interface";
+import { Company } from "../../../infrastructure/database/models/company.interface";
 import { IWorkspaceRepository } from "../../../domain/repositories/workspace.repo";
 import { DecodedData } from "../../shared/decodedData";
 

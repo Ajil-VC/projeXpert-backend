@@ -1,0 +1,21 @@
+
+
+export class UserEntityDetailed {
+    constructor(
+        public readonly _id: string,
+        public readonly name: string,
+        public readonly email: string,
+        public readonly profilePicUrl: string,
+        public readonly role: 'admin' | 'user',
+        public readonly companyId: string,
+        public readonly workspaceIds: string[],
+        public readonly defaultWorkspace: string,
+        public readonly systemRole: 'platform-admin' | 'company-user',
+        public readonly forceChangePassword: boolean,
+        public readonly isBlocked: boolean,
+        public readonly lastActiveProjectId?: string | null,
+
+        public readonly createdAt?: Date,
+        public readonly updatedAt?: Date
+    ) { }
+}

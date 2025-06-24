@@ -1,7 +1,7 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import { IProjectRepository } from "../../domain/repositories/project.repo";
 import projectModel from "../database/project.models";
-import { Project } from "../../domain/entities/project.interface";
+import { Project } from "../database/models/project.interface";
 import workSpaceModel from "../database/workspace.models";
 import { IUserRepository } from "../../domain/repositories/user.repo";
 import userModel from "../database/user.models";

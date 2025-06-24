@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { ITaskRepository } from "../../domain/repositories/task.repo";
-import { Task } from "../../domain/entities/task.interface";
+import { Task } from "../database/models/task.interface";
 import taskModel from "../database/task.models";
 import SprintModel from "../database/sprint.models";
 

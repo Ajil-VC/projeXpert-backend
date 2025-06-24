@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import { config } from "../../config/config";
 import { isCompanyBlocked } from "../../config/Dependency/auth/auth.di";
-import { Company } from "../../domain/entities/company.interface";
+import { Company } from "../database/models/company.interface";
 import { isUserBlocked } from "../../config/Dependency/auth/auth.di";
 
 
@@ -39,7 +39,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
         }
 
         req.user = decoded;
-
+  
         const [userData, companyData] = await Promise.all([
             isUserBlocked.execute(req.user.id),
             isCompanyBlocked.execute(req.user.companyId) as Promise<Company>

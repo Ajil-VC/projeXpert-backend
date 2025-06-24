@@ -1,4 +1,4 @@
-import { Otp } from "../../domain/entities/otp.interface";
+import { Otp } from "../database/models/otp.interface";
 import { IOtpRepository } from "../../domain/repositories/otp.repo";
 import otpModel from "../database/otp.models";
 

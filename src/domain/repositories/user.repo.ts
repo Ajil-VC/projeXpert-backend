@@ -1,5 +1,5 @@
 
-import { User } from "../entities/user.interface";
+import { User } from "../../infrastructure/database/models/user.interface";
 
 export interface IUserRepository {
 

@@ -1,5 +1,5 @@
-import { Sprint } from "../../../domain/entities/sprint.interface";
-import { Task } from "../../../domain/entities/task.interface";
+import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
+import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
 

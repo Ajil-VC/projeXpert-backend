@@ -11,8 +11,9 @@ export class GetChats {
         if (!result) {
             throw new Error('Couldnt findout the chats.');
         }
-
+        
         return result;
 
     }
+    
 }

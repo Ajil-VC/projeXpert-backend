@@ -2,7 +2,7 @@ import { Server } from 'socket.io';
 import { addUser, getUserSocket, removeUser } from '../infrastructure/services/socket.manager';
 import { config } from './config';
 import jwt from 'jsonwebtoken';
-
+import { saveVideoCallUse } from './Dependency/user/chat.di';
 
 let io: Server | null = null;
 
@@ -59,13 +59,20 @@ export const setupSocket = (server: any) => {
             console.log(`User ${userId} connected with socket ${socket.id}`);
         }
 
-        socket.on('video-signal', (data) => {
-            const { to, type, offer, answer, candidate } = data;
-console.log(to,'This is the to data')
+        socket.on('video-signal', async (data) => {
+            const { to, type, offer, answer, candidate, projectId, convoId, messageId } = data;
+            let msgId = messageId;
+            
             const targetSocketId = getUserSocket(to);
             if (!targetSocketId) {
                 console.warn(`Target user ${to} is not connected`);
                 return;
+            }
+
+
+            if (type === 'offer' || type === 'answer' || type === 'call-ended') {
+                const result = await saveVideoCallUse.execute(projectId, convoId, userId, to, type, msgId);
+                msgId = result?._id;
             }
 
             // Forward the signal to the intended user
@@ -77,6 +84,8 @@ console.log(to,'This is the to data')
                 answer,
                 candidate,
                 caller: socket.data.user,
+                convoId,
+                msgId
             });
 
             console.log(`Relayed ${type} signal from ${userId} to ${to}`);

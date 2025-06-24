@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { WorkSpace } from "../../domain/entities/workspace.interface";
+import { WorkSpace } from "./models/workspace.interface";
 
 
 const workSpaceSchema = new Schema<WorkSpace>({

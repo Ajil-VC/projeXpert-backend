@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { Message } from "../../domain/entities/message.interface";
+import { Message } from "./models/message.interface";
 
 const messageSchema = new Schema<Message>({
 
@@ -9,6 +9,10 @@ const messageSchema = new Schema<Message>({
     projectId: { type: Schema.Types.ObjectId },
     message: { type: String },
     seen: { type: Boolean, default: false },
+
+    type: { type: String, enum: ['text', 'call'], default: 'text' },
+    callStatus: { type: String, enum: ['started', 'ended', 'missed'], required: false },
+    duration: { type: Number, default: 0 },
 
 }, { timestamps: true })
 

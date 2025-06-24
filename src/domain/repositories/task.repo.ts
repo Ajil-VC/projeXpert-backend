@@ -1,4 +1,4 @@
-import { Task } from "../entities/task.interface";
+import { Task } from "../../infrastructure/database/models/task.interface";
 
 
 

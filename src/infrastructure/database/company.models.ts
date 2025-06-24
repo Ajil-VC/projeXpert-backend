@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { Company } from "../../domain/entities/company.interface";
+import { Company } from "./models/company.interface";
 
 const companySchema = new Schema<Company>({
 

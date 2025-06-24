@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { Task } from "../../domain/entities/task.interface";
+import { Task } from "./models/task.interface";
 
 
 const TaskSchema = new Schema<Task>({

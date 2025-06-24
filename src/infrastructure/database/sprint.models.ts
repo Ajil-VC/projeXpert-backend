@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { Sprint } from "../../domain/entities/sprint.interface";
+import { Sprint } from "./models/sprint.interface";
 
 
 

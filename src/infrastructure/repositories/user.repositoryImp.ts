@@ -1,7 +1,7 @@
 
 
 import mongoose, { model } from "mongoose";
-import { User } from "../../domain/entities/user.interface";
+import { User } from "../database/models/user.interface";
 import { IUserRepository } from "../../domain/repositories/user.repo";
 import userModel from "../database/user.models";
 

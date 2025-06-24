@@ -1,5 +1,5 @@
 
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 import { sendOtpUsecase } from "../../config/Dependency/auth/auth.di";
 import { verifyOtpUsecase } from "../../config/Dependency/auth/auth.di";
@@ -57,11 +57,12 @@ export const validateOtp = async (req: Request, res: Response): Promise<void> =>
 }
 
 
-export const signIn = async (req: Request, res: Response): Promise<void> => {
+export const signIn = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
 
         const { email, passWord } = req.body;
+
         const result = await signinUsecase.execute(email, passWord);
 
         if (typeof result.statusCode === 'undefined') throw new Error('Type mismatch might happened');
@@ -72,7 +73,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
             sameSite: 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
-        
+
         res.status(result.statusCode).json({
             status: result.status,
             token: result.token,
@@ -81,9 +82,9 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 
     } catch (err) {
 
-        console.error(`Error occured while loging in ${err}`);
-        res.status(500).json({ error: 'Error occured while loging in' })
-
+        // console.error(`Error occured while loging in ${err}`);
+        // res.status(500).json({ error: 'Error occured while loging in' })
+        next(err)
     }
 }
 
@@ -138,7 +139,7 @@ export const changePassword = async (req: Request, res: Response) => {
     try {
 
         const result = await changePasswordUsecase.execute(req.user.email, req.body.oldPassword, req.body.passWord);
-        console.log(result, 'resul  t')
+
         if (!result) {
 
             res.status(404).json({ status: false, message: 'Try again, default password might be wrong.' });

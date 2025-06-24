@@ -11,7 +11,9 @@ import { changeTaskStatusUsecase } from "../../../config/Dependency/user/backlog
 import { startSprintUsecase } from "../../../config/Dependency/user/backlog.di";
 import { updateTaskDetailsUse } from "../../../config/Dependency/user/task.di";
 import { completeSprintUse } from "../../../config/Dependency/user/task.di";
-
+import { getIO } from "../../../config/socket";
+import { getUserSocket } from "../../../infrastructure/services/socket.manager";
+import { notification } from "../../../config/Dependency/user/notification.di";
 
 export const createEpic = async (req: Request, res: Response): Promise<void> => {
 
@@ -119,18 +121,32 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
 
 export const assignIssue = async (req: Request, res: Response): Promise<void> => {
     try {
+
+        const io = getIO();
+
         const { issueId, assigneeId } = req.body;
+
         if (!issueId) {
             res.status(400).json({ status: false, message: 'Issue Id and User Id are required' });
             return;
         }
 
         const result = await assignIssueUsecase.execute(issueId, assigneeId);
+
         if (!result) {
             res.status(404).json({ status: false, message: 'No issue found with this id' });
             return;
         }
+
+
         res.status(200).json({ status: true, message: 'Issue assigned successfully', data: result });
+        if (assigneeId) {
+            const createdNotification = await notification.execute(req.user.id, assigneeId, 'task', `You are assigned to a task by ${req.user.email}`, '');
+            const assigneeSocketId = getUserSocket(assigneeId);
+            if (assigneeSocketId) {
+                io.to(assigneeSocketId).emit('notification', createdNotification)
+            }
+        }
         return;
 
     } catch (err) {

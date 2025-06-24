@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { config } from '../../../config/config';
 import { useCaseResult } from '../../shared/useCaseResult';
 import { IUserRepository } from '../../../domain/repositories/user.repo';
-import { Company } from '../../../domain/entities/company.interface';
+import { Company } from '../../../infrastructure/database/models/company.interface';
 
 
 export class RefreshTokenUseCase {
