@@ -24,10 +24,12 @@ import {
     taskStatusUpdateSchema
 } from '../../application/validator/user.validator';
 
-import { assignIssue, changeTaskStatus, completeSprint, createEpic, createIssue, createSprint, dragDropUpdate, getSprints, getTasks, startSprint, updateTaskDetails } from '../controllers/user/backlog.controller';
+import { assignIssue, changeTaskStatus, completeSprint, createEpic, createIssue, createSprint, deleteCloudinaryAttachment, dragDropUpdate, getSprints, getTasks, startSprint, updateTaskDetails } from '../controllers/user/backlog.controller';
 import { getTeam } from '../controllers/user/team.controller';
 import { createWorkspace } from '../controllers/user/workspace.controller';
 import { getChats, getMessages, sendMessage, startConversation } from '../controllers/user/chat.controller';
+
+import { upload } from '../../infrastructure/middleware/multer.middleware';
 
 const userRouter = express.Router();
 userRouter.use(express.urlencoded({ extended: true }));
@@ -64,7 +66,8 @@ userRouter.get('/team', authenticateUser, getTeam);
 userRouter.patch('/assign-issue', authenticateAsAdmin, validateBody(assignIssueSchema), assignIssue);
 userRouter.put('/update-task', authenticateAsAdmin, validateBody(dragDropSchema), dragDropUpdate);
 userRouter.put('/change-taskstatus', authenticateUser, validateBody(taskStatusUpdateSchema), changeTaskStatus);
-userRouter.put('/update-task-details', authenticateUser, updateTaskDetails);
+userRouter.put('/update-task-details', authenticateUser, upload.any(), updateTaskDetails);
+userRouter.delete('/delete-attachment', authenticateUser, deleteCloudinaryAttachment);
 
 userRouter.put('/start-sprint', authenticateAsAdmin, validateBody(startSprintSchema), startSprint);
 userRouter.put('/complete-sprint', authenticateUser, validateBody(completeSprintSchema), completeSprint);

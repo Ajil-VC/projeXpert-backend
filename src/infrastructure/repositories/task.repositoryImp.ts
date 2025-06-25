@@ -9,6 +9,25 @@ import SprintModel from "../database/sprint.models";
 export class TaskRepositoryImp implements ITaskRepository {
 
 
+    async removeAttachment(publicId: string, taskId: string): Promise<Task> {
+
+        const taskIdOb = new mongoose.Types.ObjectId(taskId);
+
+        const updatedTask = await taskModel.findByIdAndUpdate(
+            taskIdOb,
+            { $pull: { attachments: { public_id: publicId } } },
+            { new: true }
+        );
+
+        if (!updatedTask) {
+
+            throw new Error("Couldnt update task.");
+        }
+
+        return updatedTask;
+    }
+
+
     async completeSprint(completingSprintId: string, movingSprintId: string | null, projectId: string): Promise<Array<Task> | null | boolean> {
 
         const finishingSprintIdOb = new mongoose.Types.ObjectId(completingSprintId);
@@ -126,15 +145,20 @@ export class TaskRepositoryImp implements ITaskRepository {
             status: taskDetails.status,
             priority: taskDetails.priority,
             description: taskDetails.description,
+
         };
 
         if (assigneeIdOb) {
             updatePayload.assignedTo = assigneeIdOb;
         }
 
+
         const updatedTask = await taskModel.findOneAndUpdate(
             { _id: taskId },
-            { $set: updatePayload },
+            {
+                $set: updatePayload,
+                $push: { attachments: { $each: taskDetails.attachments } }
+            },
             { new: true }
         ).populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
             .populate({ path: 'sprintId' });

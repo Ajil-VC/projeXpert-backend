@@ -57,7 +57,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
         status: err.status || 500,
     });
     res.status(500).json({ message: 'Something went wrong' });
-}); 
+});
 
 server.listen(config.PORT, () => {
     console.log(`Hmmm, ProjeXpert is listening at http://localhost:${config.PORT}`);

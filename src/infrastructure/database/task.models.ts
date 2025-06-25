@@ -1,6 +1,12 @@
 import { model, Schema } from "mongoose";
-import { Task } from "./models/task.interface";
+import { Attachment, Task } from "./models/task.interface";
 
+
+const AttachmentSchema = new Schema<Attachment>({
+    public_id: { type: String, required: true },
+    url: { type: String, required: true },
+
+}, { _id: false });
 
 const TaskSchema = new Schema<Task>({
 
@@ -13,7 +19,12 @@ const TaskSchema = new Schema<Task>({
     epicId: { type: Schema.Types.ObjectId, default: null },
     sprintId: { type: Schema.Types.ObjectId, default: null, ref: 'Sprint' },
     parentId: { type: Schema.Types.ObjectId },
-    projectId: { type: Schema.Types.ObjectId }
+    projectId: { type: Schema.Types.ObjectId },
+
+    attachments: {
+        type: [AttachmentSchema],
+        default: []
+    }
 
 }, { timestamps: true })
 

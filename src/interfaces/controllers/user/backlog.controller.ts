@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 import { createEpicUsecase } from "../../../config/Dependency/user/backlog.di";
 import { createIssueUsecase } from "../../../config/Dependency/user/backlog.di";
@@ -9,7 +9,7 @@ import { assignIssueUsecase } from "../../../config/Dependency/user/backlog.di";
 import { dragDropUsecase } from "../../../config/Dependency/user/backlog.di";
 import { changeTaskStatusUsecase } from "../../../config/Dependency/user/backlog.di";
 import { startSprintUsecase } from "../../../config/Dependency/user/backlog.di";
-import { updateTaskDetailsUse } from "../../../config/Dependency/user/task.di";
+import { removeAttachment, updateTaskDetailsUse } from "../../../config/Dependency/user/task.di";
 import { completeSprintUse } from "../../../config/Dependency/user/task.di";
 import { getIO } from "../../../config/socket";
 import { getUserSocket } from "../../../infrastructure/services/socket.manager";
@@ -188,10 +188,11 @@ export const updateTaskDetails = async (req: Request, res: Response): Promise<vo
 
     try {
 
-        const { taskData, assigneeId } = req.body;
-        console.log(taskData, assigneeId);
+        const assigneeId = req.body.assigningUserId;
+        const taskData = JSON.parse(req.body.task);
+        const files = req.files as Express.Multer.File[] || [];
 
-        const result = await updateTaskDetailsUse.execute(taskData, assigneeId);
+        const result = await updateTaskDetailsUse.execute(taskData, assigneeId, files);
         if (!result) {
             throw new Error('Couldnt update task details.');
         }
@@ -205,6 +206,28 @@ export const updateTaskDetails = async (req: Request, res: Response): Promise<vo
         res.status(500).json({ status: false, message: 'Internal server error while updating task details' });
         return;
 
+    }
+}
+
+export const deleteCloudinaryAttachment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+    try {
+
+        const publicId = req.query.publicId;
+        const taskId = req.query.taskId;
+        if (!publicId || !taskId) {
+            throw new Error('Publicid or taskId is undefined.');
+        }
+        if (typeof publicId !== 'string' || typeof taskId !== 'string') {
+            throw new Error('Publicid or taskId is not a valid string.');
+        }
+        const result = await removeAttachment.execute(publicId, taskId);
+
+        res.status(200).json({ status: true, message: 'Attachment removed successfully.', result });
+        return;
+
+    } catch (err) {
+        next(err);
     }
 }
 

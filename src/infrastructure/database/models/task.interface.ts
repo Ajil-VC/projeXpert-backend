@@ -2,6 +2,12 @@ import { Document, ObjectId } from "mongoose";
 import { Team } from "./team.interface";
 import { Sprint } from "./sprint.interface";
 
+
+export interface Attachment {
+    public_id: string;
+    url: string;
+}
+
 export interface Task extends Document {
 
     _id: ObjectId;
@@ -18,5 +24,5 @@ export interface Task extends Document {
     projectId: ObjectId;
     createdAt: Date;
     updatedAt: Date;
-
+    attachments?: Attachment[];
 }
