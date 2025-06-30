@@ -12,8 +12,10 @@ export class createProjectUseCase {
         const createdProject = await this.projectRepo
             .createProject(projectName, workSpace, priority, user.companyId, user.id);
 
-        if (!createdProject) return null;
-        
+        if (!createdProject) {
+            throw new Error('Couldnt create the project. Internal server error.');
+        }
+
         return createdProject;
 
     }

@@ -103,3 +103,218 @@
     at signIn (/app/src/interfaces/controllers/authController.ts:80:52)
 2025-06-25T14:23:54.328Z error: TypeError: Cannot read properties of undefined (reading 'forceChangePassword')
     at signIn (/app/src/interfaces/controllers/authController.ts:80:52)
+2025-06-26T05:56:41.436Z error: TypeError: Cannot read properties of undefined (reading 'forceChangePassword')
+    at signIn (/app/src/interfaces/controllers/authController.ts:80:52)
+2025-06-27T08:34:12.864Z error: TypeError: Cannot read properties of null (reading '_id')
+    at SigninUseCase.execute (/app/src/application/usecase/auth/signin.usecase.ts:42:36)
+    at async signIn (/app/src/interfaces/controllers/authController.ts:66:24)
+2025-06-27T09:04:35.580Z error: TypeError: Cannot read properties of null (reading '_id')
+    at SigninUseCase.execute (/app/src/application/usecase/auth/signin.usecase.ts:42:36)
+    at async signIn (/app/src/interfaces/controllers/authController.ts:66:24)
+2025-06-27T17:19:06.554Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at TeamRepositoryImp.getTeamMembers (/app/src/infrastructure/repositories/team.repositoryImp.ts:28:27)
+    at GetTeamMembers.execute (/app/src/application/usecase/teamManagement/getTeam.usecase.ts:11:44)
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:14:52)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-28T07:13:39.415Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at TeamRepositoryImp.getTeamMembers (/app/src/infrastructure/repositories/team.repositoryImp.ts:28:27)
+    at GetTeamMembers.execute (/app/src/application/usecase/teamManagement/getTeam.usecase.ts:11:44)
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:14:52)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-28T07:52:38.953Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at TeamRepositoryImp.getTeamMembers (/app/src/infrastructure/repositories/team.repositoryImp.ts:28:27)
+    at GetTeamMembers.execute (/app/src/application/usecase/teamManagement/getTeam.usecase.ts:11:44)
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:14:52)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-28T07:52:41.651Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at BacklogRepositoryImp.getTasks (/app/src/infrastructure/repositories/backlog.repositoryImp.ts:191:29)
+    at GetTasksUseCase.execute (/app/src/application/usecase/backlogUseCase/getTasks.usecase.ts:13:47)
+    at getTasks (/app/src/interfaces/controllers/user/backlog.controller.ts:101:46)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-28T08:10:15.798Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at TeamRepositoryImp.getTeamMembers (/app/src/infrastructure/repositories/team.repositoryImp.ts:28:27)
+    at GetTeamMembers.execute (/app/src/application/usecase/teamManagement/getTeam.usecase.ts:11:44)
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:14:52)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-28T11:17:30.484Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at TeamRepositoryImp.getTeamMembers (/app/src/infrastructure/repositories/team.repositoryImp.ts:28:27)
+    at GetTeamMembers.execute (/app/src/application/usecase/teamManagement/getTeam.usecase.ts:11:44)
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:14:52)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-28T12:36:13.272Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at BacklogRepositoryImp.getSprints (/app/src/infrastructure/repositories/backlog.repositoryImp.ts:81:29)
+    at GetSprintsUseCase.execute (/app/src/application/usecase/backlogUseCase/getSprint.usecase.ts:12:53)
+    at getSprints (/app/src/interfaces/controllers/user/backlog.controller.ts:78:48)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:125:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-28T12:36:14.227Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at BacklogRepositoryImp.getTasks (/app/src/infrastructure/repositories/backlog.repositoryImp.ts:191:29)
+    at GetTasksUseCase.execute (/app/src/application/usecase/backlogUseCase/getTasks.usecase.ts:13:47)
+    at getTasks (/app/src/interfaces/controllers/user/backlog.controller.ts:101:46)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T00:56:54.512Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at TeamRepositoryImp.getTeamMembers (/app/src/infrastructure/repositories/team.repositoryImp.ts:28:27)
+    at GetTeamMembers.execute (/app/src/application/usecase/teamManagement/getTeam.usecase.ts:11:44)
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:14:52)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T06:12:07.323Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at TeamRepositoryImp.getTeamMembers (/app/src/infrastructure/repositories/team.repositoryImp.ts:28:27)
+    at GetTeamMembers.execute (/app/src/application/usecase/teamManagement/getTeam.usecase.ts:11:44)
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:14:52)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T07:32:58.229Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at TeamRepositoryImp.getTeamMembers (/app/src/infrastructure/repositories/team.repositoryImp.ts:28:27)
+    at GetTeamMembers.execute (/app/src/application/usecase/teamManagement/getTeam.usecase.ts:11:44)
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:14:52)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T07:35:07.266Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at TeamRepositoryImp.getTeamMembers (/app/src/infrastructure/repositories/team.repositoryImp.ts:28:27)
+    at GetTeamMembers.execute (/app/src/application/usecase/teamManagement/getTeam.usecase.ts:11:44)
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:14:52)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T07:35:27.811Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at TeamRepositoryImp.getTeamMembers (/app/src/infrastructure/repositories/team.repositoryImp.ts:28:27)
+    at GetTeamMembers.execute (/app/src/application/usecase/teamManagement/getTeam.usecase.ts:11:44)
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:14:52)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T08:05:20.114Z error: Error: Project Id is not valid string.
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:12:88)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T08:07:41.541Z error: Error: Project Id is not valid string.
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:12:88)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T08:13:07.846Z error: Error: Project Id is not valid string.
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:12:88)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T08:15:11.604Z error: Error: Project Id is not valid string.
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:12:88)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T08:31:00.721Z error: Error: Couldnt remove image from cloudinary.
+    at DeleteAttachmentUsecase.execute (/app/src/application/usecase/taskUsecase/deleteAttachment.usecase.ts:14:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async deleteCloudinaryAttachment (/app/src/interfaces/controllers/user/backlog.controller.ts:199:24)
+2025-06-29T12:43:53.833Z error: TypeError: Cannot read properties of undefined (reading 'forceChangePassword')
+    at signIn (/app/src/interfaces/controllers/authController.ts:80:52)
+2025-06-29T14:58:37.974Z error: Error: Project Id is not valid string.
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:12:88)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T17:46:25.446Z error: Error: Project Id is not valid string.
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:12:88)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T17:52:50.577Z error: Error: Project Id is not valid string.
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:12:88)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T17:53:08.739Z error: Error: Project Id is not valid string.
+    at getTeam (/app/src/interfaces/controllers/user/team.controller.ts:12:88)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T18:24:47.599Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at BacklogRepositoryImp.getTasks (/app/src/infrastructure/repositories/backlog.repositoryImp.ts:191:29)
+    at GetTasksUseCase.execute (/app/src/application/usecase/backlogUseCase/getTasks.usecase.ts:13:47)
+    at getTasks (/app/src/interfaces/controllers/user/backlog.controller.ts:101:46)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T18:24:48.218Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at BacklogRepositoryImp.getSprints (/app/src/infrastructure/repositories/backlog.repositoryImp.ts:81:29)
+    at GetSprintsUseCase.execute (/app/src/application/usecase/backlogUseCase/getSprint.usecase.ts:12:53)
+    at getSprints (/app/src/interfaces/controllers/user/backlog.controller.ts:78:48)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:125:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T18:27:07.411Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at BacklogRepositoryImp.getSprints (/app/src/infrastructure/repositories/backlog.repositoryImp.ts:81:29)
+    at GetSprintsUseCase.execute (/app/src/application/usecase/backlogUseCase/getSprint.usecase.ts:12:53)
+    at getSprints (/app/src/interfaces/controllers/user/backlog.controller.ts:78:48)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:125:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-06-29T18:27:07.847Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (/app/node_modules/bson/src/objectid.ts:120:15)
+    at BacklogRepositoryImp.getTasks (/app/src/infrastructure/repositories/backlog.repositoryImp.ts:191:29)
+    at GetTasksUseCase.execute (/app/src/application/usecase/backlogUseCase/getTasks.usecase.ts:13:47)
+    at getTasks (/app/src/interfaces/controllers/user/backlog.controller.ts:101:46)
+    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+    at next (/app/node_modules/router/lib/route.js:157:13)
+    at /app/src/infrastructure/middleware/user.middleware.ts:70:13
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)

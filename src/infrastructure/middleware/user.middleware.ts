@@ -31,43 +31,49 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
     }
 
 
-    jwt.verify(token, config.JWT_SECRETKEY, async (err, decoded: any) => {
+    try {
 
-        if (err) {
-            res.status(401).json({ status: false, message: 'Invalid or expired token.' });
-            return
-        }
+        jwt.verify(token, config.JWT_SECRETKEY, async (err, decoded: any) => {
 
-        req.user = decoded;
-  
-        const [userData, companyData] = await Promise.all([
-            isUserBlocked.execute(req.user.id),
-            isCompanyBlocked.execute(req.user.companyId) as Promise<Company>
-        ]);
+            if (err) {
+                res.status(401).json({ status: false, message: 'Invalid or expired token.' });
+                return
+            }
 
-        if (userData.isBlocked) {
-            res.status(403).json({ status: false, message: 'User account is blocked.' })
-            return;
-        }
+            req.user = decoded;
 
-        if (!req.user.companyId || !companyData) {
-            res.status(401).json({ status: false, message: 'Company data not available.' });
-            return;
-        }
+            const [userData, companyData] = await Promise.all([
+                isUserBlocked.execute(req.user.id),
+                isCompanyBlocked.execute(req.user.companyId) as Promise<Company>
+            ]);
 
-        if (companyData.isBlocked) {
-            res.status(403).json({ status: false, message: 'Company blocked' });
-            return;
-        }
+            if (userData.isBlocked) {
+                res.status(403).json({ status: false, message: 'User account is blocked.' })
+                return;
+            }
 
-        if (req.user.isBlocked) {
-            res.status(403).json({ status: false, message: 'User account is blocked.' });
-            return;
-        }
-        console.log('Authentication: ', req.user)
-        next();
+            if (!req.user.companyId || !companyData) {
+                res.status(401).json({ status: false, message: 'Company data not available.' });
+                return;
+            }
 
-    });
+            if (companyData.isBlocked) {
+                res.status(403).json({ status: false, message: 'Company blocked' });
+                return;
+            }
+
+            if (req.user.isBlocked) {
+                res.status(403).json({ status: false, message: 'User account is blocked.' });
+                return;
+            }
+            console.log('Authentication: ', req.user)
+            next();
+
+        });
+
+    } catch (err) {
+        next(err);
+    }
 
 }
 
@@ -86,35 +92,41 @@ export const authenticateAsAdmin = async (req: Request, res: Response, next: Nex
     }
 
 
-    jwt.verify(token, config.JWT_SECRETKEY, async (err, decoded: any) => {
+    try {
 
-        if (err) return res.status(401).json({ status: false, message: 'Invalid or expired token.' });
+        jwt.verify(token, config.JWT_SECRETKEY, async (err, decoded: any) => {
 
-        req.user = decoded;
+            if (err) return res.status(401).json({ status: false, message: 'Invalid or expired token.' });
+
+            req.user = decoded;
 
 
-        const companyData = await isCompanyBlocked.execute(req.user.companyId) as Company;
+            const companyData = await isCompanyBlocked.execute(req.user.companyId) as Company;
 
-        if (!req.user.companyId || !companyData) {
-            res.status(403).json({ status: false, message: 'Company data not available.' });
-            return;
-        }
+            if (!req.user.companyId || !companyData) {
+                res.status(403).json({ status: false, message: 'Company data not available.' });
+                return;
+            }
 
-        if (companyData.isBlocked) {
-            res.status(403).json({ status: false, message: 'Company blocked' });
-            return;
-        }
+            if (companyData.isBlocked) {
+                res.status(403).json({ status: false, message: 'Company blocked' });
+                return;
+            }
 
-        if (req.user.isBlocked) {
-            res.status(403).json({ status: false, message: 'User account is blocked.' });
-            return;
-        }
+            if (req.user.isBlocked) {
+                res.status(403).json({ status: false, message: 'User account is blocked.' });
+                return;
+            }
 
-        if (req.user.role !== 'admin') {
-            res.status(403).json({ status: false, message: 'Access denied: Admins only' });
-            return
-        }
-        next();
-    });
+            if (req.user.role !== 'admin') {
+                res.status(403).json({ status: false, message: 'Access denied: Admins only' });
+                return
+            }
+            next();
+        });
+
+    } catch (err) {
+        next(err);
+    }
 
 }

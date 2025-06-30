@@ -36,7 +36,9 @@ export class AddMemberUseCase {
         }
 
         const updatedProject = await this.projectRepo.addMemberToProject(projectId, email);
-        if (!updatedProject) return null;
+        if (!updatedProject) {
+            throw new Error('Member not added');
+        }
         return updatedProject;
 
     }

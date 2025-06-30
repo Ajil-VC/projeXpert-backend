@@ -11,6 +11,7 @@ export class DeleteProjectUsecase {
         if (result) {
             return true;
         }
-        return false;
+
+        throw new Error('Project couldnt delete successfully');
     }
 }

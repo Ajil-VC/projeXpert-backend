@@ -28,21 +28,27 @@ export const authenticatePlatformAdmin = async (req: Request, res: Response, nex
     }
 
 
-    jwt.verify(token, config.JWT_SECRETKEY, (err, decoded: any) => {
+    try {
 
-        if (err) {
-            res.status(401).json({ status: false, message: 'Error while verifying jwt.' });
-            return
-        }
+        jwt.verify(token, config.JWT_SECRETKEY, (err, decoded: any) => {
 
-        req.user = decoded;
-        if (req.user.systemRole !== 'platform-admin') {
-            res.status(403).json({ status: false, message: 'Unautherized: not Admin' });
-            return;
-        }
-        console.log('Authentication: ', req.user)
-        next();
+            if (err) {
+                res.status(401).json({ status: false, message: 'Error while verifying jwt.' });
+                return
+            }
 
-    });
+            req.user = decoded;
+            if (req.user.systemRole !== 'platform-admin') {
+                res.status(403).json({ status: false, message: 'Unautherized: not Admin' });
+                return;
+            }
+            console.log('Authentication: ', req.user)
+            next();
+
+        });
+
+    } catch (err) {
+        next(err);
+    }
 
 }

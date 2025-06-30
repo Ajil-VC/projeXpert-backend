@@ -9,7 +9,7 @@ import workSpaceModel from "../database/workspace.models";
 export class CompanyRepositoryImp implements ICompanyRepository {
 
 
-    async findCompanyById(companyId: string): Promise<any> {
+    async findCompanyById(companyId: string): Promise<Company> {
 
         const companyIdOb = new mongoose.Types.ObjectId(companyId);
         const companyData = await companyModel.findOne({ _id: companyIdOb });

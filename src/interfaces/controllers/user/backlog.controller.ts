@@ -15,62 +15,56 @@ import { getIO } from "../../../config/socket";
 import { getUserSocket } from "../../../infrastructure/services/socket.manager";
 import { notification } from "../../../config/Dependency/user/notification.di";
 
-export const createEpic = async (req: Request, res: Response): Promise<void> => {
+import { HttpStatusCode } from "../http-status.enum";
+import { RESPONSE_MESSAGES } from "../response-messages.constant";
+
+export const createEpic = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
 
         const { epicName, projectId } = req.body;
         const result = await createEpicUsecase.execute(epicName, projectId);
-        if (!result) throw new Error('Error while creating task');
 
-        res.status(201).json({ status: true, result });
+        res.status(HttpStatusCode.CREATED).json({ status: true, result });
         return;
 
     } catch (err) {
 
-        console.error('Something went wrong while creating epic.', err);
-        res.status(500).json({ status: false, message: 'Something went wrong while creating epic' });
-
+        next(err);
     }
 }
 
-export const createIssue = async (req: Request, res: Response): Promise<void> => {
+export const createIssue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
 
         const { projectId, issueType, issueName, taskGroup, epicId } = req.body;
         const result = await createIssueUsecase.execute(projectId, issueType, issueName, taskGroup, epicId);
 
-        if (!result) throw new Error('Error occured while creating issue');
-
-        res.status(201).json({ status: true, result });
+        res.status(HttpStatusCode.CREATED).json({ status: true, result });
         return;
 
     } catch (err) {
-        console.error('Something went wrong while creating issue', err);
-        res.status(500).json({ status: false, message: 'Something went wrong while creating issue' });
 
+        next(err);
     }
 }
 
-export const createSprint = async (req: Request, res: Response): Promise<void> => {
+export const createSprint = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
         const { projectId, issueIds } = req.body;
         const result = await createSprintUsecase.execute(projectId, issueIds, req.user.id);
 
-        if (!result) throw new Error('Error occured while creating sprint');
-
-        res.status(201).json({ status: true, result });
+        res.status(HttpStatusCode.CREATED).json({ status: true, result, message: RESPONSE_MESSAGES.SPRINT.CREATED });
         return;
 
     } catch (err) {
-        console.error('Something went wrong while creating sprint', err);
-        res.status(500).json({ status: false, message: 'Something went wrong while creating sprint' });
+        next(err);
     }
 }
 
-export const getSprints = async (req: Request, res: Response): Promise<void> => {
+export const getSprints = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const projectId = req.params.projectId;
         if (typeof projectId !== 'string') throw new Error('Project id is not valid string');
@@ -82,22 +76,19 @@ export const getSprints = async (req: Request, res: Response): Promise<void> => 
         const isKanbanRequest = req.path.startsWith('/get-sprints/kanban');
 
         const result = await getSprintsUsecase.execute(projectId, userRole, userId, isKanbanRequest);
-        if (!result) throw new Error('Error while getting sprints');
 
-
-        res.status(200).json({ status: true, result });
+        res.status(HttpStatusCode.OK).json({ status: true, result });
         return;
 
     } catch (err) {
-        console.error('Something went wrong while getting sprints', err);
-        res.status(500).json({ status: false, message: 'Something went wrong while getting sprints' });
+        next(err);
     }
 }
 
 
 
 
-export const getTasks = async (req: Request, res: Response): Promise<void> => {
+export const getTasks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
 
@@ -109,17 +100,16 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
         const isKanbanRequest = req.path.startsWith('/tasks/kanban');
         const result = await getTasksUsecase.execute(projectId, req.user.role, req.user.id, isKanbanRequest);
 
-        res.status(200).json({ status: true, result });
+        res.status(HttpStatusCode.OK).json({ status: true, result });
         return;
 
     } catch (err) {
-        console.error('Something went wrong while getting tasks', err);
-        res.status(500).json({ status: false, message: 'Something went wrong while getting tasks' });
+        next(err);
     }
 }
 
 
-export const assignIssue = async (req: Request, res: Response): Promise<void> => {
+export const assignIssue = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
 
         const io = getIO();
@@ -127,19 +117,19 @@ export const assignIssue = async (req: Request, res: Response): Promise<void> =>
         const { issueId, assigneeId } = req.body;
 
         if (!issueId) {
-            res.status(400).json({ status: false, message: 'Issue Id and User Id are required' });
+            res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'Issue Id and User Id are required' });
             return;
         }
 
         const result = await assignIssueUsecase.execute(issueId, assigneeId);
 
         if (!result) {
-            res.status(404).json({ status: false, message: 'No issue found with this id' });
+            res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'No issue found with this id' });
             return;
         }
 
 
-        res.status(200).json({ status: true, message: 'Issue assigned successfully', data: result });
+        res.status(HttpStatusCode.OK).json({ status: true, message: 'Issue assigned successfully', data: result });
         if (assigneeId) {
             const createdNotification = await notification.execute(req.user.id, assigneeId, 'task', `You are assigned to a task by ${req.user.email}`, '');
             const assigneeSocketId = getUserSocket(assigneeId);
@@ -150,41 +140,32 @@ export const assignIssue = async (req: Request, res: Response): Promise<void> =>
         return;
 
     } catch (err) {
-        console.error('Internal server error while assigning issue', err);
-        res.status(500).json({ status: false, message: 'Internal server error while assigning issue' });
-        return;
+        next(err);
     }
 }
 
-export const dragDropUpdate = async (req: Request, res: Response): Promise<void> => {
+export const dragDropUpdate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
 
         const { prevContainerId, containerId, movedTaskId } = req.body;
         if (!containerId || !movedTaskId || !prevContainerId) {
-            res.status(400).json({ status: false, message: 'prevContainerId, container id and movedTask id are required' });
+            res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'prevContainerId, container id and movedTask id are required' });
             return;
         }
 
         const result = await dragDropUsecase.execute(prevContainerId, containerId, movedTaskId);
 
-        if (!result) {
-            res.status(404).json({ status: false, message: 'Couldnt udpate dragged data.' });
-            return;
-        }
-
-        res.status(200).json({ status: true, message: 'Task updated', result });
+        res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
 
     } catch (err) {
 
-        console.error('Internal server error while updating dragdrop data', err);
-        res.status(500).json({ status: false, message: 'Internal server error while updating dragdrop data' });
-        return;
+        next(err);
 
     }
 }
 
-export const updateTaskDetails = async (req: Request, res: Response): Promise<void> => {
+export const updateTaskDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
 
@@ -193,19 +174,13 @@ export const updateTaskDetails = async (req: Request, res: Response): Promise<vo
         const files = req.files as Express.Multer.File[] || [];
 
         const result = await updateTaskDetailsUse.execute(taskData, assigneeId, files);
-        if (!result) {
-            throw new Error('Couldnt update task details.');
-        }
 
-        res.status(200).json({ status: false, message: 'Task details updated', result });
+        res.status(HttpStatusCode.OK).json({ status: false, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
         return;
 
     } catch (err) {
 
-        console.error('Internal server error while updating task details', err);
-        res.status(500).json({ status: false, message: 'Internal server error while updating task details' });
-        return;
-
+        next(err);
     }
 }
 
@@ -223,7 +198,7 @@ export const deleteCloudinaryAttachment = async (req: Request, res: Response, ne
         }
         const result = await removeAttachment.execute(publicId, taskId);
 
-        res.status(200).json({ status: true, message: 'Attachment removed successfully.', result });
+        res.status(HttpStatusCode.OK).json({ status: true, message: 'Attachment removed successfully.', result });
         return;
 
     } catch (err) {
@@ -232,76 +207,62 @@ export const deleteCloudinaryAttachment = async (req: Request, res: Response, ne
 }
 
 
-export const changeTaskStatus = async (req: Request, res: Response): Promise<void> => {
+export const changeTaskStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
 
         const { taskId, status } = req.body;
 
         if (!taskId || !status) {
-            res.status(400).json({ status: false, message: 'task id and status required' });
+            res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'task id and status required' });
             return;
         }
 
         const result = await changeTaskStatusUsecase.execute(taskId, status);
-        if (!result) {
-            throw new Error('Something went wront while updating task status ');
-        }
 
-        res.status(200).json({ status: true, message: 'Task updated', result });
+        res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
         return;
 
     } catch (err) {
-        console.error('Internal server error while updating task status', err);
-        res.status(500).json({ status: false, message: 'Internal server error while updating task status' });
-        return;
+        next(err);
     }
 }
 
-export const startSprint = async (req: Request, res: Response): Promise<void> => {
+export const startSprint = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
 
         const { sprintId, sprintName, duration, startDate } = req.body;
         if (!sprintId || !sprintName || !duration || !startDate) {
-            res.status(400).json({ status: false, message: 'sprint id, sprintname, duration and startdate are required' });
+            res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'sprint id, sprintname, duration and startdate are required' });
             return;
         }
 
         const result = await startSprintUsecase.execute(sprintId, sprintName, duration, startDate);
-        console.log(result, 'He');
-        if (!result) {
-            throw new Error('Something went wrong while updating sprint.');
-        }
 
-        res.status(200).json({ status: true, message: 'Sprint started successfully', result });
+        res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.SPRINT.STARTED, result });
         return;
 
     } catch (err) {
-        console.error('Internal server error while starting sprint', err);
-        res.status(500).json({ status: false, message: 'Internal server error while starting sprint' });
-        return;
+
+        next(err);
     }
 }
 
 
-export const completeSprint = async (req: Request, res: Response): Promise<void> => {
+export const completeSprint = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
         const { completingSprintId, movingSprintId, projectId } = req.body
 
         const result = await completeSprintUse.execute(completingSprintId, movingSprintId, projectId);
-        if (!result) {
-            throw new Error('Sprint couldnt complete.');
-        }
-        res.status(200).json({ status: true, message: "Sprint completed.", result });
+
+        res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.SPRINT.UPDATED, result });
         return;
 
     } catch (err) {
 
-        console.error('Internal server error while completing sprint', err);
-        res.status(500).json({ status: false, message: 'Internal server error while completing sprint' });
-        return;
+        next(err);
 
     }
 }

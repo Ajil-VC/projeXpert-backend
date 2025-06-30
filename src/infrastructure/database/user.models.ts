@@ -10,9 +10,9 @@ const userSchema = new Schema<User>({
     password: { type: String, required: true },
     profilePicUrl: { type: String, default: '' },
     role: { type: String, enum: ['admin', 'user'], required: true, default: 'user' },
-    companyId: { type: Schema.Types.ObjectId, ref: 'Company' },
+    companyId: { type: Schema.Types.ObjectId, ref: 'Company', default: null },
     workspaceIds: [{ type: Schema.Types.ObjectId, ref: 'Workspace' }],
-    defaultWorkspace: { type: Schema.Types.ObjectId, ref: 'Workspace' },
+    defaultWorkspace: { type: Schema.Types.ObjectId, ref: 'Workspace', default: null },
 
     isBlocked: { type: Boolean, default: false },
     lastActiveProjectId: { type: Schema.Types.ObjectId, ref: 'Project', default: null },

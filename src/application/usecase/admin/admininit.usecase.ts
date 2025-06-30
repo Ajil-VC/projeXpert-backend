@@ -8,10 +8,6 @@ export class AdminInitUseCase {
     async execute(): Promise<any> {
 
         const result = await this.adminRepo.getAllCompanyDetails();
-        if (!result) {
-            throw new Error('Couldnt retrieve company details.');
-        }
-
         return result;
     }
 }

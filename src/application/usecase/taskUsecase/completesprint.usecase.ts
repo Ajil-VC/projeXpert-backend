@@ -11,6 +11,9 @@ export class CompleteSprintUsecase {
 
 
         const result = await this.taskRepo.completeSprint(completingSprintId, movingSprintId, projectId);
+        if (!result) {
+            throw new Error('Sprint couldnt complete.');
+        }
         return result;
     }
 }

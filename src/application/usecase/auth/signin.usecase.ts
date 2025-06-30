@@ -17,9 +17,9 @@ export class SigninUseCase {
 
         const userData = await this.userRepo.findByEmail(email);
         if (!userData) {
-            return { status: false, message: 'Invalid credentials.', statusCode: 401 };
+            return { status: false, message: 'Invalid credentials.', statusCode: 400 };
         }
-        
+
         const isPassWordValid = await this.vPassword.validatePassword(passWord, userData?.password as string);
 
         if (!isPassWordValid) {
@@ -31,7 +31,11 @@ export class SigninUseCase {
             throw new Error('JWT secret key is not defined.');
         }
 
-        const company = userData.companyId as Company;
+
+        let company = null;
+        if (userData.systemRole === 'company-user') {
+            company = (userData.companyId as Company)._id;
+        }
         const token = jwt.sign(
             {
                 id: userData._id,
@@ -39,7 +43,7 @@ export class SigninUseCase {
                 name: userData.name,
                 role: userData.role,
                 isBlocked: userData.isBlocked,
-                companyId: company._id,
+                companyId: company,
                 systemRole: userData.systemRole
             },
             config.JWT_SECRETKEY,
@@ -52,13 +56,13 @@ export class SigninUseCase {
             { expiresIn: "7d" }
         )
 
-        return { 
-            status: true, 
-            message: 'Token Created', 
-            statusCode: 200, 
-            token: token, 
+        return {
+            status: true,
+            message: 'Token Created',
+            statusCode: 200,
+            token: token,
             additional: userData,
-            refreshToken 
+            refreshToken
         };
     }
 }

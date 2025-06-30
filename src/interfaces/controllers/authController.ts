@@ -1,6 +1,5 @@
 
 import { NextFunction, Request, Response } from "express";
-
 import { sendOtpUsecase } from "../../config/Dependency/auth/auth.di";
 import { verifyOtpUsecase } from "../../config/Dependency/auth/auth.di";
 import { signinUsecase } from "../../config/Dependency/auth/auth.di";
@@ -8,11 +7,13 @@ import { registerUsecase } from "../../config/Dependency/auth/auth.di";
 import { changePasswordUsecase } from "../../config/Dependency/auth/auth.di";
 import { refreshTokenUsecase } from "../../config/Dependency/auth/auth.di";
 
+import { HttpStatusCode } from "./http-status.enum";
+import { RESPONSE_MESSAGES } from "./response-messages.constant";
 
 import { useCaseResult } from "../../application/shared/useCaseResult";
 
 
-export const sendOtpToMail = async (req: Request, res: Response): Promise<void> => {
+export const sendOtpToMail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
 
@@ -21,20 +22,19 @@ export const sendOtpToMail = async (req: Request, res: Response): Promise<void> 
 
         const result: useCaseResult = await sendOtpUsecase.execute(email);
         if (!result.status) {
-            res.status(409).json({ result });
+            res.status(HttpStatusCode.CONFLICT).json({ result });
             return;
         }
 
         res.status(200).json({ result });
 
     } catch (err) {
-        console.error("Something went wrong while generating otp.", err)
-        res.status(500).json({ error: "Something went wrong while generating otp." });
+        next(err);
     }
 }
 
 
-export const validateOtp = async (req: Request, res: Response): Promise<void> => {
+export const validateOtp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
 
     try {
@@ -45,14 +45,14 @@ export const validateOtp = async (req: Request, res: Response): Promise<void> =>
         const isVerified = await verifyOtpUsecase.execute(email, otpFromUser);
 
         if (isVerified) {
-            res.status(200).json({ message: "otp Validated", status: true });
+            res.status(HttpStatusCode.OK).json({ message: RESPONSE_MESSAGES.AUTH.OTP_VALIDATED, status: true });
         } else {
-            res.status(404).json({ message: "Invalid otp", status: false });
+            res.status(HttpStatusCode.NOT_FOUND).json({ message: RESPONSE_MESSAGES.AUTH.OTP_INVALID, status: false });
         }
 
     } catch (err) {
-        console.error("Something went wrong while validating otp", err);
-        res.status(500).json({ error: "Something went wrong while validating otp" });
+
+        next(err);
     }
 }
 
@@ -64,7 +64,10 @@ export const signIn = async (req: Request, res: Response, next: NextFunction): P
         const { email, passWord } = req.body;
 
         const result = await signinUsecase.execute(email, passWord);
-
+        if (!result.status) {
+            res.status(HttpStatusCode.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.AUTH.INVALID_CREDENTIALS });
+            return;
+        }
         if (typeof result.statusCode === 'undefined') throw new Error('Type mismatch might happened');
 
         res.cookie('refreshToken', result.refreshToken, {
@@ -82,14 +85,12 @@ export const signIn = async (req: Request, res: Response, next: NextFunction): P
 
     } catch (err) {
 
-        // console.error(`Error occured while loging in ${err}`);
-        // res.status(500).json({ error: 'Error occured while loging in' })
         next(err)
     }
 }
 
 
-export const createCompany = async (req: Request, res: Response) => {
+export const createCompany = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
 
@@ -101,40 +102,38 @@ export const createCompany = async (req: Request, res: Response) => {
             switch (registrationStatus.message) {
 
                 case 'Email already in use':
-                    res.status(409).json({ status: false, message: 'Email already in use' });
+                    res.status(HttpStatusCode.CONFLICT).json({ status: false, message: 'Email already in use' });
                     return;
                 case 'Email already registered':
-                    res.status(409).json({ status: false, message: 'Email already registered' });
+                    res.status(HttpStatusCode.CONFLICT).json({ status: false, message: 'Email already registered' });
                     return;
                 case 'Company couldnt create':
-                    res.status(500).json({ status: false, message: 'Company couldnt create' });
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({ status: false, message: 'Company couldnt create' });
                     return;
                 case 'Workspace probably have not created':
-                    res.status(500).json({ status: false, message: 'Workspace probably have not created' });
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({ status: false, message: 'Workspace probably have not created' });
                     return;
                 case 'Password couldnt secured':
-                    res.status(500).json({ status: false, message: 'Password couldnt secured' });
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({ status: false, message: 'Password couldnt secured' });
                     return;
                 default:
-                    res.status(500).json({ status: false, message: 'Unknown error on registration' });
+                    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({ status: false, message: 'Unknown error on registration' });
                     return;
             }
 
         }
 
-        res.status(200).json({ status: true, token: registrationStatus.token });
+        res.status(HttpStatusCode.OK).json({ status: true, token: registrationStatus.token });
         return;
 
     } catch (err) {
 
-        console.error(`Something went wrong while creating profile. ${err}`);
-        res.status(500).json({ status: false, message: 'Something went wrong while creating user profile.' });
-        return;
+        next(err)
     }
 }
 
 
-export const changePassword = async (req: Request, res: Response) => {
+export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
 
@@ -142,38 +141,36 @@ export const changePassword = async (req: Request, res: Response) => {
 
         if (!result) {
 
-            res.status(404).json({ status: false, message: 'Try again, default password might be wrong.' });
+            res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'Try again, default password might be wrong.' });
             return;
         };
 
-        res.status(200).json({ status: true, message: 'Success' });
+        res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.COMMON.SUCCESS });
         return;
     } catch (err) {
-        console.error('Internal error while changing password', err);
-        res.status(500).json({ status: false, message: 'Failed' });
+        next(err);
     }
 }
 
-export const isVerified = async (req: Request, res: Response) => {
+export const isVerified = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
 
         if (req.user) {
-            res.status(200).json({ status: true, user: req.user });
+            res.status(HttpStatusCode.OK).json({ status: true, user: req.user });
             return;
         } else {
-            res.status(401).json({ status: false });
+            res.status(HttpStatusCode.UNAUTHORIZED).json({ status: false });
             return;
         }
 
     } catch (err) {
 
-        console.error('Internal error while authenticating user', err);
-        res.status(500).json({ status: false, message: 'Not authenticated' });
+        next(err);
     }
 }
 
-export const refreshToken = async (req: Request, res: Response) => {
+export const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
 
@@ -181,7 +178,7 @@ export const refreshToken = async (req: Request, res: Response) => {
         const refreshToken = req.cookies.refreshToken;
 
         if (!refreshToken) {
-            res.status(401).json({ message: 'No refresh token provided' });
+            res.status(HttpStatusCode.UNAUTHORIZED).json({ message: 'No refresh token provided' });
             return
         }
 
@@ -203,8 +200,8 @@ export const refreshToken = async (req: Request, res: Response) => {
 
 
     } catch (err) {
-        console.error('Internal error while refreshing token', err);
-        res.status(500).json({ status: false, message: 'Token couldnt refresh' });
+
+        next(err);
 
     }
 }

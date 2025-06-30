@@ -7,6 +7,7 @@ export class GetAllProjectsInWorkspaceUseCase {
     async execute(workSpaceId: String) {
 
         const data = await this.projectRepo.getProjects(workSpaceId);
+        if (!data) throw new Error('Projects couldnt retrieve');
         return data;
 
     }

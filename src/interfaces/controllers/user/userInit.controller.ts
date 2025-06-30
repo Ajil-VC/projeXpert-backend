@@ -3,7 +3,9 @@ import { NextFunction, Request, Response } from "express";
 import { initDashboardUsecase } from "../../../config/Dependency/user/userInit.di";
 import { getNotificationsUse, readNotifications } from "../../../config/Dependency/user/notification.di";
 
-export const getInitData = async (req: Request, res: Response) => {
+import { HttpStatusCode } from "../http-status.enum";
+
+export const getInitData = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
 
@@ -11,7 +13,7 @@ export const getInitData = async (req: Request, res: Response) => {
 
         if (userData) {
 
-            res.status(200).json({
+            res.status(HttpStatusCode.OK).json({
                 status: true,
                 user: {
                     _id: userData._id,
@@ -28,7 +30,7 @@ export const getInitData = async (req: Request, res: Response) => {
         }
 
     } catch (err) {
-        console.error(`Error occured while trying to get init data. ${err}`);
+        next(err)
     }
 
 }
@@ -38,7 +40,7 @@ export const getNotifications = async (req: Request, res: Response, next: NextFu
     try {
 
         const notifications = await getNotificationsUse.execute(req.user.id);
-        res.status(200).json({ status: true, result: notifications });
+        res.status(HttpStatusCode.OK).json({ status: true, result: notifications });
         return;
 
     } catch (err) {
@@ -52,7 +54,7 @@ export const updateNotification = async (req: Request, res: Response, next: Next
 
         const { notificaionId, removeAll } = req.body;
         const result = await readNotifications.execute(req.user.id, notificaionId, removeAll);
-        res.status(200).json({ status: true });
+        res.status(HttpStatusCode.OK).json({ status: true });
         return;
 
     } catch (err) {

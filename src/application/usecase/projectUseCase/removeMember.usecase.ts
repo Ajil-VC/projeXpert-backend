@@ -7,8 +7,8 @@ export class RemoveMemberUseCase {
 
     async execute(projectId: string, userId: string, currUserId: string): Promise<boolean> {
 
-        if(userId === currUserId){
-            return false;
+        if (userId === currUserId) {
+            throw new Error('Current user and removing user are same.');
         }
         const result = await this.projectRepo.removeMemberFromProject(projectId, userId);
         if (!result) throw new Error('Couldnt remove member from project');
