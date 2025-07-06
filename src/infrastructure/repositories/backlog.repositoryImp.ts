@@ -10,6 +10,27 @@ import { Sprint } from "../database/models/sprint.interface";
 export class BacklogRepositoryImp implements IBacklogRepository {
 
 
+    async updateEpic(title: string, description: string, startDate: string, endDate: string, epicId: string): Promise<Task | null> {
+
+        const epicIdOb = new mongoose.Types.ObjectId(epicId);
+        const updatedEpic = await taskModel.findOneAndUpdate(
+            { _id: epicIdOb },
+            {
+                $set: {
+                    title,
+                    description,
+                    startDate: new Date(startDate),
+                    endDate: new Date(endDate)
+                }
+            },
+            { new: true }
+        );
+        if (!updatedEpic) return null;
+
+        return updatedEpic;
+    }
+
+
     async startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<any> {
 
         const sprintIdOb = new mongoose.Types.ObjectId(sprintId);
@@ -86,11 +107,17 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         const availableSprints: Sprint[] = await SprintModel.find({ projectId: projectIdOb })
             .populate({
                 path: 'tasks', model: 'Task',
-                populate: {
-                    path: 'assignedTo',
-                    model: 'User',
-                    select: '_id name email profilePicUrl role createdAt updatedAt'
-                }
+                populate: [
+                    {
+                        path: 'assignedTo',
+                        model: 'User',
+                        select: '_id name email profilePicUrl role createdAt updatedAt'
+                    },
+                    {
+                        path: 'epicId',
+                        model: 'Task'
+                    }
+                ]
             }).exec();
         if (!availableSprints) throw new Error('Error occured while fetching sprints');
         return availableSprints;
@@ -176,12 +203,15 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         });
 
         const createdTask = await newTask.save();
+        const populatedTask = await taskModel.findById(createdTask._id).populate('epicId');
+
         if (taskGroup !== 'backlog') {
             await SprintModel.findByIdAndUpdate(sprintId, { $push: { tasks: createdTask._id } });
         }
-        if (!createdTask) throw new Error('Error occured while creating task');
 
-        return createdTask;
+        if (!populatedTask) throw new Error('Error occured while creating task');
+
+        return populatedTask;
 
     }
 
@@ -197,19 +227,26 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         }
         const tasks = await taskModel.find(query)
             .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
-            .populate({ path: 'sprintId' });
+            .populate({ path: 'sprintId' })
+            .populate({ path: 'epicId' });
         return tasks;
 
     }
 
 
-    async createEpic(epicName: string, projectId: string): Promise<Task | null> {
+    async createEpic(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task | null> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const userIdOb = new mongoose.Types.ObjectId(userId);
 
         const newTask = new taskModel({
-            title: epicName,
+            title: title,
             type: "epic",
+            description: description,
+
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
+            createdBy: userIdOb,
             status: "in-progress",
             projectId: projectIdOb
         });

@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose"
+import mongoose, { Schema, model } from "mongoose"
 import { Project } from "./models/project.interface"
 
 
@@ -19,5 +19,5 @@ const projectSchema = new Schema<Project>({
 
 }, { timestamps: true })
 
-const projectModel = model<Project>('Project', projectSchema);
+const projectModel = mongoose.models.Project || model<Project>('Project', projectSchema);
 export default projectModel;

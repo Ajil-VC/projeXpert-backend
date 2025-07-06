@@ -21,10 +21,11 @@ import {
     sendMessageSchema,
     startConversationSchema,
     startSprintSchema,
-    taskStatusUpdateSchema
+    taskStatusUpdateSchema,
+    updateEpicSchema
 } from '../../application/validator/user.validator';
 
-import { assignIssue, changeTaskStatus, completeSprint, createEpic, createIssue, createSprint, deleteCloudinaryAttachment, dragDropUpdate, getSprints, getTasks, startSprint, updateTaskDetails } from '../controllers/user/backlog.controller';
+import { addComment, assignIssue, changeTaskStatus, completeSprint, createEpic, createIssue, createSprint, deleteCloudinaryAttachment, dragDropUpdate, getComments, getSprints, getTasks, startSprint, updateEpic, updateTaskDetails } from '../controllers/user/backlog.controller';
 import { getTeam } from '../controllers/user/team.controller';
 import { createWorkspace } from '../controllers/user/workspace.controller';
 import { getChats, getMessages, sendMessage, startConversation } from '../controllers/user/chat.controller';
@@ -55,12 +56,15 @@ userRouter.put('/update-project', authenticateAsAdmin, updateProject);
 userRouter.delete('/delete-project/:projectId/:workSpaceId', authenticateAsAdmin, deleteProject);
 
 userRouter.post('/create-epic', authenticateAsAdmin, validateBody(createEpicSchema), createEpic);
+userRouter.put('/update-epic', authenticateAsAdmin, validateBody(updateEpicSchema), updateEpic);
 userRouter.post('/create-issue', authenticateAsAdmin, validateBody(createIssueSchema), createIssue);
 userRouter.post('/create-sprint', authenticateAsAdmin, validateBody(createSprintSchema), createSprint);
 userRouter.get('/get-sprints/:projectId', authenticateAsAdmin, getSprints);
 userRouter.get('/get-sprints/kanban/:projectId', authenticateUser, getSprints);
 userRouter.get('/tasks', authenticateUser, getTasks);
 userRouter.get('/tasks/kanban', authenticateUser, getTasks);
+userRouter.get('/get-comments', authenticateUser, getComments);
+userRouter.post('/add-comment',authenticateUser, addComment);
 
 userRouter.get('/team', authenticateUser, getTeam);
 userRouter.patch('/assign-issue', authenticateAsAdmin, validateBody(assignIssueSchema), assignIssue);

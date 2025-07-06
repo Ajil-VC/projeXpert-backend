@@ -1,5 +1,5 @@
-import { model, Schema } from "mongoose";
-import { Attachment, Task } from "./models/task.interface";
+import mongoose, { model, Schema } from "mongoose";
+import { Attachment, Comment, Task } from "./models/task.interface";
 
 
 const AttachmentSchema = new Schema<Attachment>({
@@ -7,6 +7,7 @@ const AttachmentSchema = new Schema<Attachment>({
     url: { type: String, required: true },
 
 }, { _id: false });
+
 
 const TaskSchema = new Schema<Task>({
 
@@ -16,10 +17,16 @@ const TaskSchema = new Schema<Task>({
     status: { type: String, enum: ["in-progress", "todo", "done"], default: 'todo' },
     priority: { type: String, enum: ['low', 'medium', 'high', 'critical'], default: 'medium' },
     assignedTo: { type: Schema.Types.ObjectId, default: null, ref: 'User' },
-    epicId: { type: Schema.Types.ObjectId, default: null },
+    epicId: { type: Schema.Types.ObjectId, default: null, ref: 'Task' },
+    startDate: { type: Date, default: null },
+    endDate: { type: Date, default: null },
+
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    progress: { type: Number, default: 0 },
+
     sprintId: { type: Schema.Types.ObjectId, default: null, ref: 'Sprint' },
     parentId: { type: Schema.Types.ObjectId },
-    projectId: { type: Schema.Types.ObjectId },
+    projectId: { type: Schema.Types.ObjectId, required: true, ref: 'Project' },
 
     attachments: {
         type: [AttachmentSchema],
@@ -28,5 +35,5 @@ const TaskSchema = new Schema<Task>({
 
 }, { timestamps: true })
 
-const taskModel = model<Task>('Task', TaskSchema);
+const taskModel = mongoose.models.Task || model<Task>('Task', TaskSchema);
 export default taskModel;

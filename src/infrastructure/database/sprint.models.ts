@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { Sprint } from "./models/sprint.interface";
 
 
@@ -24,5 +24,5 @@ const SprintSchema = new Schema<Sprint>({
     timestamps: true
 });
 
-const SprintModel = model<Sprint>('Sprint', SprintSchema);
+const SprintModel = mongoose.models.Sprint || model<Sprint>('Sprint', SprintSchema);
 export default SprintModel;

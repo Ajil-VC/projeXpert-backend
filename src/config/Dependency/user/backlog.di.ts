@@ -10,9 +10,11 @@ import { StartSprintUsecase } from "../../../application/usecase/backlogUseCase/
 
 import { BacklogRepositoryImp } from "../../../infrastructure/repositories/backlog.repositoryImp";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
+import { UpdateEpicUsecase } from "../../../application/usecase/backlogUseCase/updateEpic.usecase";
 
 const backlogRepository: IBacklogRepository = new BacklogRepositoryImp();
 
+export const updateEpicUse = new UpdateEpicUsecase(backlogRepository);
 export const createEpicUsecase = new CreateEpicUsecase(backlogRepository);
 export const createIssueUsecase = new CreateIssueUsecase(backlogRepository);
 export const createSprintUsecase = new CreateSprintUsecase(backlogRepository);

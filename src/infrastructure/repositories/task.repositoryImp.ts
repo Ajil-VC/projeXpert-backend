@@ -1,12 +1,53 @@
 import mongoose from "mongoose";
 import { ITaskRepository } from "../../domain/repositories/task.repo";
-import { Task } from "../database/models/task.interface";
+import { Comment, Task } from "../database/models/task.interface";
 import taskModel from "../database/task.models";
 import SprintModel from "../database/sprint.models";
+import commentModel from "../database/comment.models";
 
 
 
 export class TaskRepositoryImp implements ITaskRepository {
+
+
+    async addComment(userId: string, taskId: string, content: string): Promise<Comment> {
+
+        const userIdOb = new mongoose.Types.ObjectId(userId);
+        const taskIdOb = new mongoose.Types.ObjectId(taskId);
+
+        const newComment = new commentModel({
+            taskId: taskIdOb,
+            userId: userIdOb,
+            content: content,
+        });
+
+        const comment = await newComment.save();
+        if (!comment) throw new Error('Couldnt add comment');
+
+        const createdComment = await commentModel.findOne({ _id: comment._id })
+            .populate({ path: 'userId', select: '_id name email profilePicUrl role' });
+
+        if (!createdComment) throw new Error('Couldnt get the added comment');
+
+        return createdComment;
+
+    }
+
+
+
+    async getCommentsInTask(taskId: string): Promise<Comment[]> {
+
+        const taskIdOb = new mongoose.Types.ObjectId(taskId);
+
+        const comments = await commentModel.find({ taskId: taskIdOb })
+            .populate({ path: 'userId', select: '_id name email profilePicUrl role' }).sort({ createdAt: -1 });
+
+        if (!comments) {
+            throw new Error("Method not implemented.");
+        }
+
+        return comments;
+    }
 
 
     async removeAttachment(publicId: string, taskId: string): Promise<Task> {
@@ -28,7 +69,7 @@ export class TaskRepositoryImp implements ITaskRepository {
     }
 
 
-    async completeSprint(completingSprintId: string, movingSprintId: string | null, projectId: string): Promise<Array<Task> | null | boolean> {
+    async completeSprint(completingSprintId: string, movingSprintId: string | null, projectId: string): Promise<Array<Task> | null> {
 
         const finishingSprintIdOb = new mongoose.Types.ObjectId(completingSprintId);
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
@@ -46,7 +87,7 @@ export class TaskRepositoryImp implements ITaskRepository {
                     }
                 }
             )
-            return true;
+            return [];
         } else {
 
             const completingSprint = await SprintModel.findOne({ projectId: projectIdOb, _id: finishingSprintIdOb }).populate({
@@ -57,10 +98,10 @@ export class TaskRepositoryImp implements ITaskRepository {
                 return null;
             }
             completingSprint.tasks = completingSprint.tasks as Array<Task>;
-            const inCompletedTasks = completingSprint?.tasks.filter(task => task?.status !== 'done')
+            const inCompletedTasks = completingSprint?.tasks.filter((task: Task) => task?.status !== 'done')
 
             //Updating the moving sprint by adding incompleted tasks into it.
-            const taskIds = inCompletedTasks.map(task => task._id);
+            const taskIds = inCompletedTasks.map((task: Task) => task._id);
 
             if (movingSprintId === 'backlog') {
 

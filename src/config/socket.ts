@@ -32,11 +32,10 @@ export const setupSocket = (server: any) => {
 
             const decoded = jwt.verify(token, config.JWT_SECRETKEY, (err: any, decoded: any) => {
 
-                if (err) return
-                socket.data.user = decoded;
-                console.log('Authentication in socket: ', socket.data.user);
-                next();
+                if (err) return next(new Error('Authentication error: Invalid token'));
 
+                socket.data.user = decoded;
+                next();
             });
 
         } catch (err) {
@@ -62,7 +61,7 @@ export const setupSocket = (server: any) => {
         socket.on('video-signal', async (data) => {
             const { to, type, offer, answer, candidate, projectId, convoId, messageId } = data;
             let msgId = messageId;
-            
+
             const targetSocketId = getUserSocket(to);
             if (!targetSocketId) {
                 console.warn(`Target user ${to} is not connected`);

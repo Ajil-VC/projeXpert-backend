@@ -75,7 +75,7 @@ export const sendMessage = async (req: Request, res: Response, next: NextFunctio
 
         const { projecId, convoId, recieverId, message } = req.body;
         const result = await sendMessagesUsecase.execute(projecId, convoId, req.user.id, recieverId, message);
-        const createdNotification = await notification.execute(req.user.id, recieverId, 'message', `You got a message from ${req.user.email}`, '');
+        const createdNotification = await notification.execute(req.user.id, recieverId, 'message', `You got a message from ${req.user.email}`, 'user/chat');
 
         const recieverSocketId = getUserSocket(recieverId);
         const senderSocketId = getUserSocket(req.user.id);

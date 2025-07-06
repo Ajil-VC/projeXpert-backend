@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { Message } from "./models/message.interface";
+import mongoose from "mongoose";
 
 const messageSchema = new Schema<Message>({
 
@@ -16,5 +17,5 @@ const messageSchema = new Schema<Message>({
 
 }, { timestamps: true })
 
-const messageModel = model<Message>('Message', messageSchema);
+const messageModel = mongoose.models.Message || model<Message>('Message', messageSchema);
 export default messageModel;

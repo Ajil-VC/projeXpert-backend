@@ -1,5 +1,5 @@
 
-import {Schema, model } from 'mongoose';
+import mongoose, {Schema, model } from 'mongoose';
 import { Otp } from './models/otp.interface';
 
 
@@ -10,5 +10,5 @@ const otpSchema = new Schema<Otp>({
     createdAt : { type : Date, default : Date.now, expires : 60}
 })
 
-const otpModel = model<Otp>('Otp',otpSchema);
+const otpModel = mongoose.models.Otp || model<Otp>('Otp',otpSchema);
 export default otpModel;

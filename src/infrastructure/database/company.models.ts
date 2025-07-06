@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { Company } from "./models/company.interface";
 
 const companySchema = new Schema<Company>({
@@ -11,5 +11,5 @@ const companySchema = new Schema<Company>({
 
 }, { timestamps: true })
 
-const companyModel = model<Company>('Company', companySchema);
+const companyModel = mongoose.models.Company ||model<Company>('Company', companySchema);
 export default companyModel;

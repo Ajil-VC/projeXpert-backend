@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { Notification } from "./models/notification.interface";
 import { model } from "mongoose";
 
@@ -18,5 +18,5 @@ const notificationSchema = new Schema<Notification>({
 
 }, { timestamps: true });
 
-const notificationModel = model<Notification>('Notification', notificationSchema);
+const notificationModel = mongoose.models.Notification || model<Notification>('Notification', notificationSchema);
 export default notificationModel;

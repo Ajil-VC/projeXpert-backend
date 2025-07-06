@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { createEpicUsecase } from "../../../config/Dependency/user/backlog.di";
+import { createEpicUsecase, updateEpicUse } from "../../../config/Dependency/user/backlog.di";
 import { createIssueUsecase } from "../../../config/Dependency/user/backlog.di";
 import { createSprintUsecase } from "../../../config/Dependency/user/backlog.di";
 import { getSprintsUsecase } from "../../../config/Dependency/user/backlog.di";
@@ -9,7 +9,7 @@ import { assignIssueUsecase } from "../../../config/Dependency/user/backlog.di";
 import { dragDropUsecase } from "../../../config/Dependency/user/backlog.di";
 import { changeTaskStatusUsecase } from "../../../config/Dependency/user/backlog.di";
 import { startSprintUsecase } from "../../../config/Dependency/user/backlog.di";
-import { removeAttachment, updateTaskDetailsUse } from "../../../config/Dependency/user/task.di";
+import { addCommentUse, removeAttachment, updateTaskDetailsUse } from "../../../config/Dependency/user/task.di";
 import { completeSprintUse } from "../../../config/Dependency/user/task.di";
 import { getIO } from "../../../config/socket";
 import { getUserSocket } from "../../../infrastructure/services/socket.manager";
@@ -18,14 +18,33 @@ import { notification } from "../../../config/Dependency/user/notification.di";
 import { HttpStatusCode } from "../http-status.enum";
 import { RESPONSE_MESSAGES } from "../response-messages.constant";
 
+import { getCommentsUse } from "../../../config/Dependency/user/task.di";
+
+
 export const createEpic = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
     try {
 
-        const { epicName, projectId } = req.body;
-        const result = await createEpicUsecase.execute(epicName, projectId);
+        const { title, description, startDate, endDate, projectId } = req.body;
+        const result = await createEpicUsecase.execute(title, description, startDate, endDate, projectId, req.user.id);
 
         res.status(HttpStatusCode.CREATED).json({ status: true, result });
+        return;
+
+    } catch (err) {
+
+        next(err);
+    }
+}
+
+export const updateEpic = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+    try {
+
+        const { title, description, startDate, endDate, epicId } = req.body;
+        const result = await updateEpicUse.execute(title, description, startDate, endDate, epicId);
+
+        res.status(HttpStatusCode.OK).json({ status: true, result });
         return;
 
     } catch (err) {
@@ -131,7 +150,7 @@ export const assignIssue = async (req: Request, res: Response, next: NextFunctio
 
         res.status(HttpStatusCode.OK).json({ status: true, message: 'Issue assigned successfully', data: result });
         if (assigneeId) {
-            const createdNotification = await notification.execute(req.user.id, assigneeId, 'task', `You are assigned to a task by ${req.user.email}`, '');
+            const createdNotification = await notification.execute(req.user.id, assigneeId, 'task', `You are assigned to a task by ${req.user.email}`, 'user/board');
             const assigneeSocketId = getUserSocket(assigneeId);
             if (assigneeSocketId) {
                 io.to(assigneeSocketId).emit('notification', createdNotification)
@@ -264,5 +283,42 @@ export const completeSprint = async (req: Request, res: Response, next: NextFunc
 
         next(err);
 
+    }
+}
+
+
+export const getComments = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+    try {
+
+        const taskId = req.query.task_id as string;
+
+        if (!taskId) throw new Error('Project Id and task Id cannot be null');
+
+        const result = await getCommentsUse.execute(taskId);
+        res.status(HttpStatusCode.OK).json({ status: true, result });
+        return;
+
+    } catch (err) {
+
+        next(err);
+    }
+}
+
+export const addComment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+    try {
+
+        const { taskId, content } = req.body;
+        if (!taskId || !content) {
+            throw new Error('Task ID or content cannot be null');
+        }
+
+        const result = await addCommentUse.execute(req.user.id, taskId, content);
+        res.status(HttpStatusCode.CREATED).json({ status: true, result });
+        return
+
+    } catch (err) {
+        next(err);
     }
 }

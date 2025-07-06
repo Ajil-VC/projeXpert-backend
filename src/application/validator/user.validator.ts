@@ -9,9 +9,21 @@ export const projectCreationSchema = yup.object({
 });
 
 export const createEpicSchema = yup.object({
-    epicName: yup.string().required('Epic name is required'),
+    title: yup.string().required('Epic name is required'),
+    description: yup.string(),
+    startDate: yup.string().required('Start date is required'),
+    endDate: yup.string().required('End Date is required'),
     projectId: yup.string().required('projectId is required')
 });
+
+export const updateEpicSchema = yup.object({
+    title: yup.string().required('Epic name is required'),
+    description: yup.string(),
+    startDate: yup.string().required('Start date is required'),
+    endDate: yup.string().required('End Date is required'),
+    epicId: yup.string().required('EpicId is required')
+});
+
 
 export const createIssueSchema = yup.object({
     projectId: yup.string().required('Project Id is required'),

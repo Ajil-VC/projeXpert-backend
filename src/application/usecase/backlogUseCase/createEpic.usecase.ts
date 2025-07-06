@@ -7,13 +7,13 @@ export class CreateEpicUsecase {
 
     constructor(private backlogRepo: IBacklogRepository) { }
 
-    async execute(epicName: string, projectId: string): Promise<Task> {
+    async execute(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task> {
 
-        const result = await this.backlogRepo.createEpic(epicName, projectId);
-        if(!result){
+        const result = await this.backlogRepo.createEpic(title, description, startDate, endDate, projectId, userId);
+        if (!result) {
             throw new Error('Couldnt create epic');
         }
-        
+
         return result;
     }
 }

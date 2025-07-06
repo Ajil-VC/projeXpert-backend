@@ -1,6 +1,7 @@
 
 import { model, Schema } from "mongoose";
 import { Conversation } from "./models/conversation.interface";
+import mongoose from "mongoose";
 
 const conversationSchema = new Schema<Conversation>({
 
@@ -16,5 +17,5 @@ const conversationSchema = new Schema<Conversation>({
 
 }, { timestamps: true })
 
-const conversationModel = model<Conversation>('Conversation', conversationSchema);
+const conversationModel = mongoose.models.Conversation || model<Conversation>('Conversation', conversationSchema);
 export default conversationModel;

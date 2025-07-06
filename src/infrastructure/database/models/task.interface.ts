@@ -1,11 +1,21 @@
 import { Document, ObjectId } from "mongoose";
 import { Team } from "./team.interface";
 import { Sprint } from "./sprint.interface";
+import { User } from "./user.interface";
 
 
 export interface Attachment {
     public_id: string;
     url: string;
+}
+
+export interface Comment {
+
+    taskId: ObjectId,
+    userId: ObjectId,
+    content: string,
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface Task extends Document {
@@ -17,7 +27,14 @@ export interface Task extends Document {
     status: "in-progress" | "todo" | "done";
     priority: 'low' | 'medium' | 'high' | 'critical';
     assignedTo: ObjectId | Team;
-    epicId: ObjectId;       // Refers to a parent epic if any
+
+    epicId: ObjectId | Task;       // Refers to a parent epic if any
+    startDate?: Date; // Only for epics (epic timeframe)
+    endDate?: Date;   // Only for epics
+
+    createdBy?: ObjectId;
+    progress?: number;
+
     sprintId: ObjectId | Sprint;     // Logical grouping for sprints
     sprintNumber: Number; //Only for sprints
     parentId: ObjectId;     // for subtasks

@@ -3,7 +3,9 @@ import { Task } from "../../infrastructure/database/models/task.interface";
 
 export interface IBacklogRepository {
 
-    createEpic(epicName: string, projectId: string): Promise<Task | null>;
+    updateEpic(title: string, description: string, startDate: string, endDate: string, epicId: string): Promise<Task | null>;
+
+    createEpic(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task | null>;
 
     getTasks(projectId: string, userRole: string, userId: string): Promise<any>;
 
