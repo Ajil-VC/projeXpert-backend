@@ -2,7 +2,7 @@ import { PopulatedUser } from "../../../infrastructure/database/models/populated
 import { Project } from "../../../infrastructure/database/models/project.interface";
 import { WorkSpace } from "../../../infrastructure/database/models/workspace.interface";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
-import { UserDeepMapper } from "../../../interfaces/mappers/user/userdeep.mapper";
+import { UserDeepMapper } from "../../../mappers/user/userdeep.mapper";
 
 export class InitDashBoardUseCase {
 

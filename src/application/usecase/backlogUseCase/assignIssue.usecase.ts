@@ -1,7 +1,7 @@
 import { Task } from "../../../infrastructure/database/models/task.interface";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
-import { TaskMapper } from "../../../interfaces/mappers/task/task.mapper";
-import { TaskResponseDetailedDTO } from "../../../interfaces/dtos/task/taskResponseDTO";
+import { TaskMapper } from "../../../mappers/task/task.mapper";
+import { TaskResponseDetailedDTO } from "../../../dtos/task/taskResponseDTO";
 
 
 export class AssignIssueUseCase {

@@ -22,7 +22,7 @@ export class UpdateProjectUseCase {
 
         if (!(result[0] && result[1])) throw new Error('Error occured while updating the project.');
 
-        return true;
+        return isUpdated;
 
     }
 }

@@ -21,11 +21,11 @@ export class projectRepositoryImp implements IProjectRepository {
 
         const unknownData = workSpace?.projects as unknown;
         const workspaceWithProjects = unknownData as Array<Project>
-        if(!workspaceWithProjects) throw new Error('Projects not available.');
+        if (!workspaceWithProjects) throw new Error('Projects not available.');
 
-        for(let project of workspaceWithProjects){
+        for (let project of workspaceWithProjects) {
             const proId = project._id as unknown;
-            if(projectIdOb.equals(new mongoose.Types.ObjectId(proId as string))){
+            if (projectIdOb.equals(new mongoose.Types.ObjectId(proId as string))) {
                 return project;
             }
         }
@@ -88,16 +88,21 @@ export class projectRepositoryImp implements IProjectRepository {
     }
 
 
-    async updateProject(projectId: string, projectName: string, status: string, priority: string): Promise<any> {
+    async updateProject(projectId: string, projectName: string, status: string, priority: string): Promise<Project> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
 
-        const updatedResult = await projectModel.updateOne({ _id: projectIdOb },
-            { $set: { name: projectName, status: status, priority: priority } }
-        );
+        const updatedResult = await projectModel.findOneAndUpdate(
+            { _id: projectIdOb },
+            { $set: { name: projectName, status: status, priority: priority } },
+            { new: true }
+        ).populate({
+            path: 'members', model: 'User',
+            select: '_id name email profilePicUrl role createdAt updatedAt'
+        });
 
-        if (!updatedResult.acknowledged) throw new Error('couldnt update the project');
-        return true;
+        if (!updatedResult) throw new Error('couldnt update the project');
+        return updatedResult;
     }
 
     async addMemberToProject(projectId: string, email: string): Promise<Project> {
@@ -122,21 +127,26 @@ export class projectRepositoryImp implements IProjectRepository {
     }
 
 
-    async getProjects(workSpaceId: String): Promise<Array<any>> {
+    async getProjects(workSpaceId: String, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }> {
 
         if (typeof workSpaceId !== 'string') throw new Error('Workspace Id is not valid string');
         const workSpaceObjectId = new mongoose.Types.ObjectId(workSpaceId);
+        
+        const totalCount = await projectModel.countDocuments({ workSpace: workSpaceObjectId, status: { $in: filter } });
 
-        const workSpaceData = await workSpaceModel.findById(workSpaceObjectId)
+
+        const projectsInWorkspace = await projectModel.find({ workSpace: workSpaceObjectId, status: { $in: filter } })
+            .skip(skip)
+            .limit(limit)
             .populate({
-                path: 'projects',
-                populate: {
-                    path: 'members'
-                }
-            }).exec();
+                path: 'members', model: 'User',
+                select: '_id name email profilePicUrl role createdAt updatedAt'
+            });
+            
+        const totalPages = Math.ceil(totalCount / limit);
 
-        if (!workSpaceData) throw new Error('Workspace didnt find');
-        return workSpaceData.projects;
+        if (!projectsInWorkspace) throw new Error('Workspace didnt find');
+        return { projects: projectsInWorkspace, totalPage: totalPages };
 
     }
 

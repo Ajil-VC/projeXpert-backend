@@ -12,9 +12,9 @@ export interface IProjectRepository {
         memberId: String
     ): Promise<Project>;
 
-    getProjects(workSpaceId: String): Promise<Array<any>>;
+    getProjects(workSpaceId: String, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }>;
 
-    getCurProject(workspaceId : string, projectId : string):Promise<any>;
+    getCurProject(workspaceId: string, projectId: string): Promise<any>;
 
     addMemberToProject(projectId: string, email: string): Promise<Project>;
 
@@ -24,7 +24,7 @@ export interface IProjectRepository {
         projectName: string,
         status: string,
         priority: string
-    ): Promise<boolean>;
+    ): Promise<Project>;
 
     deleteProject(projectId: string, workSpaceId: string): Promise<any>;
 }

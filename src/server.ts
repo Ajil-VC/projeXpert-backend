@@ -5,8 +5,8 @@ import connectDB from './config/connectDB';
 import morgan from 'morgan';
 import cors from 'cors';
 import { config } from './config/config';
-import userRouter from './interfaces/routes/userRoutes';
-import companyRouter from './interfaces/routes/companyRoutes';
+import userRouter from './routes/userRoutes';
+import companyRouter from './routes/companyRoutes';
 import { setupSocket } from './config/socket';
 import cookieParser from 'cookie-parser';
 
@@ -16,7 +16,7 @@ import logger from './utils/logger';
 
 
 import http from 'http';
-import adminRouter from './interfaces/routes/adminRoutes';
+import adminRouter from './routes/adminRoutes';
 
 const app = express();
 
