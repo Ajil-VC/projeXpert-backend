@@ -8,7 +8,7 @@ import { DragDropUseCase } from "../../../application/usecase/backlogUseCase/dra
 import { ChangeTaskStatus } from "../../../application/usecase/backlogUseCase/changeTaskStatus.usecase";
 import { StartSprintUsecase } from "../../../application/usecase/backlogUseCase/startSprint.usecase";
 
-import { BacklogRepositoryImp } from "../../../infrastructure/repositories/backlog.repositoryImp";
+import { BacklogRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/backlog.repositoryImp";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import { UpdateEpicUsecase } from "../../../application/usecase/backlogUseCase/updateEpic.usecase";
 

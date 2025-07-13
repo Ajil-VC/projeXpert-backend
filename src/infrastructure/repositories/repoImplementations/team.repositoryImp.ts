@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { ITeamRepository } from "../../domain/repositories/team.repo";
-import projectModel from "../database/project.models";
-import { User } from "../database/models/user.interface";
-import { Team } from "../database/models/team.interface";
-import taskModel from "../database/task.models";
-import userModel from "../database/user.models";
+import { ITeamRepository } from "../../../domain/repositories/team.repo";
+import projectModel from "../../database/project.models";
+import { User } from "../../database/models/user.interface";
+import { Team } from "../../database/models/team.interface";
+import taskModel from "../../database/task.models";
+import userModel from "../../database/user.models";
 
 
 export class TeamRepositoryImp implements ITeamRepository {

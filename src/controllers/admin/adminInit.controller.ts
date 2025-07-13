@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { adminInitUsecase } from "../../config/Dependency/admin/adminInit.di";
 
-import { HttpStatusCode } from "../http-status.enum";
+import { HttpStatusCode } from "../../config/http-status.enum";
 import { IAdminInit } from "../../interfaces/admin/adminInit.controller.interface";
 import { AdminInitUseCase } from "../../application/usecase/admin/admininit.usecase";
 

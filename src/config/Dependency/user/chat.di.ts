@@ -3,7 +3,7 @@ import { GetChats } from "../../../application/usecase/chatUseCase/getChats.usec
 import { GetMessagesUseCase } from "../../../application/usecase/chatUseCase/getMessages.usecase";
 import { SendMessageUsecase } from "../../../application/usecase/chatUseCase/sendMessage.usecase";
 
-import { ChatRepositoryImp } from "../../../infrastructure/repositories/chat.repositoryImp";
+import { ChatRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/chat.repositoryImp";
 import { IChatRepository } from "../../../domain/repositories/chat.repo";
 
 import { SaveVideoCallUsecase } from "../../../application/usecase/chatUseCase/saveVideocallRecord.usecase";

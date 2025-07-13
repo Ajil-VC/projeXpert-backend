@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { getTeammembersUsecase } from "../../config/Dependency/user/team.di";
 
-import { HttpStatusCode } from "../http-status.enum";
-import { RESPONSE_MESSAGES } from "../response-messages.constant";
+import { HttpStatusCode } from "../../config/http-status.enum";
+import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 import { ITeamController } from "../../interfaces/user/team.controller.interface";
 import { GetTeamMembers } from "../../application/usecase/teamManagement/getTeam.usecase";
 

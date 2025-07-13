@@ -9,8 +9,8 @@ import { getUserSocket } from "../../infrastructure/services/socket.manager";
 import { getIO } from "../../config/socket";
 import { notification } from "../../config/Dependency/user/notification.di";
 
-import { HttpStatusCode } from "../http-status.enum";
-import { RESPONSE_MESSAGES } from "../response-messages.constant";
+import { HttpStatusCode } from "../../config/http-status.enum";
+import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 import { IChatController } from "../../interfaces/user/chat.controller.interface";
 import { ChatUseCase } from "../../application/usecase/chatUseCase/startConversation.usecase";
 import { GetChats } from "../../application/usecase/chatUseCase/getChats.usecase";
@@ -39,10 +39,10 @@ export class ChatController implements IChatController {
 
         try {
 
-            const { userId, projectId } = req.body;
+            const { userId } = req.body;
 
-            if (typeof userId !== 'string' || typeof projectId !== 'string') {
-                throw new Error('userId or projectId is not valid string');
+            if (typeof userId !== 'string') {
+                throw new Error('userId is not valid string');
             }
 
             if (userId === req.user.id) {
@@ -50,7 +50,7 @@ export class ChatController implements IChatController {
                 return;
             }
 
-            const result = await this.chatUsecase.execute(userId, req.user.id, projectId);
+            const result = await this.chatUsecase.execute(userId, req.user.id, req.user.companyId);
 
             res.status(HttpStatusCode.CREATED).json({ status: true, message: 'Conversation started', result });
             return;
@@ -66,7 +66,7 @@ export class ChatController implements IChatController {
     getChats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
 
-            const result = await this.getChatsUsecase.execute(req.user.id, req.params.projectId);
+            const result = await this.getChatsUsecase.execute(req.user.id, req.user.companyId);
 
             res.status(HttpStatusCode.OK).json({ status: true, message: 'Chats fetched', result });
             return;
@@ -98,8 +98,8 @@ export class ChatController implements IChatController {
 
             const io = getIO();
 
-            const { projecId, convoId, recieverId, message } = req.body;
-            const result = await this.sendMessagesUsecase.execute(projecId, convoId, req.user.id, recieverId, message);
+            const { convoId, recieverId, message } = req.body;
+            const result = await this.sendMessagesUsecase.execute(convoId, req.user.id, recieverId, message);
             const createdNotification = await this.notification.execute(req.user.id, recieverId, 'message', `You got a message from ${req.user.email}`, 'user/chat');
 
             const recieverSocketId = getUserSocket(recieverId);

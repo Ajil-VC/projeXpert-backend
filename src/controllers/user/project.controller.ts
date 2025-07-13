@@ -9,9 +9,10 @@ import { removeMemberUsecase } from "../../config/Dependency/user/project.di";
 import { updateProjectUsecase } from "../../config/Dependency/user/project.di";
 import { deleteProjectUsecase } from "../../config/Dependency/user/project.di";
 import { getTasksUsecase } from "../../config/Dependency/user/project.di";
+import { projectStatsUse } from "../../config/Dependency/user/project.di";
 
-import { HttpStatusCode } from "../http-status.enum";
-import { RESPONSE_MESSAGES } from "../response-messages.constant";
+import { HttpStatusCode } from "../../config/http-status.enum";
+import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 import { IProjectController } from "../../interfaces/user/project.controller.interface";
 import { GetWorkSpaceUseCase } from "../../application/usecase/workspaceUsecase/getWorkspace.usecase";
 import { createProjectUseCase } from "../../application/usecase/projectUseCase/createProject.usecase";
@@ -22,6 +23,7 @@ import { AddMemberUseCase } from "../../application/usecase/projectUseCase/addMe
 import { RemoveMemberUseCase } from "../../application/usecase/projectUseCase/removeMember.usecase";
 import { UpdateProjectUseCase } from "../../application/usecase/projectUseCase/updateProject.usecase";
 import { DeleteProjectUsecase } from "../../application/usecase/projectUseCase/deleteProject.usecase";
+import { ProjectStatsUseCase } from "../../application/usecase/projectUseCase/projectstats.usecase";
 
 
 export class ProjectController implements IProjectController {
@@ -35,6 +37,8 @@ export class ProjectController implements IProjectController {
     private removeMemberUsecase: RemoveMemberUseCase;
     private updateProjectUsecase: UpdateProjectUseCase;
     private deleteProjectUsecase: DeleteProjectUsecase;
+    private projectStatsUse: ProjectStatsUseCase;
+
     constructor() {
 
         this.getWorkspaceUsecase = getWorkspaceUsecase;
@@ -46,6 +50,28 @@ export class ProjectController implements IProjectController {
         this.removeMemberUsecase = removeMemberUsecase;
         this.updateProjectUsecase = updateProjectUsecase;
         this.deleteProjectUsecase = deleteProjectUsecase;
+        this.projectStatsUse = projectStatsUse
+    }
+
+
+    projectStats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+        try {
+
+            const projectId = req.params.projectId;
+            const groupedData = await this.projectStatsUse.execute(projectId, req.user.id, req.user.role);
+
+            if (!groupedData) {
+                res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'No tasks found' });
+                return;
+            }
+
+            res.status(HttpStatusCode.OK).json({ status: true, result: groupedData });
+            return;
+
+        } catch (err) {
+            next(err);
+        }
     }
 
 

@@ -7,7 +7,6 @@ const messageSchema = new Schema<Message>({
     conversationId: { type: Schema.Types.ObjectId },
     senderId: { type: Schema.Types.ObjectId },
     receiverId: { type: Schema.Types.ObjectId },
-    projectId: { type: Schema.Types.ObjectId },
     message: { type: String },
     seen: { type: Boolean, default: false },
 

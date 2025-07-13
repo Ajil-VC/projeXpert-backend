@@ -1,12 +1,23 @@
 import mongoose, { Types } from "mongoose";
-import { useCaseResult } from "../../application/shared/useCaseResult";
-import { Company } from "../database/models/company.interface";
-import { ICompanyRepository } from "../../domain/repositories/company.repo";
-import companyModel from "../database/company.models";
-import workSpaceModel from "../database/workspace.models";
+import { useCaseResult } from "../../../application/shared/useCaseResult";
+import { Company } from "../../database/models/company.interface";
+import { ICompanyRepository } from "../../../domain/repositories/company.repo";
+import companyModel from "../../database/company.models";
+import workSpaceModel from "../../database/workspace.models";
 
 
 export class CompanyRepositoryImp implements ICompanyRepository {
+
+
+    async updateCompanyDetails(company: Company): Promise<Company> {
+
+        const updatedCompany = await company.save();
+        if (!updatedCompany) {
+            throw new Error('Company couldnt update.');
+        }
+
+        return updatedCompany;
+    }
 
 
     async findCompanyById(companyId: string): Promise<Company> {

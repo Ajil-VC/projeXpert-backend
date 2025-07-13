@@ -7,7 +7,6 @@ export interface Message extends Document {
     conversationId: ObjectId,
     senderId: ObjectId,
     receiverId: ObjectId,
-    projectId: ObjectId,
     message: string,
     seen: boolean,
 

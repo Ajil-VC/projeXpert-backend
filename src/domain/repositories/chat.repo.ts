@@ -1,15 +1,16 @@
+import { Conversation } from "../../infrastructure/database/models/conversation.interface";
 import { Message } from "../../infrastructure/database/models/message.interface";
 
 
 export interface IChatRepository {
 
-    startConversation(recieverId: string, senderId: string, projectId: string): Promise<any>;
+    startConversation(recieverId: string, senderId: string, companyId: string): Promise<Conversation>;
 
-    getChats(userId: string, projectId: string): Promise<any>;
+    getChats(userId: string, companyId: string): Promise<Conversation[]>;
 
-    getMessages(convoId: string): Promise<any>;
+    getMessages(convoId: string): Promise<Message[]>;
 
-    sendMessage(projecId: string, convoId: string, senderId: string, recieverId: string, message: string): Promise<any>;
+    sendMessage(convoId: string, senderId: string, recieverId: string, message: string): Promise<Message>;
 
-    saveVideoCallRecord(projectId: string, convoId: string, senderId: string, recieverId: string, type: string, msgId: string | null): Promise<Message | null>;
+    saveVideoCallRecord(convoId: string, senderId: string, recieverId: string, type: string, msgId: string | null): Promise<Message | null>;
 }

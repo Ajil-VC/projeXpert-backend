@@ -10,13 +10,13 @@ import { RemoveMemberUseCase } from "../../../application/usecase/projectUseCase
 import { GetProjectUseCase } from "../../../application/usecase/projectUseCase/getProject.usecase";
 import { GetTasksUseCase } from "../../../application/usecase/backlogUseCase/getTasks.usecase";
 
-import { WorkspaceRepoImp } from "../../../infrastructure/repositories/workspace.repositoryImp";
+import { WorkspaceRepoImp } from "../../../infrastructure/repositories/repoImplementations/workspace.repositoryImp";
 import { IWorkspaceRepository } from "../../../domain/repositories/workspace.repo";
 
-import { projectRepositoryImp } from "../../../infrastructure/repositories/project.repositoryImp";
+import { projectRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/project.repositoryImp";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 
-import { userRepositoryImp } from "../../../infrastructure/repositories/user.repositoryImp";
+import { userRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/user.repositoryImp";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 
 import { EmailServiceImp } from "../../../infrastructure/services/email.serviceImp";
@@ -25,8 +25,9 @@ import { IEmailService } from "../../../domain/services/email.interface";
 import { SecurePasswordImp } from "../../../infrastructure/services/securepassword.serviceImp";
 import { ISecurePassword } from "../../../domain/services/securepassword.interface";
 
-import { BacklogRepositoryImp } from "../../../infrastructure/repositories/backlog.repositoryImp";
+import { BacklogRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/backlog.repositoryImp";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
+import { ProjectStatsUseCase } from "../../../application/usecase/projectUseCase/projectstats.usecase";
 
 const workspaceRepository: IWorkspaceRepository = new WorkspaceRepoImp();
 const userRepository: IUserRepository = new userRepositoryImp();
@@ -45,3 +46,4 @@ export const removeMemberUsecase = new RemoveMemberUseCase(projectRepository);
 export const updateProjectUsecase = new UpdateProjectUseCase(projectRepository, userRepository);
 export const deleteProjectUsecase = new DeleteProjectUsecase(projectRepository);
 export const getTasksUsecase = new GetTasksUseCase(backlogRepository);
+export const projectStatsUse = new ProjectStatsUseCase(projectRepository);

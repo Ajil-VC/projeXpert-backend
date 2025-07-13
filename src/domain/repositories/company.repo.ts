@@ -10,6 +10,7 @@ export interface ICompanyRepository {
     createCompany(companyName: string, email: string): Promise<string | useCaseResult>;
     createWorkspace(name: string, companyId: string): Promise<string | useCaseResult>;
 
+    updateCompanyDetails(company: Company): Promise<Company>;
     changeCompanyStatus(companyId: string, status: boolean): Promise<any>;
 
 }

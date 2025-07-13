@@ -7,5 +7,9 @@ export interface IWorkspaceRepository {
 
     getCompanyWithWorkSpace(companyId: String): Promise<Company | null>;
 
-    createWorkspace(workspaceName: string, companyId: string): Promise<WorkSpace | useCaseResult>;
+    createWorkspace(workspaceName: string, companyId: string, userId: string): Promise<WorkSpace | useCaseResult>;
+
+    getWorkspace(workspaceId: string): Promise<WorkSpace>;
+
+    countWorkspace(companyId: string): Promise<number>;
 }

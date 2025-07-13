@@ -1,6 +1,6 @@
-import { Otp } from "../database/models/otp.interface";
-import { IOtpRepository } from "../../domain/repositories/otp.repo";
-import otpModel from "../database/otp.models";
+import { Otp } from "../../database/models/otp.interface";
+import { IOtpRepository } from "../../../domain/repositories/otp.repo";
+import otpModel from "../../database/otp.models";
 
 
 export class OtpRepoImp implements IOtpRepository {

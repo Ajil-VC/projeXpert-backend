@@ -22,4 +22,6 @@ export interface IUserRepository {
 
     updateRole(members: Array<{ email: string, role: string }>, adminEmail: string): Promise<boolean>;
 
+    updateDefaultWorkspace(workspaceId: string, userId: string): Promise<User>;
+
 }

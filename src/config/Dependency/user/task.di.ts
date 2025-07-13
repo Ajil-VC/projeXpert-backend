@@ -1,5 +1,5 @@
 
-import { TaskRepositoryImp } from "../../../infrastructure/repositories/task.repositoryImp";
+import { TaskRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/task.repositoryImp";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
 import { UpdateTaskDetailsUsecase } from "../../../application/usecase/taskUsecase/updateTask.usecase";
 import { CompleteSprintUsecase } from "../../../application/usecase/taskUsecase/completesprint.usecase";
@@ -8,6 +8,7 @@ import { CloudUploadService } from "../../../infrastructure/services/cloud-uploa
 import { DeleteAttachmentUsecase } from "../../../application/usecase/taskUsecase/deleteAttachment.usecase";
 import { GetCommentsUseCase } from "../../../application/usecase/taskUsecase/getComment.usecase";
 import { AddCommentUseCase } from "../../../application/usecase/taskUsecase/addComment.usecase";
+import { EpicProgressUsecase } from "../../../application/usecase/taskUsecase/epicprogress.usecase";
 
 const cloudinarySer: ICloudinary = new CloudUploadService()
 const taskRepository: ITaskRepository = new TaskRepositoryImp();
@@ -17,3 +18,4 @@ export const completeSprintUse = new CompleteSprintUsecase(taskRepository);
 export const removeAttachment = new DeleteAttachmentUsecase(taskRepository, cloudinarySer);
 export const getCommentsUse = new GetCommentsUseCase(taskRepository);
 export const addCommentUse = new AddCommentUseCase(taskRepository);
+export const epicProgress = new EpicProgressUsecase(taskRepository);

@@ -8,11 +8,11 @@ export class SaveVideoCallUsecase {
 
 
     constructor(private chatRepo: IChatRepository) { }
-    async execute(projectId: string, convoId: string, senderId: string, recieverId: string, type: string, msgId: string | null): Promise<Message | null> {
+    async execute(convoId: string, senderId: string, recieverId: string, type: string, msgId: string | null): Promise<Message | null> {
 
         try {
-            
-            const result = await this.chatRepo.saveVideoCallRecord(projectId, convoId, senderId, recieverId, type, msgId);
+
+            const result = await this.chatRepo.saveVideoCallRecord(convoId, senderId, recieverId, type, msgId);
             return result;
         } catch (err) {
             console.error('Couldnt save the video call record.');

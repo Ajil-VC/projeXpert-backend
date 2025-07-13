@@ -13,7 +13,7 @@ const conversationSchema = new Schema<Conversation>({
     callerId: { type: Schema.Types.ObjectId, ref: 'User' },
 
     lastMessage: { type: String, default: '' },
-    projectId: { type: Schema.Types.ObjectId }
+    companyId: { type: Schema.Types.ObjectId }
 
 }, { timestamps: true })
 

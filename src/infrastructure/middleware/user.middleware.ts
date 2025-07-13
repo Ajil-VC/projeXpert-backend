@@ -6,7 +6,7 @@ import { Company } from "../database/models/company.interface";
 import { isUserBlocked } from "../../config/Dependency/auth/auth.di";
 
 
-// Extend the Request interface to include the user property
+
 declare global {
     namespace Express {
         interface Request {

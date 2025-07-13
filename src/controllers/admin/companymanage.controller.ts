@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { companyManagementUsecase } from "../../config/Dependency/admin/comapanymanage.di";
 import { companyStatusChangeUsecase } from "../../config/Dependency/admin/comapanymanage.di";
 
-import { HttpStatusCode } from "../http-status.enum";
+import { HttpStatusCode } from "../../config/http-status.enum";
 import { ICompanyManagement } from "../../interfaces/admin/company.controller.interface";
 import { changeUserStatusUseCase } from "../../application/usecase/admin/updateUserStatus.usecase";
 import { ChangeCompanyStatusUsecase } from "../../application/usecase/admin/updateCompanyStatus.usecase";

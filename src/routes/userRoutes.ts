@@ -1,5 +1,6 @@
 
 import express from 'express';
+import bodyParser from 'body-parser';
 import { validateBody } from '../infrastructure/middleware/validateBody';
 import { passWordChangeSchema, signinSchema } from '../application/validator/authValidator';
 import { authenticateAsAdmin, authenticateUser } from '../infrastructure/middleware/user.middleware';
@@ -26,6 +27,8 @@ import { UserInitController } from '../controllers/user/userInit.controller';
 import { TeamController } from '../controllers/user/team.controller';
 import { WorkSpaceController } from '../controllers/user/workspace.controller';
 import { AuthController } from '../controllers/authController';
+import { StripeController } from '../controllers/user/stripe.controller';
+import { PlanPolicyMiddleware } from '../infrastructure/middleware/planpolicy.middleware';
 
 const userRouter = express.Router();
 userRouter.use(express.urlencoded({ extended: true }));
@@ -37,21 +40,30 @@ const teamController = new TeamController();
 const userInitController = new UserInitController();
 const workspaceController = new WorkSpaceController();
 const authController = new AuthController();
+const stripeController = new StripeController();
+const planPolicyMiddleware = new PlanPolicyMiddleware();
 
 userRouter.get('/authenticate-user', authenticateUser, authController.isVerified);
 userRouter.post('/login', validateBody(signinSchema), authController.signIn);
 userRouter.post('/change-password', validateBody(passWordChangeSchema), authenticateUser, authController.changePassword);
 userRouter.post('/refresh-token', authController.refreshToken);
 
+userRouter.get('/subscription', authenticateUser, stripeController.getSubscriptionDetails);
+userRouter.post('/checkout', authenticateUser, stripeController.checkout);
+userRouter.get('/stripe/session/:sessionId', authenticateUser, stripeController.verifySubscription);
+
 userRouter.get('/get-notifications', authenticateUser, userInitController.getNotifications);
 userRouter.patch('/update-notificaions', authenticateUser, userInitController.updateNotification);
 
 userRouter.get('/init-data', authenticateUser, userInitController.getInitData);
 userRouter.get('/projects-initials', authenticateUser, projectController.getProjectsInitData);
-userRouter.post('/create-project', validateBody(projectCreationSchema), authenticateAsAdmin, projectController.createProject);
+userRouter.post('/create-project', validateBody(projectCreationSchema), authenticateAsAdmin, planPolicyMiddleware.checkPolicy('createProject'), projectController.createProject);
 userRouter.get('/init-projects', authenticateAsAdmin, projectController.getProjectData);
 userRouter.get('/get-project', authenticateUser, projectController.getProject);
-userRouter.post('/create-workspace', authenticateAsAdmin, validateBody(createWorkspaceSchema), workspaceController.createWorkspace);
+userRouter.post('/create-workspace', authenticateAsAdmin, validateBody(createWorkspaceSchema), planPolicyMiddleware.checkPolicy('createWorkspace'), workspaceController.createWorkspace);
+userRouter.get('/get-workspace', authenticateUser, workspaceController.getWorkspace);
+
+userRouter.get('/dashboard/:projectId', authenticateUser, projectController.projectStats);
 
 userRouter.post('/add-member', authenticateAsAdmin, projectController.addMember);
 userRouter.patch('/remove-member', authenticateAsAdmin, projectController.removeMember);
@@ -80,7 +92,7 @@ userRouter.put('/start-sprint', authenticateAsAdmin, validateBody(startSprintSch
 userRouter.put('/complete-sprint', authenticateUser, validateBody(completeSprintSchema), backlogController.completeSprint);
 
 userRouter.post('/start-conversation', authenticateUser, validateBody(startConversationSchema), chatController.startConversation);
-userRouter.get('/get-chats/:projectId', authenticateUser, chatController.getChats);
+userRouter.get('/get-chats', authenticateUser, chatController.getChats);
 userRouter.get('/get-messages/:convoId', authenticateUser, chatController.getMessages);
 userRouter.post('/send-message', authenticateUser, validateBody(sendMessageSchema), chatController.sendMessage);
 

@@ -13,4 +13,8 @@ export interface ITaskRepository {
     getCommentsInTask(taskId: string): Promise<Comment[]>;
 
     addComment(userId: string, taskId: string, content: string): Promise<Comment>;
+
+    getAllTasksUnderEpic(epicId: string): Promise<Task[]>;
+
+    updateEpicProgress(epicId: string, progress: number): Promise<Task>;
 }

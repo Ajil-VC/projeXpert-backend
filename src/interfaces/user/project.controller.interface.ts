@@ -16,4 +16,6 @@ export interface IProjectController {
     updateProject(req: Request, res: Response, next: NextFunction): Promise<void>;
 
     deleteProject(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+    projectStats(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

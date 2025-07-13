@@ -45,12 +45,6 @@ export const setupSocket = (server: any) => {
 
     io.on('connection', (socket) => {
 
-        //Commented code is for user registration in socket.
-        // But im already doing it while connecting to socket.
-        //So im skipping this for now.
-        // socket.on('register', (userId: string) => {
-        //     console.log(`User ${userId} registered with socket ${socket.id}`);
-        // });
 
         const userId = socket.data.user?.id;
         if (userId) {
@@ -59,18 +53,17 @@ export const setupSocket = (server: any) => {
         }
 
         socket.on('video-signal', async (data) => {
-            const { to, type, offer, answer, candidate, projectId, convoId, messageId } = data;
+            const { to, type, offer, answer, candidate, convoId, messageId } = data;
             let msgId = messageId;
-
             const targetSocketId = getUserSocket(to);
             if (!targetSocketId) {
+
                 console.warn(`Target user ${to} is not connected`);
                 return;
             }
 
-
             if (type === 'offer' || type === 'answer' || type === 'call-ended') {
-                const result = await saveVideoCallUse.execute(projectId, convoId, userId, to, type, msgId);
+                const result = await saveVideoCallUse.execute(convoId, userId, to, type, msgId);
                 msgId = result?._id;
             }
 

@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
-import { IChatRepository } from "../../domain/repositories/chat.repo";
-import conversationModel from "../database/conversation.models";
-import messageModel from "../database/message.models";
-import { Message } from "../database/models/message.interface";
+import { IChatRepository } from "../../../domain/repositories/chat.repo";
+import conversationModel from "../../database/conversation.models";
+import messageModel from "../../database/message.models";
+import { Message } from "../../database/models/message.interface";
+import { Conversation } from "../../database/models/conversation.interface";
 
 
 
 export class ChatRepositoryImp implements IChatRepository {
 
 
-    async saveVideoCallRecord(projectId: string, convoId: string, senderId: string, recieverId: string, type: string, msgId: string | null): Promise<Message | null> {
+    async saveVideoCallRecord(convoId: string, senderId: string, recieverId: string, type: string, msgId: string | null): Promise<Message | null> {
 
-        const projectIdOb = new mongoose.Types.ObjectId(projectId);
         const convoIdOb = new mongoose.Types.ObjectId(convoId);
         const senderIdOb = new mongoose.Types.ObjectId(senderId);
         const recieverIdOb = new mongoose.Types.ObjectId(recieverId);
@@ -21,7 +21,6 @@ export class ChatRepositoryImp implements IChatRepository {
                 conversationId: convoIdOb,
                 senderId: senderIdOb,
                 receiverId: recieverIdOb,
-                projectId: projectIdOb,
                 message: 'Video call',
                 type: "call",
                 callStatus: "missed"
@@ -59,9 +58,8 @@ export class ChatRepositoryImp implements IChatRepository {
     }
 
 
-    async sendMessage(projecId: string, convoId: string, senderId: string, recieverId: string, message: string): Promise<any> {
+    async sendMessage(convoId: string, senderId: string, recieverId: string, message: string): Promise<Message> {
 
-        const projectIdOb = new mongoose.Types.ObjectId(projecId);
         const convoIdOb = new mongoose.Types.ObjectId(convoId);
         const senderIdOb = new mongoose.Types.ObjectId(senderId);
         const recieverIdOb = new mongoose.Types.ObjectId(recieverId);
@@ -70,7 +68,6 @@ export class ChatRepositoryImp implements IChatRepository {
             conversationId: convoIdOb,
             senderId: senderIdOb,
             receiverId: recieverIdOb,
-            projectId: projectIdOb,
             message: message
         });
 
@@ -87,7 +84,7 @@ export class ChatRepositoryImp implements IChatRepository {
     }
 
 
-    async getMessages(convoId: string): Promise<any> {
+    async getMessages(convoId: string): Promise<Message[]> {
 
         const convoIdOb = new mongoose.Types.ObjectId(convoId);
         const retrievedMessages = await messageModel.find({
@@ -102,14 +99,14 @@ export class ChatRepositoryImp implements IChatRepository {
     }
 
 
-    async getChats(userId: string, projectId: string): Promise<any> {
+    async getChats(userId: string, companyId: string): Promise<Conversation[]> {
 
         const userIdOb = new mongoose.Types.ObjectId(userId);
-        const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const companyIdOb = new mongoose.Types.ObjectId(companyId);
 
         const availableChats = await conversationModel.find({
             participants: userIdOb,
-            projectId: projectIdOb
+            companyId: companyIdOb
         }).populate({ path: 'participants', select: '_id name email profilePicUrl role createdAt updatedAt' });
 
         if (!availableChats) {
@@ -120,20 +117,20 @@ export class ChatRepositoryImp implements IChatRepository {
 
     }
 
-    async startConversation(recieverId: string, senderId: string, projectId: string): Promise<any> {
+    async startConversation(recieverId: string, senderId: string, companyId: string): Promise<Conversation> {
 
         const senderIdOb = new mongoose.Types.ObjectId(senderId);
         const recieverIdOb = new mongoose.Types.ObjectId(recieverId);
-        const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const companyIdOb = new mongoose.Types.ObjectId(companyId);
 
         const newConversation = new conversationModel({
-            participants: [senderId, recieverIdOb],
-            projectId: projectIdOb
+            participants: [senderIdOb, recieverIdOb],
+            companyId: companyIdOb,
         });
 
         const isConvoExists = await conversationModel.findOne({
             participants: { $all: [senderIdOb, recieverIdOb] },
-            projectId: projectIdOb
+            companyId: companyIdOb
         }).populate({ path: 'participants', select: '_id name email profilePicUrl role createdAt updatedAt' });
 
         if (isConvoExists) {

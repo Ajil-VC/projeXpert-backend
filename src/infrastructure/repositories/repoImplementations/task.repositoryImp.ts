@@ -1,14 +1,38 @@
-import mongoose from "mongoose";
-import { ITaskRepository } from "../../domain/repositories/task.repo";
-import { Comment, Task } from "../database/models/task.interface";
-import taskModel from "../database/task.models";
-import SprintModel from "../database/sprint.models";
-import commentModel from "../database/comment.models";
+import mongoose, { ObjectId, Types } from "mongoose";
+import { ITaskRepository } from "../../../domain/repositories/task.repo";
+import { Comment, Task } from "../../database/models/task.interface";
+import taskModel from "../../database/task.models";
+import SprintModel from "../../database/sprint.models";
+import commentModel from "../../database/comment.models";
 
 
 
 export class TaskRepositoryImp implements ITaskRepository {
 
+
+    async getAllTasksUnderEpic(epicId: string): Promise<Task[]> {
+
+        const epicIdOb = new mongoose.Types.ObjectId(epicId);
+        const tasks = await taskModel.find({ epicId: epicIdOb });
+        if (!tasks) {
+
+            throw new Error("Tasks under epic couldnt get.");
+        }
+
+        return tasks;
+    }
+
+    async updateEpicProgress(epicId: string, progress: number): Promise<Task> {
+
+        const epicIdOb = new mongoose.Types.ObjectId(epicId);
+        const updatedEpic = await taskModel.findOneAndUpdate({ _id: epicIdOb }, { $set: { progress: progress } }, { new: true });
+
+        if (!updatedEpic) {
+            throw new Error('Couldnt update the epic');
+        }
+
+        return updatedEpic;
+    }
 
     async addComment(userId: string, taskId: string, content: string): Promise<Comment> {
 

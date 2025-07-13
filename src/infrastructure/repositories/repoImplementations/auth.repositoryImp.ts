@@ -1,5 +1,5 @@
-import { IAuthRepository } from "../../domain/repositories/auth.repo";
-import userModel from "../database/user.models";
+import { IAuthRepository } from "../../../domain/repositories/auth.repo";
+import userModel from "../../database/user.models";
 
 
 export class AuthRepositoryImp implements IAuthRepository {

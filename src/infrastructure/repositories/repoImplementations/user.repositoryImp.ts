@@ -1,11 +1,31 @@
 
 
 import mongoose, { model } from "mongoose";
-import { User } from "../database/models/user.interface";
-import { IUserRepository } from "../../domain/repositories/user.repo";
-import userModel from "../database/user.models";
+import { User } from "../../database/models/user.interface";
+import { IUserRepository } from "../../../domain/repositories/user.repo";
+import userModel from "../../database/user.models";
 
 export class userRepositoryImp implements IUserRepository {
+
+
+
+    async updateDefaultWorkspace(workspaceId: string, userId: string): Promise<User> {
+
+        const workSpaceOb = new mongoose.Types.ObjectId(workspaceId);
+        const userIdOb = new mongoose.Types.ObjectId(userId);
+
+        const updatedUser = await userModel.findOneAndUpdate(
+            { _id: userIdOb },
+            { $set: { defaultWorkspace: workSpaceOb } },
+        )
+
+        if (!updatedUser) {
+
+            throw new Error("Default workspace coulndt set");
+        }
+
+        return updatedUser;
+    }
 
 
     async changeUserStatus(userId: string, status: boolean): Promise<any> {

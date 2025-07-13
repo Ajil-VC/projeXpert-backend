@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { INotificationRepository } from "../../domain/repositories/notification.repo"
-import { Notification } from "../database/models/notification.interface";
-import notificationModel from "../database/notification.models";
+import { INotificationRepository } from "../../../domain/repositories/notification.repo"
+import { Notification } from "../../database/models/notification.interface";
+import notificationModel from "../../database/notification.models";
 
 
 

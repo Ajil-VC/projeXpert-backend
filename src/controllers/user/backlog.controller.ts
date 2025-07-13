@@ -9,14 +9,14 @@ import { assignIssueUsecase } from "../../config/Dependency/user/backlog.di";
 import { dragDropUsecase } from "../../config/Dependency/user/backlog.di";
 import { changeTaskStatusUsecase } from "../../config/Dependency/user/backlog.di";
 import { startSprintUsecase } from "../../config/Dependency/user/backlog.di";
-import { addCommentUse, removeAttachment, updateTaskDetailsUse } from "../../config/Dependency/user/task.di";
+import { addCommentUse, epicProgress, removeAttachment, updateTaskDetailsUse } from "../../config/Dependency/user/task.di";
 import { completeSprintUse } from "../../config/Dependency/user/task.di";
 import { getIO } from "../../config/socket";
 import { getUserSocket } from "../../infrastructure/services/socket.manager";
 import { notification } from "../../config/Dependency/user/notification.di";
 
-import { HttpStatusCode } from "../http-status.enum";
-import { RESPONSE_MESSAGES } from "../response-messages.constant";
+import { HttpStatusCode } from "../../config/http-status.enum";
+import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 
 import { getCommentsUse } from "../../config/Dependency/user/task.di";
 import { IBacklogController } from "../../interfaces/user/backlog.controller.interface";
@@ -36,6 +36,7 @@ import { StartSprintUsecase } from "../../application/usecase/backlogUseCase/sta
 import { CompleteSprintUsecase } from "../../application/usecase/taskUsecase/completesprint.usecase";
 import { GetCommentsUseCase } from "../../application/usecase/taskUsecase/getComment.usecase";
 import { AddCommentUseCase } from "../../application/usecase/taskUsecase/addComment.usecase";
+import { EpicProgressUsecase } from "../../application/usecase/taskUsecase/epicprogress.usecase";
 
 
 
@@ -57,6 +58,7 @@ export class BacklogController implements IBacklogController {
     private completeSprintUse: CompleteSprintUsecase;
     private getCommentsUse: GetCommentsUseCase;
     private addCommentUse: AddCommentUseCase;
+    private epicProgress: EpicProgressUsecase
 
     constructor() {
         this.createEpicUsecase = createEpicUsecase;
@@ -75,6 +77,8 @@ export class BacklogController implements IBacklogController {
         this.completeSprintUse = completeSprintUse;
         this.getCommentsUse = getCommentsUse;
         this.addCommentUse = addCommentUse;
+        this.epicProgress = epicProgress
+
     }
 
     updateEpic = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -114,6 +118,13 @@ export class BacklogController implements IBacklogController {
 
             const { projectId, issueType, issueName, taskGroup, epicId } = req.body;
             const result = await this.createIssueUsecase.execute(projectId, issueType, issueName, taskGroup, epicId);
+
+            if (result.epicId) {
+                
+                const epicId = typeof result.epicId === 'string' ? result.epicId : result.epicId?._id.toString();
+                const updateEpicProgress = await this.epicProgress.execute(epicId);
+            }
+
 
             res.status(HttpStatusCode.CREATED).json({ status: true, result });
             return;
@@ -226,7 +237,6 @@ export class BacklogController implements IBacklogController {
             }
 
             const result = await this.dragDropUsecase.execute(prevContainerId, containerId, movedTaskId);
-
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
 
         } catch (err) {
@@ -291,6 +301,11 @@ export class BacklogController implements IBacklogController {
             }
 
             const result = await this.changeTaskStatusUsecase.execute(taskId, status);
+
+            if (result.epicId) {
+                const epicId = typeof result.epicId === 'string' ? result.epicId : result.epicId?.toString();
+                const updateEpicProgress = await this.epicProgress.execute(epicId);
+            }
 
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
             return;

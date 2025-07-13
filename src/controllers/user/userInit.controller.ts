@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { initDashboardUsecase } from "../../config/Dependency/user/userInit.di";
 import { getNotificationsUse, readNotifications } from "../../config/Dependency/user/notification.di";
 
-import { HttpStatusCode } from "../http-status.enum";
+import { HttpStatusCode } from "../../config/http-status.enum";
 import { IUserInit } from "../../interfaces/user/userInit.controller.interface";
 import { InitDashBoardUseCase } from "../../application/usecase/workspaceUsecase/initDashboard.usecase";
 import { GetNotificationUsecase } from "../../application/usecase/notificationUseCase/getNotificationusecase";

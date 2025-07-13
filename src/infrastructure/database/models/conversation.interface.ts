@@ -5,7 +5,7 @@ export interface Conversation extends Document {
 
     _id: ObjectId,
     participants: ObjectId[],
-    projectId: ObjectId,
+    companyId: ObjectId,
 
     lastActivityType: 'call' | 'msg',
     callStatus: 'missed' | 'started' | 'ended',

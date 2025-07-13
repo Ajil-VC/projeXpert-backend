@@ -1,15 +1,47 @@
 import mongoose, { isValidObjectId } from "mongoose";
-import { IProjectRepository } from "../../domain/repositories/project.repo";
-import projectModel from "../database/project.models";
-import { Project } from "../database/models/project.interface";
-import workSpaceModel from "../database/workspace.models";
-import { IUserRepository } from "../../domain/repositories/user.repo";
-import userModel from "../database/user.models";
+import { IProjectRepository } from "../../../domain/repositories/project.repo";
+import projectModel from "../../database/project.models";
+import { Project } from "../../database/models/project.interface";
+import workSpaceModel from "../../database/workspace.models";
+import { IUserRepository } from "../../../domain/repositories/user.repo";
+import userModel from "../../database/user.models";
+import { Task } from "../../database/models/task.interface";
+import taskModel from "../../database/task.models";
 
 
 export class projectRepositoryImp implements IProjectRepository {
 
     constructor(private userRepo: IUserRepository) { }
+
+
+    async countProjects(companyId: string): Promise<number> {
+
+        const companyOb = new mongoose.Types.ObjectId(companyId);
+        const projectCount = await projectModel.countDocuments({ companyId: companyOb });
+        return projectCount;
+
+    }
+
+
+    async projectStats(projectId: string, userId: string, userRole: "admin" | "user"): Promise<Task[]> {
+
+        const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const userIdOb = new mongoose.Types.ObjectId(userId);
+
+        const query: any = { projectId: projectIdOb };
+        if (userRole === 'user') {
+            query['assignedTo'] = userIdOb;
+        }
+
+        const availableTasks = await taskModel.find(query)
+            .populate({ path: 'sprintId' });
+        if (!availableTasks) {
+
+            throw new Error("Couldnt findout the tasks");
+        }
+
+        return availableTasks;
+    }
 
     async getCurProject(workspaceId: string, projectId: string): Promise<any> {
 
@@ -105,9 +137,10 @@ export class projectRepositoryImp implements IProjectRepository {
         return updatedResult;
     }
 
-    async addMemberToProject(projectId: string, email: string): Promise<Project> {
+    async addMemberToProject(projectId: string, email: string, workSpaceId: string): Promise<Project> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const workSpaceIdOb = new mongoose.Types.ObjectId(workSpaceId);
 
         const user = await this.userRepo.findByEmail(email);
         if (!user) throw new Error('User couldnt find');
@@ -117,7 +150,23 @@ export class projectRepositoryImp implements IProjectRepository {
             await user.save();
         }
 
-        await projectModel.updateOne({ _id: projectIdOb }, { $addToSet: { members: user._id } });
+        const updates = [
+            workSpaceModel.updateOne(
+                { _id: workSpaceIdOb },
+                { $addToSet: { members: user._id } }
+            ),
+            userModel.updateOne(
+                { _id: user._id },
+                { $addToSet: { workspaceIds: workSpaceIdOb } }
+            ),
+            projectModel.updateOne(
+                { _id: projectIdOb },
+                { $addToSet: { members: user._id } }
+            )
+        ];
+
+        await Promise.all(updates);
+
 
         const updatedProject = await projectModel.findById(projectIdOb).populate({ path: 'members' }).exec();
 
@@ -131,7 +180,7 @@ export class projectRepositoryImp implements IProjectRepository {
 
         if (typeof workSpaceId !== 'string') throw new Error('Workspace Id is not valid string');
         const workSpaceObjectId = new mongoose.Types.ObjectId(workSpaceId);
-        
+
         const totalCount = await projectModel.countDocuments({ workSpace: workSpaceObjectId, status: { $in: filter } });
 
 
@@ -142,7 +191,7 @@ export class projectRepositoryImp implements IProjectRepository {
                 path: 'members', model: 'User',
                 select: '_id name email profilePicUrl role createdAt updatedAt'
             });
-            
+
         const totalPages = Math.ceil(totalCount / limit);
 
         if (!projectsInWorkspace) throw new Error('Workspace didnt find');

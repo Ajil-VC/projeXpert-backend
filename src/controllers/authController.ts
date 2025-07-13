@@ -7,8 +7,8 @@ import { registerUsecase } from "../config/Dependency/auth/auth.di";
 import { changePasswordUsecase } from "../config/Dependency/auth/auth.di";
 import { refreshTokenUsecase } from "../config/Dependency/auth/auth.di";
 
-import { HttpStatusCode } from "./http-status.enum";
-import { RESPONSE_MESSAGES } from "./response-messages.constant";
+import { HttpStatusCode } from "../config/http-status.enum";
+import { RESPONSE_MESSAGES } from "../config/response-messages.constant";
 
 import { useCaseResult } from "../application/shared/useCaseResult";
 import { IAuthController } from "../interfaces/auth.controller.interface";

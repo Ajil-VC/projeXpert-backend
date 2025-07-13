@@ -1,5 +1,6 @@
 
 import { Project } from "../../infrastructure/database/models/project.interface";
+import { Task } from "../../infrastructure/database/models/task.interface";
 
 
 export interface IProjectRepository {
@@ -16,7 +17,7 @@ export interface IProjectRepository {
 
     getCurProject(workspaceId: string, projectId: string): Promise<any>;
 
-    addMemberToProject(projectId: string, email: string): Promise<Project>;
+    addMemberToProject(projectId: string, email: string, workSpaceId: string): Promise<Project>;
 
     removeMemberFromProject(projectId: string, userId: string): Promise<boolean>;
 
@@ -27,4 +28,9 @@ export interface IProjectRepository {
     ): Promise<Project>;
 
     deleteProject(projectId: string, workSpaceId: string): Promise<any>;
+
+    projectStats(projectId: string, userId: string, userRole: 'admin' | 'user'): Promise<Task[]>;
+
+    countProjects(companyId: string): Promise<number>;
+
 }

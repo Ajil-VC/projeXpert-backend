@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { Task } from "../database/models/task.interface";
-import { IBacklogRepository } from "../../domain/repositories/backlog.repo";
-import taskModel from "../database/task.models";
-import { Team } from "../database/models/team.interface";
-import SprintModel from "../database/sprint.models";
-import { Sprint } from "../database/models/sprint.interface";
+import { Task } from "../../database/models/task.interface";
+import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
+import taskModel from "../../database/task.models";
+import { Team } from "../../database/models/team.interface";
+import SprintModel from "../../database/sprint.models";
+import { Sprint } from "../../database/models/sprint.interface";
 
 
 export class BacklogRepositoryImp implements IBacklogRepository {

@@ -14,11 +14,13 @@ import fs from 'fs';
 import path from 'path';
 import logger from './utils/logger';
 
-
 import http from 'http';
 import adminRouter from './routes/adminRoutes';
+import webhookRouter from './routes/webhookRoutes';
 
 const app = express();
+
+app.use('/api/v1/webhook', webhookRouter);
 
 const logDir = path.join(__dirname, 'logs');
 if (!fs.existsSync(logDir)) {
