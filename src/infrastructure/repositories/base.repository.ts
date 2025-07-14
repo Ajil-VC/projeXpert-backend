@@ -1,6 +1,6 @@
-import { Model } from "mongoose";
+import { Document, Model, PopulateOptions } from "mongoose";
 
-export abstract class BaseRepository<T> {
+export abstract class BaseRepository<T extends Document> {
 
     protected model: Model<T>;
 
@@ -8,13 +8,37 @@ export abstract class BaseRepository<T> {
         this.model = model;
     }
 
- 
+
     async findById(id: string): Promise<T | null> {
         return await this.model.findById(id).exec();
     }
 
-    async create(data: any): Promise<T> {
-        return await this.model.create(data);
+    // Find by ID with error throwing
+    async findByIdOrThrow(id: string, errorMessage?: string): Promise<T> {
+        
+        const document = await this.findById(id);
+        if (!document) {
+            throw new Error(errorMessage || `${this.model.modelName} with ID ${id} not found`);
+        }
+ 
+        return document;
     }
+
+    // Find by ID with populate
+    ////////////////////////////////////////////////////////
+    async findByIdWithPopulate(id: string, populateOptions: PopulateOptions | PopulateOptions[]): Promise<T | null> {
+        return await this.model.findById(id).populate(populateOptions).exec();
+    }
+
+    // Find by ID with populate and error throwing
+    async findByIdWithPopulateOrThrow(id: string, populateOptions: PopulateOptions | PopulateOptions[], errorMessage?: string): Promise<T> {
+        const document = await this.findByIdWithPopulate(id, populateOptions);
+        if (!document) {
+            throw new Error(errorMessage || `${this.model.modelName} with ID ${id} not found`);
+        }
+        return document;
+    }
+
+
 
 }

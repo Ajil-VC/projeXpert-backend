@@ -5,6 +5,9 @@ import { WorkSpace } from "../../infrastructure/database/models/workspace.interf
 
 export interface ICompanyRepository {
 
+
+    getCompanyWithWorkSpace(companyId: String): Promise<Company | null>;
+
     findCompanyById(companyId: string): Promise<any>;
     findCompanyByEmail(email: string): Promise<Company | null>;
     createCompany(companyName: string, email: string): Promise<string | useCaseResult>;

@@ -4,9 +4,25 @@ import { Company } from "../../database/models/company.interface";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import companyModel from "../../database/company.models";
 import workSpaceModel from "../../database/workspace.models";
+import { BaseRepository } from "../base.repository";
 
 
-export class CompanyRepositoryImp implements ICompanyRepository {
+export class CompanyRepositoryImp extends BaseRepository<Company> implements ICompanyRepository {
+
+    constructor() {
+        super(companyModel);
+    }
+
+    async findCompanyById(companyId: string): Promise<Company> {
+        return await this.findByIdOrThrow(companyId, 'Couldnt find companydata');
+    }
+
+    async getCompanyWithWorkSpace(companyId: String): Promise<Company | null> {
+
+        if (typeof companyId !== 'string') return null;
+        return await this.findByIdWithPopulateOrThrow(companyId, { path: 'workspaces' });
+
+    }
 
 
     async updateCompanyDetails(company: Company): Promise<Company> {
@@ -19,16 +35,6 @@ export class CompanyRepositoryImp implements ICompanyRepository {
         return updatedCompany;
     }
 
-
-    async findCompanyById(companyId: string): Promise<Company> {
-
-        const companyIdOb = new mongoose.Types.ObjectId(companyId);
-        const companyData = await companyModel.findOne({ _id: companyIdOb });
-        if (!companyData) {
-            throw new Error('Couldnt find companydata');
-        }
-        return companyData;
-    }
 
     async changeCompanyStatus(companyId: string, status: boolean): Promise<any> {
 

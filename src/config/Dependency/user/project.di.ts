@@ -28,16 +28,19 @@ import { ISecurePassword } from "../../../domain/services/securepassword.interfa
 import { BacklogRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/backlog.repositoryImp";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import { ProjectStatsUseCase } from "../../../application/usecase/projectUseCase/projectstats.usecase";
+import { ICompanyRepository } from "../../../domain/repositories/company.repo";
+import { CompanyRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/company.repositoryImp";
 
-const workspaceRepository: IWorkspaceRepository = new WorkspaceRepoImp();
+
 const userRepository: IUserRepository = new userRepositoryImp();
 const projectRepository: IProjectRepository = new projectRepositoryImp(userRepository);
 const emailService: IEmailService = new EmailServiceImp();
 const securePassword: ISecurePassword = new SecurePasswordImp();
 const backlogRepository: IBacklogRepository = new BacklogRepositoryImp();
+const companyRepository: ICompanyRepository = new CompanyRepositoryImp();
 
 
-export const getWorkspaceUsecase = new GetWorkSpaceUseCase(workspaceRepository);
+export const getWorkspaceUsecase = new GetWorkSpaceUseCase(companyRepository);
 export const createProjectUsecase = new createProjectUseCase(projectRepository);
 export const getProjectsInWorkspaceUsecase = new GetAllProjectsInWorkspaceUseCase(projectRepository);
 export const getCurrentProjectUsecase = new GetProjectUseCase(projectRepository);

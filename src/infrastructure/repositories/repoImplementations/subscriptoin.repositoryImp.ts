@@ -3,20 +3,23 @@ import { ISubscription } from "../../../domain/repositories/subscription.repo";
 import { Subscription } from "../../database/models/subscription.interface";
 import subscriptionModel from "../../database/subscription.models";
 import companyModel from "../../database/company.models";
+import { BaseRepository } from "../base.repository";
 
 
 
 
 
-export class SubscriptionImp implements ISubscription {
+export class SubscriptionImp extends BaseRepository<Subscription> implements ISubscription {
 
-    constructor() { }
+    constructor() {
+        super(subscriptionModel);
+    }
 
 
     async getSubscriptions(companyId: string | null): Promise<Subscription | Subscription[] | null> {
 
         if (!companyId) {
-
+            
             const subscriptions = await subscriptionModel.find().populate('companyId');
             if (!subscriptions) {
                 throw new Error('Subscriptions couldnt retrieve.');

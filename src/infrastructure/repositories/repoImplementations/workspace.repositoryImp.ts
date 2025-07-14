@@ -6,11 +6,15 @@ import { WorkSpace } from "../../database/models/workspace.interface";
 import { useCaseResult } from "../../../application/shared/useCaseResult";
 import workSpaceModel from "../../database/workspace.models";
 import userModel from "../../database/user.models";
+import { BaseRepository } from "../base.repository";
 
 
 
-export class WorkspaceRepoImp implements IWorkspaceRepository {
+export class WorkspaceRepoImp extends BaseRepository<WorkSpace> implements IWorkspaceRepository {
 
+    constructor() {
+        super(workSpaceModel);
+    }
 
     async countWorkspace(companyId: string): Promise<number> {
 
@@ -22,14 +26,8 @@ export class WorkspaceRepoImp implements IWorkspaceRepository {
 
     async getWorkspace(workspaceId: string): Promise<WorkSpace> {
 
-        const workSpaceIdOb = new mongoose.Types.ObjectId(workspaceId);
+        return await this.findByIdWithPopulateOrThrow(workspaceId, { path: 'projects' });
 
-        const workSpace = await workSpaceModel.findOne({ _id: workSpaceIdOb }).populate('projects');
-        if (!workSpace) {
-            throw new Error("Couldnt findout the workspace.");
-        }
-
-        return workSpace;
     }
 
     async createWorkspace(workspaceName: string, companyId: string, userId: string): Promise<WorkSpace | useCaseResult> {
@@ -62,17 +60,6 @@ export class WorkspaceRepoImp implements IWorkspaceRepository {
         } catch (err) {
             throw new Error('Something went wrong while creating workspace.');
         }
-
-    }
-
-
-
-    async getCompanyWithWorkSpace(companyId: String): Promise<Company | null> {
-
-        if (typeof companyId !== 'string') return null;
-        const companyIdOb = new mongoose.Types.ObjectId(companyId)
-        const companyData = await companyModel.findById(companyIdOb).populate('workspaces');
-        return companyData;
 
     }
 
