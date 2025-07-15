@@ -30,6 +30,7 @@ import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import { ProjectStatsUseCase } from "../../../application/usecase/projectUseCase/projectstats.usecase";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { CompanyRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/company.repositoryImp";
+import { RetrieveProjectUseCase } from "../../../application/usecase/projectUseCase/retrieveProject.usecase";
 
 
 const userRepository: IUserRepository = new userRepositoryImp();
@@ -38,7 +39,6 @@ const emailService: IEmailService = new EmailServiceImp();
 const securePassword: ISecurePassword = new SecurePasswordImp();
 const backlogRepository: IBacklogRepository = new BacklogRepositoryImp();
 const companyRepository: ICompanyRepository = new CompanyRepositoryImp();
-
 
 export const getWorkspaceUsecase = new GetWorkSpaceUseCase(companyRepository);
 export const createProjectUsecase = new createProjectUseCase(projectRepository);
@@ -50,3 +50,4 @@ export const updateProjectUsecase = new UpdateProjectUseCase(projectRepository, 
 export const deleteProjectUsecase = new DeleteProjectUsecase(projectRepository);
 export const getTasksUsecase = new GetTasksUseCase(backlogRepository);
 export const projectStatsUse = new ProjectStatsUseCase(projectRepository);
+export const retrieveProjectUsecase = new RetrieveProjectUseCase(projectRepository);

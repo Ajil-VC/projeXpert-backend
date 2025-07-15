@@ -4,11 +4,12 @@ import streamifier from 'streamifier';
 import { ICloudinary } from '../../domain/services/cloudinary.interface';
 
 export class CloudUploadService implements ICloudinary {
-    async uploadImage(file: Express.Multer.File): Promise<{ public_id: string; url: string }> {
+    async uploadImage(file: Express.Multer.File ,folder:string): Promise<{ public_id: string; url: string }> {
         return new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
                 {
-                    folder: 'tasks',
+                    folder: folder,
+                    
                 },
                 (error, result) => {
                     if (result) {

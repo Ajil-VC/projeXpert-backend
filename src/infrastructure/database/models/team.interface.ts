@@ -1,5 +1,5 @@
 import { ObjectId } from "mongoose";
-
+import { Attachment } from "./user.interface";
 
 
 export interface Team {
@@ -8,7 +8,7 @@ export interface Team {
     name: String;
     email: String,
 
-    profilePicUrl: String,
+    profilePicUrl: Attachment,
     role: "user" | "admin",
 
     createdAt?: Date,

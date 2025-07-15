@@ -29,6 +29,7 @@ import { WorkSpaceController } from '../controllers/user/workspace.controller';
 import { AuthController } from '../controllers/authController';
 import { StripeController } from '../controllers/user/stripe.controller';
 import { PlanPolicyMiddleware } from '../infrastructure/middleware/planpolicy.middleware';
+import { userController } from '../controllers/user/user.controller';
 
 const userRouter = express.Router();
 userRouter.use(express.urlencoded({ extended: true }));
@@ -42,6 +43,7 @@ const workspaceController = new WorkSpaceController();
 const authController = new AuthController();
 const stripeController = new StripeController();
 const planPolicyMiddleware = new PlanPolicyMiddleware();
+const userControllerOb = new userController();
 
 userRouter.get('/authenticate-user', authenticateUser, authController.isVerified);
 userRouter.post('/login', validateBody(signinSchema), authController.signIn);
@@ -55,14 +57,16 @@ userRouter.get('/stripe/session/:sessionId', authenticateUser, stripeController.
 userRouter.get('/get-notifications', authenticateUser, userInitController.getNotifications);
 userRouter.patch('/update-notificaions', authenticateUser, userInitController.updateNotification);
 
-userRouter.get('/init-data', authenticateUser, userInitController.getInitData);
+userRouter.get('/init-data', authenticateAsAdmin, userInitController.getInitData);
 userRouter.get('/projects-initials', authenticateUser, projectController.getProjectsInitData);
 userRouter.post('/create-project', validateBody(projectCreationSchema), authenticateAsAdmin, planPolicyMiddleware.checkPolicy('createProject'), projectController.createProject);
 userRouter.get('/init-projects', authenticateAsAdmin, projectController.getProjectData);
 userRouter.get('/get-project', authenticateUser, projectController.getProject);
+userRouter.get('/project', authenticateUser, projectController.retrieveProject);
 userRouter.post('/create-workspace', authenticateAsAdmin, validateBody(createWorkspaceSchema), planPolicyMiddleware.checkPolicy('createWorkspace'), workspaceController.createWorkspace);
 userRouter.get('/get-workspace', authenticateUser, workspaceController.getWorkspace);
 
+userRouter.put('/update-profile', authenticateUser, upload.any(), userControllerOb.updateProfile);
 userRouter.get('/dashboard/:projectId', authenticateUser, projectController.projectStats);
 
 userRouter.post('/add-member', authenticateAsAdmin, projectController.addMember);

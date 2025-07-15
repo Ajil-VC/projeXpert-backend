@@ -11,7 +11,7 @@ export class UpdateTaskDetailsUsecase {
 
 
         const uploadedFiles = await Promise.all(
-            files.map(file => this.cloudinary.uploadImage(file))
+            files.map(file => this.cloudinary.uploadImage(file, 'tasks'))
         );
 
         task.attachments = uploadedFiles;

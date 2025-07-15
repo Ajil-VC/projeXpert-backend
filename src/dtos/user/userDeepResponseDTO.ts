@@ -1,11 +1,11 @@
-
+import { Attachment } from "../../infrastructure/database/models/user.interface";
 
 
 export class UserResponseDetailedDTO {
 
     _id!: string;
     name!: string;
-    profilePicUrl!: string;
+    profilePicUrl!: Attachment;
     email!: string;
     role!: 'admin' | 'user';
     forceChangePassword!: boolean;

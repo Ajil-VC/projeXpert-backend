@@ -1,12 +1,12 @@
 
+import { Attachment } from "../../infrastructure/database/models/user.interface";
 
-
-export class UserResponseDetailedDTO {
+export class UserResponseDTO {
 
     _id!: string;
     name!: string;
     email!: string;
-    profilePicUrl!: string;
+    profilePicUrl!: Attachment;
     role!: 'admin' | 'user';
     companyId!: string;
     workspaceIds: string[] = [];

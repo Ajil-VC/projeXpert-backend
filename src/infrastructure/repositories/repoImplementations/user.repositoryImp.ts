@@ -1,11 +1,35 @@
 
 
 import mongoose, { model } from "mongoose";
-import { User } from "../../database/models/user.interface";
+import { Attachment, User } from "../../database/models/user.interface";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 import userModel from "../../database/user.models";
 
 export class userRepositoryImp implements IUserRepository {
+
+
+    async updateUserProfile(file: Attachment | null, userId: string, name: string): Promise<User> {
+
+        const userIdOb = new mongoose.Types.ObjectId(userId);
+        let query: { profilePicUrl?: Attachment, name?: string } = {};
+        if (file) {
+            query.profilePicUrl = file;
+        }
+        if (name) {
+            query.name = name;
+        }
+        const updatedUser = await userModel.findOneAndUpdate(
+            { _id: userIdOb },
+            { $set: query },
+        )
+
+        if (!updatedUser) {
+
+            throw new Error("Profile picture coulndt set");
+        }
+
+        return updatedUser;
+    }
 
 
 

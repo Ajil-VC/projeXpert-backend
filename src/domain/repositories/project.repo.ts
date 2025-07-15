@@ -13,6 +13,8 @@ export interface IProjectRepository {
         memberId: String
     ): Promise<Project>;
 
+    retrieveProject(projectId: string): Promise<Project>;
+
     getProjects(workSpaceId: String, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }>;
 
     getCurProject(workspaceId: string, projectId: string): Promise<any>;

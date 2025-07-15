@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { getWorkspaceUsecase } from "../../config/Dependency/user/project.di";
+import { getWorkspaceUsecase, retrieveProjectUsecase } from "../../config/Dependency/user/project.di";
 import { createProjectUsecase } from "../../config/Dependency/user/project.di";
 import { getProjectsInWorkspaceUsecase } from "../../config/Dependency/user/project.di";
 import { getCurrentProjectUsecase } from "../../config/Dependency/user/project.di";
@@ -24,6 +24,7 @@ import { RemoveMemberUseCase } from "../../application/usecase/projectUseCase/re
 import { UpdateProjectUseCase } from "../../application/usecase/projectUseCase/updateProject.usecase";
 import { DeleteProjectUsecase } from "../../application/usecase/projectUseCase/deleteProject.usecase";
 import { ProjectStatsUseCase } from "../../application/usecase/projectUseCase/projectstats.usecase";
+import { RetrieveProjectUseCase } from "../../application/usecase/projectUseCase/retrieveProject.usecase";
 
 
 export class ProjectController implements IProjectController {
@@ -38,6 +39,7 @@ export class ProjectController implements IProjectController {
     private updateProjectUsecase: UpdateProjectUseCase;
     private deleteProjectUsecase: DeleteProjectUsecase;
     private projectStatsUse: ProjectStatsUseCase;
+    private retrieveProjectUsecase: RetrieveProjectUseCase;
 
     constructor() {
 
@@ -50,7 +52,8 @@ export class ProjectController implements IProjectController {
         this.removeMemberUsecase = removeMemberUsecase;
         this.updateProjectUsecase = updateProjectUsecase;
         this.deleteProjectUsecase = deleteProjectUsecase;
-        this.projectStatsUse = projectStatsUse
+        this.projectStatsUse = projectStatsUse;
+        this.retrieveProjectUsecase = retrieveProjectUsecase;
     }
 
 
@@ -165,6 +168,24 @@ export class ProjectController implements IProjectController {
 
         } catch (err) {
 
+            next(err);
+        }
+    }
+
+    retrieveProject = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+
+            const projectId = req.query.project_id;
+
+            if (typeof projectId !== 'string') {
+                throw new Error('project id is not valid string');
+            }
+
+            const result = await this.retrieveProjectUsecase.execute(projectId);
+            res.status(HttpStatusCode.OK).json({ status: true, result });
+            return;
+
+        } catch (err) {
             next(err);
         }
     }

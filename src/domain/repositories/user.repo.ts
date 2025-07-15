@@ -1,7 +1,9 @@
 
-import { User } from "../../infrastructure/database/models/user.interface";
+import { Attachment, User } from "../../infrastructure/database/models/user.interface";
 
 export interface IUserRepository {
+
+    updateUserProfile(file: Attachment | null, userId: string, name: string): Promise<User>;
 
     changeUserStatus(userId: string, status: boolean): Promise<any>;
 

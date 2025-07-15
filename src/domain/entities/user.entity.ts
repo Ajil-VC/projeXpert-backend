@@ -1,11 +1,11 @@
-
+import { Attachment } from "../../infrastructure/database/models/user.interface";
 
 export class UserEntityDetailed {
     constructor(
         public readonly _id: string,
         public readonly name: string,
         public readonly email: string,
-        public readonly profilePicUrl: string,
+        public readonly profilePicUrl: Attachment,
         public readonly role: 'admin' | 'user',
         public readonly companyId: string,
         public readonly workspaceIds: string[],

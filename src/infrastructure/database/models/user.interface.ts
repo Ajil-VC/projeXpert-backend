@@ -1,6 +1,10 @@
 import { Document, ObjectId } from "mongoose";
 import { Company } from "./company.interface";
 
+export interface Attachment {
+    public_id: string;
+    url: string;
+}
 
 export interface User extends Document {
 
@@ -8,7 +12,7 @@ export interface User extends Document {
     name: String;
     email: String;
     password: String;
-    profilePicUrl: String;
+    profilePicUrl: Attachment;
     role: 'admin' | 'user';
     companyId: ObjectId | Company;
     workspaceIds: ObjectId[];

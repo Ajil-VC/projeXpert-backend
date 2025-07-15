@@ -7,11 +7,20 @@ import { IUserRepository } from "../../../domain/repositories/user.repo";
 import userModel from "../../database/user.models";
 import { Task } from "../../database/models/task.interface";
 import taskModel from "../../database/task.models";
+import { BaseRepository } from "../base.repository";
 
 
-export class projectRepositoryImp implements IProjectRepository {
+export class projectRepositoryImp extends BaseRepository<Project> implements IProjectRepository {
 
-    constructor(private userRepo: IUserRepository) { }
+    constructor(private userRepo: IUserRepository) { 
+        super(projectModel);
+    }
+
+
+    async retrieveProject(projectId: string): Promise<Project> {
+
+        return await this.findByIdWithPopulateOrThrow(projectId, { path: 'members' });
+    }
 
 
     async countProjects(companyId: string): Promise<number> {

@@ -42,7 +42,7 @@ export const authenticatePlatformAdmin = async (req: Request, res: Response, nex
                 res.status(403).json({ status: false, message: 'Unautherized: not Admin' });
                 return;
             }
-            console.log('Authentication: ', req.user)
+            console.log('Admin Authentication: ', req.user)
             next();
 
         });
