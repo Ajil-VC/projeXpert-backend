@@ -57,7 +57,7 @@ userRouter.get('/stripe/session/:sessionId', authenticateUser, stripeController.
 userRouter.get('/get-notifications', authenticateUser, userInitController.getNotifications);
 userRouter.patch('/update-notificaions', authenticateUser, userInitController.updateNotification);
 
-userRouter.get('/init-data', authenticateAsAdmin, userInitController.getInitData);
+userRouter.get('/init-data', authenticateUser, userInitController.getInitData);
 userRouter.get('/projects-initials', authenticateUser, projectController.getProjectsInitData);
 userRouter.post('/create-project', validateBody(projectCreationSchema), authenticateAsAdmin, planPolicyMiddleware.checkPolicy('createProject'), projectController.createProject);
 userRouter.get('/init-projects', authenticateAsAdmin, projectController.getProjectData);

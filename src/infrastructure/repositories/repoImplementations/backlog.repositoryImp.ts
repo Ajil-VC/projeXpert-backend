@@ -37,7 +37,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         const endDate = new Date(startDate);
         endDate.setDate(endDate.getDate() + duration - 1);
         const updatedSprint = await SprintModel.findByIdAndUpdate({ _id: sprintIdOb }, {
-            $set: {
+            $set: { 
                 name: sprintName,
                 startDate: startDate,
                 endDate: endDate,
