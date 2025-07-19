@@ -20,6 +20,7 @@ const userSchema = new Schema<User>({
     defaultWorkspace: { type: Schema.Types.ObjectId, ref: 'Workspace', default: null },
 
     isBlocked: { type: Boolean, default: false },
+    restrict: { type: Boolean, default: false },
     lastActiveProjectId: { type: Schema.Types.ObjectId, ref: 'Project', default: null },
 
     forceChangePassword: { type: Boolean, default: true },

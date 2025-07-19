@@ -8,7 +8,7 @@ export interface ICompanyRepository {
 
     getCompanyWithWorkSpace(companyId: String): Promise<Company | null>;
 
-    findCompanyById(companyId: string): Promise<any>;
+    findCompanyById(companyId: string): Promise<Company>;
     findCompanyByEmail(email: string): Promise<Company | null>;
     createCompany(companyName: string, email: string): Promise<string | useCaseResult>;
     createWorkspace(name: string, companyId: string): Promise<string | useCaseResult>;

@@ -95,7 +95,7 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
     }
 
 
-    async deleteProject(projectId: string, workSpaceId: string): Promise<any> {
+    async deleteProject(projectId: string, workSpaceId: string): Promise<boolean> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
         const workSpaceIdOb = new mongoose.Types.ObjectId(workSpaceId);

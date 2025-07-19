@@ -1,8 +1,19 @@
 import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.repo";
+import { User } from "../../database/models/user.interface";
 import userModel from "../../database/user.models";
+import { BaseRepository } from "../base.repository";
 
 
-export class AdminRepositoryImp implements IAdminRepository {
+export class AdminRepositoryImp extends BaseRepository<User> implements IAdminRepository {
+
+    constructor() {
+        super(userModel);
+    }
+
+    async getAdmin(adminId: string): Promise<User> {
+
+        return await this.findByIdOrThrow(adminId, 'Couldnt findout admin details.');
+    }
 
     async getAllCompanyDetails(): Promise<any> {
 
@@ -47,7 +58,7 @@ export class AdminRepositoryImp implements IAdminRepository {
         ]);
 
 
-        if(!allCompanyData){
+        if (!allCompanyData) {
             throw new Error('Company data couldnt retrieve.');
         }
 

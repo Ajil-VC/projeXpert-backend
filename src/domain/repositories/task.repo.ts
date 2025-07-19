@@ -4,7 +4,7 @@ import { Comment, Task } from "../../infrastructure/database/models/task.interfa
 
 export interface ITaskRepository {
 
-    updateTaskDetails(task: any, assigneeId: string): Promise<any>;
+    updateTaskDetails(task: Task, assigneeId: string): Promise<Task>;
 
     completeSprint(completingSprintId: string, movingSprintId: string | null, projectId: string): Promise<Array<Task> | null>;
 

@@ -31,7 +31,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<any> {
+    async startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<Sprint> {
 
         const sprintIdOb = new mongoose.Types.ObjectId(sprintId);
         const endDate = new Date(startDate);
@@ -67,7 +67,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async dragDropUpdation(prevContainerId: string, containerId: string, movedTaskId: string): Promise<any> {
+    async dragDropUpdation(prevContainerId: string, containerId: string, movedTaskId: string): Promise<Task> {
 
         const movedTaskIdOb = new mongoose.Types.ObjectId(movedTaskId);
         let containerIdOb = null;
@@ -97,7 +97,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async getSprints(projectId: string): Promise<any> {
+    async getSprints(projectId: string): Promise<Sprint[]> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
 

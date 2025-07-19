@@ -18,6 +18,7 @@ export class UserMapper {
             forceChangePassword: user.forceChangePassword,
 
             isBlocked: user.isBlocked,
+            restrict: user.restrict,
 
             systemRole: user.systemRole,
 

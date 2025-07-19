@@ -6,8 +6,14 @@ import { ChangeCompanyStatusUsecase } from "../../../application/usecase/admin/u
 import { CompanyRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/company.repositoryImp";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 
+import { ISubscription } from "../../../domain/repositories/subscription.repo";
+import { SubscriptionImp } from "../../../infrastructure/repositories/repoImplementations/subscriptoin.repositoryImp";
+import { GetSubscriptions } from "../../../application/usecase/admin/getSubscriptionDetails.usecase";
+
 const userRepository: IUserRepository = new userRepositoryImp();
 const companyRepository: ICompanyRepository = new CompanyRepositoryImp();
+const subscriptionRepository: ISubscription = new SubscriptionImp();
 
 export const companyManagementUsecase = new changeUserStatusUseCase(userRepository);
 export const companyStatusChangeUsecase = new ChangeCompanyStatusUsecase(companyRepository);
+export const getSubscriptionsusecase = new GetSubscriptions(subscriptionRepository);

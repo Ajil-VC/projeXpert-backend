@@ -194,16 +194,16 @@ export class TaskRepositoryImp implements ITaskRepository {
     }
 
 
-    async updateTaskDetails(task: any, assigneeId: string): Promise<any> {
+    async updateTaskDetails(task: Task, assigneeId: string): Promise<Task> {
 
         let assigneeIdOb = assigneeId.length == 0 ? null : new mongoose.Types.ObjectId(assigneeId);
 
-        const taskDetails = task as Task;
+        const taskDetails = task;
         const taskId = typeof taskDetails._id === "string" ? new mongoose.Types.ObjectId(taskDetails._id) : null;
         if (!taskId) {
             throw new Error('Task Id is not valid.');
         }
-
+        
         const updatePayload: any = {
             title: taskDetails.title,
             type: taskDetails.type,

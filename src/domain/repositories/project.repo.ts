@@ -29,7 +29,7 @@ export interface IProjectRepository {
         priority: string
     ): Promise<Project>;
 
-    deleteProject(projectId: string, workSpaceId: string): Promise<any>;
+    deleteProject(projectId: string, workSpaceId: string): Promise<boolean>;
 
     projectStats(projectId: string, userId: string, userRole: 'admin' | 'user'): Promise<Task[]>;
 

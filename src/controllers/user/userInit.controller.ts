@@ -35,7 +35,7 @@ export class UserInitController implements IUserInit {
                     user: {
                         _id: userData._id,
                         name: userData.name,
-                        profileUrl: userData.profilePicUrl,
+                        profilePicUrl: userData.profilePicUrl,
                         email: userData.email,
                         role: userData.role,
                         workSpaces: userData.workspaceIds,

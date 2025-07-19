@@ -40,7 +40,6 @@ export class AuthController implements IAuthController {
         this.refreshTokenUsecase = refreshTokenUsecase;
     }
 
-
     sendOtpToMail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         try {

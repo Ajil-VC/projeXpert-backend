@@ -20,7 +20,7 @@ export class userController implements IUserController {
     updateProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         try {
-
+            
             const name = req.body.name;
             const files = req.files as Express.Multer.File[] || [];
 

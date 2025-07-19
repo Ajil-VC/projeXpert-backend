@@ -1,3 +1,4 @@
+import { Sprint } from "../../infrastructure/database/models/sprint.interface";
 import { Task } from "../../infrastructure/database/models/task.interface";
 
 
@@ -15,11 +16,11 @@ export interface IBacklogRepository {
 
     createSprint(projectId: string, issueIds: Array<string>, userId: string): Promise<any>;
 
-    getSprints(projectId: string): Promise<any>;
+    getSprints(projectId: string): Promise<Sprint[]>;
 
-    dragDropUpdation(prevContainerId: string, containerId: string, movedTaskId: string): Promise<any>;
+    dragDropUpdation(prevContainerId: string, containerId: string, movedTaskId: string): Promise<Task>;
 
-    changeTaskStatus(taskId: string, status: string): Promise<any>;
+    changeTaskStatus(taskId: string, status: string): Promise<Task>;
 
-    startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<any>;
+    startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<Sprint>;
 }

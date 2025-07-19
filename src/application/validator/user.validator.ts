@@ -79,3 +79,10 @@ export const sendMessageSchema = yup.object({
     recieverId: yup.string().required('Reciever Id required'),
     message: yup.string().required('Message required')
 });
+
+
+export const controlSchema = yup.object({
+    userId: yup.string().required('User Id required'),
+    status: yup.string().nullable(),
+    userRole: yup.string()
+})

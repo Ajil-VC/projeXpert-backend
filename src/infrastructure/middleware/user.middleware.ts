@@ -52,6 +52,11 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
                 return;
             }
 
+            if (userData?.restrict && req.method !== 'GET') {
+                res.status(403).json({ status: false, message: 'Dont have permission to perform this operation' });
+                return;
+            }
+
             if (!req.user.companyId || !companyData) {
                 res.status(401).json({ status: false, message: 'Company data not available.' });
                 return;
@@ -101,7 +106,15 @@ export const authenticateAsAdmin = async (req: Request, res: Response, next: Nex
             req.user = decoded;
 
 
-            const companyData = await isCompanyBlocked.execute(req.user.companyId) as Company;
+            const [userData, companyData] = await Promise.all([
+                isUserBlocked.execute(req.user.id),
+                isCompanyBlocked.execute(req.user.companyId) as Promise<Company>
+            ]);
+
+            if (userData?.restrict && req.method !== 'GET') {
+                res.status(403).json({ status: false, message: 'Dont have permission to perform this operation' });
+                return;
+            }
 
             if (!req.user.companyId || !companyData) {
                 res.status(403).json({ status: false, message: 'Company data not available.' });

@@ -21,6 +21,7 @@ export interface User extends Document {
     forceChangePassword: boolean;
 
     isBlocked: boolean;
+    restrict:boolean;
 
     systemRole: 'platform-admin' | 'company-user';
 

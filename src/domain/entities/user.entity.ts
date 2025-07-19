@@ -13,6 +13,7 @@ export class UserEntityDetailed {
         public readonly systemRole: 'platform-admin' | 'company-user',
         public readonly forceChangePassword: boolean,
         public readonly isBlocked: boolean,
+        public readonly restrict: boolean,
         public readonly lastActiveProjectId?: string | null,
 
         public readonly createdAt?: Date,

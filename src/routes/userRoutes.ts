@@ -6,7 +6,7 @@ import { passWordChangeSchema, signinSchema } from '../application/validator/aut
 import { authenticateAsAdmin, authenticateUser } from '../infrastructure/middleware/user.middleware';
 
 import {
-    assignIssueSchema, completeSprintSchema, createEpicSchema,
+    assignIssueSchema, completeSprintSchema, controlSchema, createEpicSchema,
     createIssueSchema, createSprintSchema,
     createWorkspaceSchema,
     dragDropSchema,
@@ -84,7 +84,9 @@ userRouter.get('/tasks', authenticateUser, backlogController.getTasks);
 userRouter.get('/tasks/kanban', authenticateUser, backlogController.getTasks);
 userRouter.get('/get-comments', authenticateUser, backlogController.getComments);
 userRouter.post('/add-comment', authenticateUser, backlogController.addComment);
+userRouter.patch('/control-user', authenticateAsAdmin, validateBody(controlSchema), teamController.restrictUser);
 
+userRouter.get('/get-users', authenticateAsAdmin, teamController.getCompanyUsers);
 userRouter.get('/team', authenticateUser, teamController.getTeam);
 userRouter.patch('/assign-issue', authenticateAsAdmin, validateBody(assignIssueSchema), backlogController.assignIssue);
 userRouter.put('/update-task', authenticateAsAdmin, validateBody(dragDropSchema), backlogController.dragDropUpdate);
