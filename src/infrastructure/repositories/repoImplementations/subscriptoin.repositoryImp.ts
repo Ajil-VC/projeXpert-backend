@@ -29,7 +29,9 @@ export class SubscriptionImp extends BaseRepository<Subscription> implements ISu
         }
 
         const companyIdOb = new mongoose.Types.ObjectId(companyId);
+ 
         const subscription = await subscriptionModel.findOne({ companyId: companyIdOb });
+
         if (!subscription) {
             return null;
         }
@@ -67,6 +69,8 @@ export class SubscriptionImp extends BaseRepository<Subscription> implements ISu
             },
             { new: true, upsert: true }
         );
+
+
 
         if (!updatedSubscription) {
             throw new Error('Subscription not saved.');

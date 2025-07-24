@@ -41,9 +41,27 @@ export class StripeController implements IStripeController {
         try {
 
             const session = await stripe.checkout.sessions.retrieve(sessionId);
-            const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+            const subscription = await stripe.subscriptions.retrieve(session.subscription as string, {
+                expand: ['items.data.price.product']
+            });
 
-            const planName = subscription.items.data[0].price.nickname || 'Pro';
+            const item = subscription.items.data[0];
+            let planName = item.price.nickname;
+
+            if (!planName && item.price.metadata?.plan_name) {
+                planName = item.price.metadata.plan_name;
+            }
+
+            if (!planName) {
+                const product = item.price.product;
+                if (typeof product === 'object' && product && 'name' in product && !product.deleted) {
+                    planName = product.name;
+                } else if (typeof product === 'string') {
+                    const fetchedProduct = await stripe.products.retrieve(product);
+                    planName = fetchedProduct.name;
+                }
+            }
+
             const billingCycle = subscription.items.data[0].price.recurring?.interval || 'monthly';
 
             res.json({ plan: planName, billingCycle });
@@ -87,9 +105,12 @@ export class StripeController implements IStripeController {
 
             const item = subscription.items.data[0];
 
+            const productId = item.price.product as string;
+            const product = await stripe.products.retrieve(productId);
+            const planName = product.name;
+
             const currentPeriodEnd = new Date(item.current_period_end * 1000);
             const billingCycle = item.plan.interval || 'month';
-            const planName = item.plan.nickname || 'Pro';
 
             const result = await this.subscribe.execute(
                 session.customer_email,

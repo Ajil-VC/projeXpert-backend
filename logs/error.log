@@ -1246,3 +1246,107 @@
     at next (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\node_modules\router\lib\route.js:157:13)
     at D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\infrastructure\middleware\validateBody.ts:9:9
     at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-07-21T14:11:17.760Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:11:23.978Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:11:30.542Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:11:46.289Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:13:18.395Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:46:05.723Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:47:04.422Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:47:24.367Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:47:30.744Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:49:16.047Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:49:19.482Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:49:24.791Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:49:28.760Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:49:33.570Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:51:39.443Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:52:12.928Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T14:52:15.942Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T15:02:42.492Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T15:07:16.853Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T15:19:00.052Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-21T15:22:20.169Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-22T06:51:02.246Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-22T07:28:45.934Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-22T07:45:53.841Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-22T08:34:55.243Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)
+2025-07-22T09:13:58.842Z error: Error: No subscription details available.
+    at GetSubscription.execute (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\application\usecase\subscriptionUseCase\getSubscription.usecase.ts:12:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at StripeController.getSubscriptionDetails (D:\FullStackDeveloper\Week 22\ProjeXpert\backend\src\controllers\user\stripe.controller.ts:27:28)

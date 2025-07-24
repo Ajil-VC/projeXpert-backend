@@ -18,6 +18,7 @@ export class SubscriptionUsecase {
     ): Promise<Subscription> {
 
         const company = await this.company.findCompanyByEmail(ownerEmail);
+
         if (!company) {
             throw new Error('Couldnt find the company details');
         }
@@ -31,6 +32,7 @@ export class SubscriptionUsecase {
         }
 
         const subscription = await this.subcribe.createSubscription(company._id as unknown as string, stripeCustomerId, stripeSubscriptionId, plan, subscriptionStatus, billingCycle, currentPeriodEnd);
+   
         if (!subscription) {
             throw new Error('Couldnt create the subscription.');
         }
