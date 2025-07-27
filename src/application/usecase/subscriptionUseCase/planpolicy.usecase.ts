@@ -18,24 +18,24 @@ export class PlanPolicy {
             return { status: false, message: 'Please subscribe to a plan to perform this operation' };
         }
 
-        const planPermissions = PLAN_PERMISSIONS[isSubscribed.plan];
-        const operationPermission = planPermissions[operationType];
+        // const planPermissions = PLAN_PERMISSIONS[isSubscribed.name];
+        // const operationPermission = planPermissions[operationType];
 
-        if (operationType === 'createWorkspace') {
+        // if (operationType === 'createWorkspace') {
 
-            const workspaceCount = await this.workspaceRepo.countWorkspace(companyId);
-            if (workspaceCount >= operationPermission.limit) {
-                return { status: false, message: `Current plan does not allow to create more than ${operationPermission.limit} workspace` };
-            }
+        //     const workspaceCount = await this.workspaceRepo.countWorkspace(companyId);
+        //     if (workspaceCount >= operationPermission.limit) {
+        //         return { status: false, message: `Current plan does not allow to create more than ${operationPermission.limit} workspace` };
+        //     }
 
-        } else if (operationType === 'createProject') {
+        // } else if (operationType === 'createProject') {
 
-            const projectCount = await this.projectRepo.countProjects(companyId);
-            if (projectCount >= operationPermission.limit) {
-                return { status: false, message: `Current plan does not allow to create more than ${operationPermission.limit} projects` };
-            }
+        //     const projectCount = await this.projectRepo.countProjects(companyId);
+        //     if (projectCount >= operationPermission.limit) {
+        //         return { status: false, message: `Current plan does not allow to create more than ${operationPermission.limit} projects` };
+        //     }
 
-        }
+        // }
 
         return { status: true, message: 'ok' };
     }

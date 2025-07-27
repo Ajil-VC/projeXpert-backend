@@ -3,13 +3,17 @@ import { Subscription } from "./models/subscription.interface";
 
 const subscriptionSchema = new Schema<Subscription>({
 
-    companyId: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
-    stripeCustomerId: { type: String, required: true },
-    stripeSubscriptionId: { type: String, required: true },
-    plan: { type: String, enum: ['Pro', 'Enterprise'], required: true },
-    status: { type: String, enum: ['active', 'canceled', 'past_due'], default: 'active' },
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    description: { type: String },
     billingCycle: { type: String, enum: ['month', 'year'], required: true },
-    currentPeriodEnd: { type: Date, required: true }
+
+    maxWorkspace: { type: Number, required: true },
+    maxProjects: { type: Number, required: true },
+    maxMembers: { type: Number, required: true },
+    canUseVideoCall: { type: Boolean, required: true },
+
+    isActive: { type: Boolean, required: true, default: false }
 
 }, { timestamps: true })
 

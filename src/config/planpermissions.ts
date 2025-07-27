@@ -11,7 +11,7 @@ export const PLAN_PERMISSIONS = {
         createProject: { limit: 4 },
     },
     Enterprise: {
-        createWorkspace: { limit: Infinity },
+        createWorkspace: { limit: Infinity },   
         createProject: { limit: Infinity },
     },
 

@@ -37,7 +37,7 @@ export class SubscriptionUsecase {
             throw new Error('Couldnt create the subscription.');
         }
 
-        company.plan = plan;
+        // company.plan = plan;
         const updatedCompany = await this.company.updateCompanyDetails(company);
         if (!updatedCompany) {
             throw new Error('Company plan couldnt update.');

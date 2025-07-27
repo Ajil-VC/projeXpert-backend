@@ -6,10 +6,13 @@ export interface Company extends Document {
     _id: ObjectId;
     name: String;
     email: String;
-    plan: 'Free' | 'Pro' | 'Enterprise';
+
+    plan: ObjectId;
+
+    stripeCustomerId: string;
+    stripeSubscriptionId: string;
 
     workspaces: ObjectId[];
-
     isBlocked: boolean;
 
     createdAt?: Date;

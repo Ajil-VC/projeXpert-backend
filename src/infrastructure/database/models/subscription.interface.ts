@@ -4,13 +4,18 @@ import { Document, ObjectId } from "mongoose";
 export interface Subscription extends Document {
 
     _id: ObjectId;
-    companyId: ObjectId;
-    stripeCustomerId: string;
-    stripeSubscriptionId: string;
-    plan: 'Pro' | 'Enterprise';
-    status: 'active' | 'canceled' | 'past_due' | 'other';
+    name: string;
+    price: number;
+
     billingCycle: 'month' | 'year';
-    currentPeriodEnd: Date;
+
+    description: String;
+    isActive: boolean;
+
+    maxWorkspace: number;
+    maxProjects: number;
+    maxMembers: number;
+    canUseVideoCall: boolean;
 
     createdAt?: Date;
     updatedAt?: Date;
