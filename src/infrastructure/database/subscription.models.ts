@@ -8,6 +8,9 @@ const subscriptionSchema = new Schema<Subscription>({
     description: { type: String },
     billingCycle: { type: String, enum: ['month', 'year'], required: true },
 
+    stripePriceId: { type: String },
+    stripeProductId: { type: String },
+
     maxWorkspace: { type: Number, required: true },
     maxProjects: { type: Number, required: true },
     maxMembers: { type: Number, required: true },

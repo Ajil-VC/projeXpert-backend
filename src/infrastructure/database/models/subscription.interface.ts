@@ -12,6 +12,9 @@ export interface Subscription extends Document {
     description: String;
     isActive: boolean;
 
+    stripePriceId: String;
+    stripeProductId: String;
+
     maxWorkspace: number;
     maxProjects: number;
     maxMembers: number;

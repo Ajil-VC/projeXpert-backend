@@ -23,7 +23,7 @@ export class PlanPolicyMiddleware {
         this.planPolicyUsecase = planPolicyUsecase;
     }
 
-    checkPolicy = (operationType: 'createWorkspace' | 'createProject') => {
+    checkPolicy = (operationType: 'createWorkspace' | 'createProject' | 'maxMembers' | 'canVideoCall') => {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
 
@@ -33,8 +33,9 @@ export class PlanPolicyMiddleware {
                 }
 
                 const canContinue = await this.planPolicyUsecase.execute(req.user.companyId, operationType);
+
                 if (!canContinue.status) {
-                    res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: canContinue.message });
+                    res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: canContinue.message, issue: canContinue?.additional });
                     return;
                 }
 
@@ -45,4 +46,5 @@ export class PlanPolicyMiddleware {
             }
         };
     };
+
 }

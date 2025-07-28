@@ -59,7 +59,7 @@ export class SubscriptionPlanImp implements ISubscriptionPlanRepository {
 
         const totalPages = Math.ceil(totalCount / limit);
 
-        if (!allSubscriptionPlans) throw new Error('Workspace didnt find');
+        if (!allSubscriptionPlans) throw new Error('No subscription plans available');
         return { plans: allSubscriptionPlans, totalPage: totalPages };
 
     }

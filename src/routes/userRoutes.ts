@@ -69,7 +69,7 @@ userRouter.get('/get-workspace', authenticateUser, workspaceController.getWorksp
 userRouter.put('/update-profile', authenticateUser, upload.any(), userControllerOb.updateProfile);
 userRouter.get('/dashboard/:projectId', authenticateUser, projectController.projectStats);
 
-userRouter.post('/add-member', authenticateAsAdmin, projectController.addMember);
+userRouter.post('/add-member', authenticateAsAdmin, planPolicyMiddleware.checkPolicy('maxMembers'), projectController.addMember);
 userRouter.patch('/remove-member', authenticateAsAdmin, projectController.removeMember);
 userRouter.put('/update-project', authenticateAsAdmin, projectController.updateProject);
 userRouter.delete('/delete-project/:projectId/:workSpaceId', authenticateAsAdmin, projectController.deleteProject);

@@ -7,8 +7,9 @@ export interface Company extends Document {
     name: String;
     email: String;
 
+    subscriptionStatus: 'active' | 'canceled' | 'past_due' | 'other';
     plan: ObjectId;
-
+    currentPeriodEnd?: Date;
     stripeCustomerId: string;
     stripeSubscriptionId: string;
 

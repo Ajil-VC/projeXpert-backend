@@ -11,7 +11,7 @@ export class UserMapper {
             email: user.email.toString(),
             profilePicUrl: user.profilePicUrl,
             role: user.role,
-            companyId: user.companyId.toString(),
+            companyId: user.companyId?.toString(),
             workspaceIds: user.workspaceIds.map(ele => ele.toString()),
             defaultWorkspace: user.defaultWorkspace.toString(),
             lastActiveProjectId: user.lastActiveProjectId ? user.lastActiveProjectId.toString() : null,

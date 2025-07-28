@@ -7,6 +7,7 @@ import { isUserBlocked } from "../../config/Dependency/auth/auth.di";
 
 
 
+
 declare global {
     namespace Express {
         interface Request {
@@ -15,6 +16,15 @@ declare global {
     }
 }
 
+
+function verifyToken(token: string, secret: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, secret, (err, decoded) => {
+            if (err) return reject(err);
+            resolve(decoded);
+        });
+    });
+}
 
 export const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -33,48 +43,41 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
 
     try {
 
-        jwt.verify(token, config.JWT_SECRETKEY, async (err, decoded: any) => {
+        const decoded: any = await verifyToken(token, config.JWT_SECRETKEY);
+        req.user = decoded;
 
-            if (err) {
-                res.status(401).json({ status: false, message: 'Invalid or expired token.' });
-                return
-            }
+        const [userData, companyData] = await Promise.all([
+            isUserBlocked.execute(req.user.id),
+            isCompanyBlocked.execute(req.user.companyId) as Promise<Company>
+        ]);
 
-            req.user = decoded;
+        if (userData.isBlocked) {
+            res.status(403).json({ status: false, message: 'User account is blocked.' })
+            return;
+        }
 
-            const [userData, companyData] = await Promise.all([
-                isUserBlocked.execute(req.user.id),
-                isCompanyBlocked.execute(req.user.companyId) as Promise<Company>
-            ]);
+        if (userData?.restrict && req.method !== 'GET') {
+            res.status(403).json({ status: false, message: 'Dont have permission to perform this operation' });
+            return;
+        }
 
-            if (userData.isBlocked) {
-                res.status(403).json({ status: false, message: 'User account is blocked.' })
-                return;
-            }
+        if (!req.user.companyId || !companyData) {
+            res.status(401).json({ status: false, message: 'Company data not available.' });
+            return;
+        }
 
-            if (userData?.restrict && req.method !== 'GET') {
-                res.status(403).json({ status: false, message: 'Dont have permission to perform this operation' });
-                return;
-            }
+        if (companyData.isBlocked) {
+            res.status(403).json({ status: false, message: 'Company blocked' });
+            return;
+        }
 
-            if (!req.user.companyId || !companyData) {
-                res.status(401).json({ status: false, message: 'Company data not available.' });
-                return;
-            }
+        if (req.user.isBlocked) {
+            res.status(403).json({ status: false, message: 'User account is blocked.' });
+            return;
+        }
+        console.log('Authentication: ', req.user)
+        next();
 
-            if (companyData.isBlocked) {
-                res.status(403).json({ status: false, message: 'Company blocked' });
-                return;
-            }
-
-            if (req.user.isBlocked) {
-                res.status(403).json({ status: false, message: 'User account is blocked.' });
-                return;
-            }
-            console.log('Authentication: ', req.user)
-            next();
-
-        });
 
     } catch (err) {
         next(err);
@@ -99,44 +102,40 @@ export const authenticateAsAdmin = async (req: Request, res: Response, next: Nex
 
     try {
 
-        jwt.verify(token, config.JWT_SECRETKEY, async (err, decoded: any) => {
+        const decoded: any = await verifyToken(token, config.JWT_SECRETKEY);
+        req.user = decoded;
 
-            if (err) return res.status(401).json({ status: false, message: 'Invalid or expired token.' });
+        const [userData, companyData] = await Promise.all([
+            isUserBlocked.execute(req.user.id),
+            isCompanyBlocked.execute(req.user.companyId) as Promise<Company>
+        ]);
 
-            req.user = decoded;
+        if (userData?.restrict && req.method !== 'GET') {
+            res.status(403).json({ status: false, message: 'Dont have permission to perform this operation' });
+            return;
+        }
 
+        if (!req.user.companyId || !companyData) {
+            res.status(403).json({ status: false, message: 'Company data not available.' });
+            return;
+        }
 
-            const [userData, companyData] = await Promise.all([
-                isUserBlocked.execute(req.user.id),
-                isCompanyBlocked.execute(req.user.companyId) as Promise<Company>
-            ]);
+        if (companyData.isBlocked) {
+            res.status(403).json({ status: false, message: 'Company blocked' });
+            return;
+        }
 
-            if (userData?.restrict && req.method !== 'GET') {
-                res.status(403).json({ status: false, message: 'Dont have permission to perform this operation' });
-                return;
-            }
+        if (req.user.isBlocked) {
+            res.status(403).json({ status: false, message: 'User account is blocked.' });
+            return;
+        }
 
-            if (!req.user.companyId || !companyData) {
-                res.status(403).json({ status: false, message: 'Company data not available.' });
-                return;
-            }
+        if (req.user.role !== 'admin') {
+            res.status(403).json({ status: false, message: 'Access denied: Admins only' });
+            return
+        }
+        next();
 
-            if (companyData.isBlocked) {
-                res.status(403).json({ status: false, message: 'Company blocked' });
-                return;
-            }
-
-            if (req.user.isBlocked) {
-                res.status(403).json({ status: false, message: 'User account is blocked.' });
-                return;
-            }
-
-            if (req.user.role !== 'admin') {
-                res.status(403).json({ status: false, message: 'Access denied: Admins only' });
-                return
-            }
-            next();
-        });
 
     } catch (err) {
         next(err);

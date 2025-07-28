@@ -4,19 +4,25 @@ import { stripe } from "../../config/stripe.config";
 import Stripe from 'stripe';
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { config } from "../../config/config";
-import { subscribe } from "../../config/Dependency/user/subscription.di";
+import { companySubscription, isPlanAvailable, subscribe } from "../../config/Dependency/user/subscription.di";
 import { SubscriptionUsecase } from "../../application/usecase/subscriptionUseCase/subscription.usecase";
 import { getSubscription } from "../../config/Dependency/user/subscription.di";
-import { GetSubscription } from "../../application/usecase/subscriptionUseCase/getSubscription.usecase";
+import { GetSubscriptionPlans } from "../../application/usecase/subscriptionUseCase/getSubscription.usecase";
+import { GetCompanySubscription } from "../../application/usecase/companyUsecase/getCompanySubscription.usecase";
+import { IsPlanAvailableUseCase } from "../../application/usecase/subscriptionUseCase/isPlanAvailable.usecase";
 
 export class StripeController implements IStripeController {
 
     private subscribe: SubscriptionUsecase;
-    private getSubscription: GetSubscription;
-    constructor() {
+    private getSubscriptionplans: GetSubscriptionPlans;
+    private isPlanAvailable: IsPlanAvailableUseCase
 
+    private companySubscription: GetCompanySubscription
+    constructor() {
         this.subscribe = subscribe;
-        this.getSubscription = getSubscription;
+        this.getSubscriptionplans = getSubscription;
+        this.companySubscription = companySubscription;
+        this.isPlanAvailable = isPlanAvailable;
     }
 
 
@@ -24,8 +30,24 @@ export class StripeController implements IStripeController {
 
         try {
 
-            const result = await this.getSubscription.execute(req.user.companyId);
-            res.status(HttpStatusCode.OK).json({ status: true, result });
+            const page = req.query.page_num;
+            const pageNum =
+                typeof page === "string"
+                    ? parseInt(page)
+                    : 1;
+            const limit = 6;
+            const skip = (pageNum - 1) * limit;
+
+            const result = await this.companySubscription.execute(req.user.companyId);
+
+            if (!result.isExpired) {
+                res.status(HttpStatusCode.OK).json({ status: true, result: result.company });
+                return;
+            }
+
+            const plans = await this.getSubscriptionplans.execute(limit, skip);
+            res.status(HttpStatusCode.OK).json({ status: false, plans });
+            return;
 
         } catch (err) {
             next(err);
@@ -107,19 +129,16 @@ export class StripeController implements IStripeController {
 
             const productId = item.price.product as string;
             const product = await stripe.products.retrieve(productId);
-            const planName = product.name;
 
             const currentPeriodEnd = new Date(item.current_period_end * 1000);
-            const billingCycle = item.plan.interval || 'month';
 
             const result = await this.subscribe.execute(
                 session.customer_email,
                 customerId,
                 subscriptionId,
-                planName,
                 subscription.status,
-                billingCycle,
-                currentPeriodEnd
+                currentPeriodEnd,
+                productId
             );
 
         }
@@ -136,6 +155,12 @@ export class StripeController implements IStripeController {
         const { priceId } = req.body;
 
         try {
+
+            const isPlanAvailable = await this.isPlanAvailable.execute(priceId);
+            if (!isPlanAvailable) {
+                res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'Plan is not avaialalbe currently.' });
+                return;
+            }
 
             const session = await stripe.checkout.sessions.create({
                 mode: 'subscription',

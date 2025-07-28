@@ -11,10 +11,9 @@ export class SubscriptionUsecase {
         ownerEmail: string,
         stripeCustomerId: string,
         stripeSubscriptionId: string,
-        plan: string,
         subscriptionStatus: string,
-        billingCycle: string,
-        currentPeriodEnd: Date
+        currentPeriodEnd: Date,
+        productId: string
     ): Promise<Subscription> {
 
         const company = await this.company.findCompanyByEmail(ownerEmail);
@@ -23,24 +22,16 @@ export class SubscriptionUsecase {
             throw new Error('Couldnt find the company details');
         }
 
-        if (plan !== 'Pro' && plan !== 'Enterprise') {
-            throw new Error('Plan should be Pro or Enterprise.');
-        }
-        
-        if (billingCycle !== 'month' && billingCycle !== 'year') {
-            throw new Error('billing cycle should be either monthly or yearly.');
-        }
+        const subscription = await this.subcribe.createSubscription(
+            company._id as unknown as string,
+            stripeCustomerId,
+            stripeSubscriptionId,
+            subscriptionStatus,
+            currentPeriodEnd,
+            productId);
 
-        const subscription = await this.subcribe.createSubscription(company._id as unknown as string, stripeCustomerId, stripeSubscriptionId, plan, subscriptionStatus, billingCycle, currentPeriodEnd);
-   
         if (!subscription) {
             throw new Error('Couldnt create the subscription.');
-        }
-
-        // company.plan = plan;
-        const updatedCompany = await this.company.updateCompanyDetails(company);
-        if (!updatedCompany) {
-            throw new Error('Company plan couldnt update.');
         }
 
         return subscription;

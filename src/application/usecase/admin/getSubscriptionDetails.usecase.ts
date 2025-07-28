@@ -1,4 +1,6 @@
+import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.repo";
 import { ISubscription } from "../../../domain/repositories/subscription.repo";
+import { Company } from "../../../infrastructure/database/models/company.interface";
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
@@ -6,14 +8,11 @@ import { Subscription } from "../../../infrastructure/database/models/subscripti
 
 export class GetSubscriptions {
 
-    constructor(private subscription: ISubscription) { }
+    constructor(private adminRepo: IAdminRepository) { }
 
-    async execute(): Promise<Subscription[]> {
+    async execute(): Promise<Company[]> {
 
-        const subs = await this.subscription.getSubscriptions(null);
-        if (!Array.isArray(subs)) {
-            throw new Error('Need array of Subscription in getSubscriptions');
-        }
-        return subs;
+        const companies = await this.adminRepo.getCopmaniesWithPlans();
+        return companies;
     }
 }

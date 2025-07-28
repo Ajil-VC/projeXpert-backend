@@ -14,7 +14,7 @@ export class CompanyRepositoryImp extends BaseRepository<Company> implements ICo
     }
 
     async findCompanyById(companyId: string): Promise<Company> {
-        return await this.findByIdOrThrow(companyId, 'Couldnt find companydata');
+        return await this.findByIdWithPopulateOrThrow(companyId, { path: 'plan' });
     }
 
     async getCompanyWithWorkSpace(companyId: String): Promise<Company | null> {

@@ -6,12 +6,12 @@ export interface ISubscription {
     createSubscription(companyId: string,
         stripeCustomerId: string,
         stripeSubscriptionId: string,
-        plan: 'Pro' | 'Enterprise',
         status: string,
-        billingCycle: 'month' | 'year',
-        currentPeriodEnd: Date
+        currentPeriodEnd: Date,
+        productId: string
     ): Promise<Subscription>;
 
+    getPlan(priceId: string): Promise<Subscription>;
 
-    getSubscriptions(companyId: string | null): Promise<Subscription | Subscription[] | null>;
+    getAllPlans(limit: number, skip: number): Promise<{ plans: Subscription[], totalPage: number }>;
 }

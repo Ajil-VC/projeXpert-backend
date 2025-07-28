@@ -62,6 +62,6 @@ export const createPlanSchema = yup.object({
     maxWorkspace: yup.number().required('Maximum workspace required'),
     maxProjects: yup.number().required('Maximum Projects required'),
     maxMembers: yup.number().required('Maximum members required'),
-    canUseVideoCall: yup.string().oneOf(['true', 'false'], 'Video call ability option should be true or false').required('Videocall ability required'),
+    // canUseVideoCall: yup.string().oneOf(['true', 'false'], 'Video call ability option should be true or false').required('Videocall ability required'),
     description: yup.string().required('Description required')
 });

@@ -9,11 +9,13 @@ import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { ISubscription } from "../../../domain/repositories/subscription.repo";
 import { SubscriptionImp } from "../../../infrastructure/repositories/repoImplementations/subscriptoin.repositoryImp";
 import { GetSubscriptions } from "../../../application/usecase/admin/getSubscriptionDetails.usecase";
+import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.repo";
+import { AdminRepositoryImp } from "../../../infrastructure/repositories/adminRepo/admin.repository";
 
 const userRepository: IUserRepository = new userRepositoryImp();
 const companyRepository: ICompanyRepository = new CompanyRepositoryImp();
-const subscriptionRepository: ISubscription = new SubscriptionImp();
+const adminRepository: IAdminRepository = new AdminRepositoryImp();
 
 export const companyManagementUsecase = new changeUserStatusUseCase(userRepository);
 export const companyStatusChangeUsecase = new ChangeCompanyStatusUsecase(companyRepository);
-export const getSubscriptionsusecase = new GetSubscriptions(subscriptionRepository);
+export const getSubscriptionsusecase = new GetSubscriptions(adminRepository);

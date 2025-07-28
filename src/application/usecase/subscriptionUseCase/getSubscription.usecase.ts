@@ -1,14 +1,15 @@
+
 import { ISubscription } from "../../../domain/repositories/subscription.repo";
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
-export class GetSubscription {
+export class GetSubscriptionPlans {
 
     constructor(private subscribe: ISubscription) { }
 
-    async execute(companyId: string | null): Promise<Subscription | Subscription[] | null> {
+    async execute(limit: number, skip: number): Promise<{ plans: Subscription[], totalPage: number }> {
 
-        const result = await this.subscribe.getSubscriptions(companyId);
+        const result = await this.subscribe.getAllPlans(limit, skip);
         if (!result) throw new Error('No subscription details available.');
         return result;
     }

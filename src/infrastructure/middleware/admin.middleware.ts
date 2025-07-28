@@ -13,6 +13,16 @@ declare global {
 }
 
 
+function verifyToken(token: string, secret: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, secret, (err, decoded) => {
+            if (err) return reject(err);
+            resolve(decoded);
+        });
+    });
+}
+
+
 export const authenticatePlatformAdmin = async (req: Request, res: Response, next: NextFunction) => {
 
     const authHeader = req.headers.authorization;
@@ -30,22 +40,16 @@ export const authenticatePlatformAdmin = async (req: Request, res: Response, nex
 
     try {
 
-        jwt.verify(token, config.JWT_SECRETKEY, (err, decoded: any) => {
+        const decoded: any = await verifyToken(token, config.JWT_SECRETKEY);
+        req.user = decoded;
 
-            if (err) {
-                res.status(401).json({ status: false, message: 'Error while verifying jwt.' });
-                return
-            }
-
-            req.user = decoded;
-            if (req.user.systemRole !== 'platform-admin') {
-                res.status(403).json({ status: false, message: 'Unautherized: not Admin' });
-                return;
-            }
-            console.log('Admin Authentication: ', req.user)
-            next();
-
-        });
+        req.user = decoded;
+        if (req.user.systemRole !== 'platform-admin') {
+            res.status(403).json({ status: false, message: 'Unautherized: not Admin' });
+            return;
+        }
+        console.log('Admin Authentication: ', req.user)
+        next();
 
     } catch (err) {
         next(err);

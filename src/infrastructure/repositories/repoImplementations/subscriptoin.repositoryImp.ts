@@ -15,27 +15,28 @@ export class SubscriptionImp extends BaseRepository<Subscription> implements ISu
         super(subscriptionModel);
     }
 
+    async getPlan(priceId: string): Promise<Subscription> {
 
-    async getSubscriptions(companyId: string | null): Promise<Subscription | Subscription[] | null> {
-
-        if (!companyId) {
-            
-            const subscriptions = await subscriptionModel.find().populate('companyId');
-            if (!subscriptions) {
-                throw new Error('Subscriptions couldnt retrieve.');
-            }
-            return subscriptions;
-
+        const plan = await subscriptionModel.findOne({ stripePriceId: priceId });
+        if (!plan) {
+            throw new Error("Plan is not available.");
         }
 
-        const companyIdOb = new mongoose.Types.ObjectId(companyId);
- 
-        const subscription = await subscriptionModel.findOne({ companyId: companyIdOb });
+        return plan;
+    }
 
-        if (!subscription) {
-            return null;
-        }
-        return subscription;
+    async getAllPlans(limit: number, skip: number): Promise<{ plans: Subscription[]; totalPage: number; }> {
+
+        const totalCount = await subscriptionModel.countDocuments({});
+
+        const allSubscriptionPlans = await subscriptionModel.find({ isActive: true })
+            .skip(skip)
+            .limit(limit)
+
+        const totalPages = Math.ceil(totalCount / limit);
+
+        if (!allSubscriptionPlans) throw new Error('No subscription plans available');
+        return { plans: allSubscriptionPlans, totalPage: totalPages };
 
     }
 
@@ -44,10 +45,10 @@ export class SubscriptionImp extends BaseRepository<Subscription> implements ISu
         companyId: string,
         stripeCustomerId: string,
         stripeSubscriptionId: string,
-        plan: "Pro" | "Enterprise",
         status: string,
-        billingCycle: "month" | "year",
-        currentPeriodEnd: Date): Promise<Subscription> {
+        currentPeriodEnd: Date,
+        productId: string
+    ): Promise<Subscription> {
 
         const companyIdOb = new mongoose.Types.ObjectId(companyId);
         let subStatus = 'other';
@@ -55,27 +56,26 @@ export class SubscriptionImp extends BaseRepository<Subscription> implements ISu
             subStatus = status;
         }
 
-        const updatedSubscription = await subscriptionModel.findOneAndUpdate(
-            { companyId: companyIdOb },
+        const subscribedPlan = await subscriptionModel.findOne({ stripeProductId: productId });
+
+        const updatedCompany = await companyModel.findOneAndUpdate(
+            { _id: companyIdOb },
             {
                 $set: {
+                    plan: subscribedPlan._id,
+                    currentPeriodEnd,
                     stripeCustomerId,
                     stripeSubscriptionId,
-                    plan,
-                    status: subStatus,
-                    billingCycle,
-                    currentPeriodEnd,
-                },
+                    subscriptionStatus: subStatus
+                }
             },
-            { new: true, upsert: true }
+            { new: true }
         );
 
-
-
-        if (!updatedSubscription) {
+        if (!updatedCompany) {
             throw new Error('Subscription not saved.');
         }
 
-        return updatedSubscription;
+        return subscribedPlan;
     }
 }
