@@ -10,6 +10,17 @@ import { Sprint } from "../../database/models/sprint.interface";
 export class BacklogRepositoryImp implements IBacklogRepository {
 
 
+    async isActiveSprint(projectId: string): Promise<boolean> {
+
+        const projectOb = new mongoose.Types.ObjectId(projectId);
+        const sprint = await SprintModel.findOne({ projectId: projectOb, status: 'active' });
+        if (!sprint) {
+            return false;
+        }
+        return true;
+    }
+
+
     async updateEpic(title: string, description: string, startDate: string, endDate: string, epicId: string): Promise<Task | null> {
 
         const epicIdOb = new mongoose.Types.ObjectId(epicId);
@@ -37,7 +48,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         const endDate = new Date(startDate);
         endDate.setDate(endDate.getDate() + duration - 1);
         const updatedSprint = await SprintModel.findByIdAndUpdate({ _id: sprintIdOb }, {
-            $set: { 
+            $set: {
                 name: sprintName,
                 startDate: startDate,
                 endDate: endDate,

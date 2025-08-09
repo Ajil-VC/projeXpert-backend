@@ -51,7 +51,13 @@ export const authenticatePlatformAdmin = async (req: Request, res: Response, nex
         console.log('Admin Authentication: ', req.user)
         next();
 
-    } catch (err) {
+    } catch (err: any) {
+
+        if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+            res.status(401).json({ status: false, message: 'Invalid or expired token.' });
+            return 
+        }
+
         next(err);
     }
 

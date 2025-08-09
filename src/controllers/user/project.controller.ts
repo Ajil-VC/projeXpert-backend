@@ -25,6 +25,8 @@ import { UpdateProjectUseCase } from "../../application/usecase/projectUseCase/u
 import { DeleteProjectUsecase } from "../../application/usecase/projectUseCase/deleteProject.usecase";
 import { ProjectStatsUseCase } from "../../application/usecase/projectUseCase/projectstats.usecase";
 import { RetrieveProjectUseCase } from "../../application/usecase/projectUseCase/retrieveProject.usecase";
+import { AddActivityUsecase } from "../../application/usecase/activityUseCase/addActivity.usecase";
+import { addActivityUsecase } from "../../config/Dependency/user/activity.di";
 
 
 export class ProjectController implements IProjectController {
@@ -40,6 +42,7 @@ export class ProjectController implements IProjectController {
     private deleteProjectUsecase: DeleteProjectUsecase;
     private projectStatsUse: ProjectStatsUseCase;
     private retrieveProjectUsecase: RetrieveProjectUseCase;
+    private addActivityUsecase: AddActivityUsecase;
 
     constructor() {
 
@@ -54,6 +57,7 @@ export class ProjectController implements IProjectController {
         this.deleteProjectUsecase = deleteProjectUsecase;
         this.projectStatsUse = projectStatsUse;
         this.retrieveProjectUsecase = retrieveProjectUsecase;
+        this.addActivityUsecase = addActivityUsecase;
     }
 
 
@@ -197,6 +201,7 @@ export class ProjectController implements IProjectController {
 
             const { email, projectId, workSpaceId } = req.body;
             const updatedProjectData = await this.addMemberUsecase.execute(email, projectId, workSpaceId, req.user.companyId);
+            await this.addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'Added', email);
 
             res.status(HttpStatusCode.OK).json({
                 status: true, message: 'Member added to the project successfully', updatedProjectData
@@ -234,6 +239,8 @@ export class ProjectController implements IProjectController {
             const workSpaceId = req.body.workSpaceId;
 
             const updatedProject = await this.updateProjectUsecase.execute(_id, name, status, priority, members, req.user.email);
+            await this.addActivityUsecase.execute(_id, req.user.companyId, req.user.id, 'updated', 'project');
+
             res.status(HttpStatusCode.OK).json({ status: true, data: updatedProject });
             return;
 

@@ -5,8 +5,10 @@ import { WorkSpace } from "../../infrastructure/database/models/workspace.interf
 
 export interface ICompanyRepository {
 
-
+    activeCompanySubscriptions(): Promise<Number>;
     getCompanyWithWorkSpace(companyId: String): Promise<Company | null>;
+
+    getTotalCompanyCountWithLastJoined(): Promise<{ totalCompanyCount: Number, lastMonthJoinedCount: Number }>;
 
     findCompanyById(companyId: string): Promise<Company>;
     findCompanyByEmail(email: string): Promise<Company | null>;

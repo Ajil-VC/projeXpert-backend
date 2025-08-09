@@ -79,7 +79,12 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
         next();
 
 
-    } catch (err) {
+    } catch (err: any) {
+
+        if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+            res.status(401).json({ status: false, message: 'Invalid or expired token.' });
+            return
+        }
         next(err);
     }
 
@@ -137,7 +142,13 @@ export const authenticateAsAdmin = async (req: Request, res: Response, next: Nex
         next();
 
 
-    } catch (err) {
+    } catch (err: any) {
+
+        if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+            res.status(401).json({ status: false, message: 'Invalid or expired token.' });
+            return
+        }
+
         next(err);
     }
 

@@ -13,6 +13,58 @@ export class CompanyRepositoryImp extends BaseRepository<Company> implements ICo
         super(companyModel);
     }
 
+
+    async getTotalCompanyCountWithLastJoined(): Promise<{ totalCompanyCount: Number; lastMonthJoinedCount: Number; }> {
+
+        const data = await companyModel.aggregate([
+            {
+                $facet: {
+                    totalCompanies: [
+                        { $count: 'count' }
+                    ],
+                    companiesLastMonth: [
+                        {
+                            $match: {
+                                createdAt: {
+                                    $gte: new Date(new Date().setMonth(new Date().getMonth() - 1))
+                                }
+                            }
+                        },
+                        { $count: 'count' }
+                    ]
+                }
+            }
+        ]);
+
+        const totalCompanyCount = data[0].totalCompanies[0]?.count || 0;
+        const lastMonthJoinedCount = data[0].companiesLastMonth[0]?.count || 0;
+
+        return { totalCompanyCount, lastMonthJoinedCount };
+    }
+
+
+    async activeCompanySubscriptions(): Promise<Number> {
+
+        const result = await companyModel.aggregate([
+            {
+                $match: {
+                    currentPeriodEnd: { $gt: new Date() },
+                    isBlocked: false
+                }
+            },
+            {
+                $count: 'activeSubscriptionCount'
+            }
+        ]);
+
+        if (!result) {
+            throw new Error("No active subscriptions available right now.");
+        }
+
+        return result[0]?.activeSubscriptionCount || 0;
+
+    }
+
     async findCompanyById(companyId: string): Promise<Company> {
         return await this.findByIdWithPopulateOrThrow(companyId, { path: 'plan' });
     }

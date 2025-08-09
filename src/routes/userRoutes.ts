@@ -10,6 +10,7 @@ import {
     createIssueSchema, createSprintSchema,
     createWorkspaceSchema,
     dragDropSchema,
+    meetingSchema,
     projectCreationSchema,
     sendMessageSchema,
     startConversationSchema,
@@ -30,10 +31,15 @@ import { AuthController } from '../controllers/authController';
 import { StripeController } from '../controllers/user/stripe.controller';
 import { PlanPolicyMiddleware } from '../infrastructure/middleware/planpolicy.middleware';
 import { userController } from '../controllers/user/user.controller';
+import { ActivityController } from '../controllers/user/activity.controller';
+import { GroupcallController } from '../controllers/user/groupCall.controller';
+import { GenerateKitTokenService } from '../infrastructure/services/generateKitToken.serviceImp';
+import { IGenerateKitToken } from '../domain/services/generateKitToken.interface';
 
 const userRouter = express.Router();
 userRouter.use(express.urlencoded({ extended: true }));
 
+const zegTokenService: IGenerateKitToken = new GenerateKitTokenService();
 const backlogController = new BacklogController();
 const chatController = new ChatController();
 const projectController = new ProjectController();
@@ -44,6 +50,8 @@ const authController = new AuthController();
 const stripeController = new StripeController();
 const planPolicyMiddleware = new PlanPolicyMiddleware();
 const userControllerOb = new userController();
+const getActivities = new ActivityController();
+const groupCallController = new GroupcallController(zegTokenService);
 
 userRouter.get('/authenticate-user', authenticateUser, authController.isVerified);
 userRouter.post('/login', validateBody(signinSchema), authController.signIn);
@@ -101,5 +109,11 @@ userRouter.post('/start-conversation', authenticateUser, validateBody(startConve
 userRouter.get('/get-chats', authenticateUser, chatController.getChats);
 userRouter.get('/get-messages/:convoId', authenticateUser, chatController.getMessages);
 userRouter.post('/send-message', authenticateUser, validateBody(sendMessageSchema), chatController.sendMessage);
+userRouter.get('/activity', authenticateUser, getActivities.getActivity);
+
+userRouter.get('/get-zegotoken', authenticateUser, groupCallController.getCallToken);
+userRouter.post('/create-room', authenticateUser, validateBody(meetingSchema), groupCallController.createRoom);
+userRouter.get('/get-upcoming-meetings', authenticateUser, groupCallController.getUpcomingMeetings);
+userRouter.delete('/remove-meeting', authenticateUser, groupCallController.removeMeeting);
 
 export default userRouter;

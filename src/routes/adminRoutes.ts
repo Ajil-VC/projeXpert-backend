@@ -24,7 +24,10 @@ adminRouter.use(express.urlencoded({ extended: true }));
 adminRouter.get('/autherize-admin', authenticatePlatformAdmin, authController.isVerified);
 adminRouter.post('/login', validateBody(signinSchema), authController.signIn);
 adminRouter.get('/admin', authenticatePlatformAdmin, adminInitController.getAdminData);
+
 adminRouter.get('/admin-init', authenticatePlatformAdmin, adminInitController.platFormData);
+adminRouter.get('/dashboard', authenticatePlatformAdmin, adminInitController.dashBoard)
+
 adminRouter.put('/change-user-status', authenticatePlatformAdmin, validateBody(changeUserStatusSchema), companyManagementController.changeUserStatus);
 adminRouter.put('/change-company-status', authenticatePlatformAdmin, validateBody(changeCompanyStatusSchema), companyManagementController.changeCompanyStatus);
 adminRouter.get('/get-notifications', authenticatePlatformAdmin, userInitController.getNotifications);

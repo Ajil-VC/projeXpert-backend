@@ -1,8 +1,10 @@
+
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
 
 export interface ISubscriptionPlanRepository {
+
 
     changePlanStatus(planId: string): Promise<Subscription>;
 

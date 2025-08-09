@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import { ISubscriptionPlanRepository } from "../../../domain/repositories/adminRepo/subscriptionplan.repo";
 import { Subscription } from "../../database/models/subscription.interface";
 import subscriptionModel from "../../database/subscription.models";
+import { companySubscription } from "../../database/models/companySubscription.interface";
+import companySubscriptionModel from "../../database/companySubscription.model";
 
 
 

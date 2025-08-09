@@ -57,7 +57,8 @@ export const startSprintSchema = yup.object({
     sprintId: yup.string().required('Sprint id required'),
     sprintName: yup.string().required('Sprint name required'),
     duration: yup.number().required('duration required'),
-    startDate: yup.date().required('Date required')
+    startDate: yup.date().required('Date required'),
+    projectId: yup.string().required('projectId required')
 });
 
 export const completeSprintSchema = yup.object({
@@ -85,4 +86,38 @@ export const controlSchema = yup.object({
     userId: yup.string().required('User Id required'),
     status: yup.string().nullable(),
     userRole: yup.string()
-})
+});
+
+export const meetingSchema = yup.object({
+    roomName: yup
+        .string()
+        .trim()
+        .required('Room name is required'),
+
+    meetingDate: yup
+        .string()
+        .required('Meeting date is required')
+        .matches(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (YYYY-MM-DD)'),
+
+    meetingTime: yup
+        .string()
+        .required('Meeting time is required')
+        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm in 24-hour format)'),
+
+    description: yup
+        .string()
+        .optional(),
+
+    members: yup
+        .array()
+        .of(
+            yup
+                .string()
+                .trim()
+                .required('Member ID must be a non-empty string')
+        )
+        .min(1, 'At least one member is required'),
+
+    roomId: yup.string().required('Room Id is required'),
+    url: yup.string().required('url is required')
+});

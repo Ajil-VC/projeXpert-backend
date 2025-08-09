@@ -22,7 +22,7 @@ export class SubscriptionUsecase {
             throw new Error('Couldnt find the company details');
         }
 
-        const subscription = await this.subcribe.createSubscription(
+        const subscription = await this.subcribe.addSubscriptionToCompany(
             company._id as unknown as string,
             stripeCustomerId,
             stripeSubscriptionId,
@@ -30,8 +30,19 @@ export class SubscriptionUsecase {
             currentPeriodEnd,
             productId);
 
+        const companySubscription = await this.subcribe.createSubscriptionForCompany(
+            company._id as unknown as string,
+            subscription._id as unknown as string,
+            currentPeriodEnd,
+            stripeCustomerId,
+            stripeSubscriptionId,
+            subscriptionStatus
+        );
+
         if (!subscription) {
             throw new Error('Couldnt create the subscription.');
+        } else if (!companySubscription) {
+            throw new Error('Couldnt save the subscribed plan.');
         }
 
         return subscription;

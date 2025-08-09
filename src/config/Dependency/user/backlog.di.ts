@@ -11,6 +11,7 @@ import { StartSprintUsecase } from "../../../application/usecase/backlogUseCase/
 import { BacklogRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/backlog.repositoryImp";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import { UpdateEpicUsecase } from "../../../application/usecase/backlogUseCase/updateEpic.usecase";
+import { IsActiveSprintUsecase } from "../../../application/usecase/backlogUseCase/isActiveSprint.usecase";
 
 const backlogRepository: IBacklogRepository = new BacklogRepositoryImp();
 
@@ -24,3 +25,4 @@ export const assignIssueUsecase = new AssignIssueUseCase(backlogRepository);
 export const dragDropUsecase = new DragDropUseCase(backlogRepository);
 export const changeTaskStatusUsecase = new ChangeTaskStatus(backlogRepository);
 export const startSprintUsecase = new StartSprintUsecase(backlogRepository);
+export const isActiveSprint = new IsActiveSprintUsecase(backlogRepository);

@@ -14,6 +14,7 @@ export class CompanyManagementController implements ICompanyManagement {
     private companyManagementUsecase: changeUserStatusUseCase;
     private companyStatusChangeUsecase: ChangeCompanyStatusUsecase;
     private getSubscriptionsusecase: GetSubscriptions;
+
     constructor() {
         this.companyManagementUsecase = companyManagementUsecase;
         this.companyStatusChangeUsecase = companyStatusChangeUsecase;

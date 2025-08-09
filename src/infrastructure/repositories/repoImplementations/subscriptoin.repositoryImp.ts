@@ -4,6 +4,8 @@ import { Subscription } from "../../database/models/subscription.interface";
 import subscriptionModel from "../../database/subscription.models";
 import companyModel from "../../database/company.models";
 import { BaseRepository } from "../base.repository";
+import { companySubscription } from "../../database/models/companySubscription.interface";
+import companySubscriptionModel from "../../database/companySubscription.model";
 
 
 
@@ -13,6 +15,35 @@ export class SubscriptionImp extends BaseRepository<Subscription> implements ISu
 
     constructor() {
         super(subscriptionModel);
+    }
+
+    async createSubscriptionForCompany(
+        companyId: string,
+        plan: string,
+        currentPeriodEnd: Date,
+        stripeCustomerId: string,
+        stripeSubscriptionId: string,
+        subscriptionStatus: string): Promise<companySubscription> {
+
+        const companyOb = new mongoose.Types.ObjectId(companyId);
+        const planId = new mongoose.Types.ObjectId(plan);
+
+        const newCompanySubscription = new companySubscriptionModel({
+            companyId: companyOb,
+            plan: planId,
+            currentPeriodEnd,
+            stripeCustomerId,
+            stripeSubscriptionId,
+            subscriptionStatus
+        });
+
+        const createdCompanySubscription = await newCompanySubscription.save();
+        if (!createdCompanySubscription) {
+            throw new Error("Method not implemented.");
+        }
+
+        return createdCompanySubscription;
+
     }
 
     async getPlan(priceId: string): Promise<Subscription> {
@@ -41,7 +72,7 @@ export class SubscriptionImp extends BaseRepository<Subscription> implements ISu
     }
 
 
-    async createSubscription(
+    async addSubscriptionToCompany(
         companyId: string,
         stripeCustomerId: string,
         stripeSubscriptionId: string,

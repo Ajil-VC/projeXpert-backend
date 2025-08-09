@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { createEpicUsecase, updateEpicUse } from "../../config/Dependency/user/backlog.di";
+import { createEpicUsecase, isActiveSprint, updateEpicUse } from "../../config/Dependency/user/backlog.di";
 import { createIssueUsecase } from "../../config/Dependency/user/backlog.di";
 import { createSprintUsecase } from "../../config/Dependency/user/backlog.di";
 import { getSprintsUsecase } from "../../config/Dependency/user/backlog.di";
@@ -37,6 +37,9 @@ import { CompleteSprintUsecase } from "../../application/usecase/taskUsecase/com
 import { GetCommentsUseCase } from "../../application/usecase/taskUsecase/getComment.usecase";
 import { AddCommentUseCase } from "../../application/usecase/taskUsecase/addComment.usecase";
 import { EpicProgressUsecase } from "../../application/usecase/taskUsecase/epicprogress.usecase";
+import { IsActiveSprintUsecase } from "../../application/usecase/backlogUseCase/isActiveSprint.usecase";
+import { AddActivityUsecase } from "../../application/usecase/activityUseCase/addActivity.usecase";
+import { addActivityUsecase } from "../../config/Dependency/user/activity.di";
 
 
 
@@ -59,6 +62,8 @@ export class BacklogController implements IBacklogController {
     private getCommentsUse: GetCommentsUseCase;
     private addCommentUse: AddCommentUseCase;
     private epicProgress: EpicProgressUsecase
+    private isActiveSprint: IsActiveSprintUsecase;
+    private addActivityUsecase: AddActivityUsecase;
 
     constructor() {
         this.createEpicUsecase = createEpicUsecase;
@@ -77,7 +82,9 @@ export class BacklogController implements IBacklogController {
         this.completeSprintUse = completeSprintUse;
         this.getCommentsUse = getCommentsUse;
         this.addCommentUse = addCommentUse;
-        this.epicProgress = epicProgress
+        this.epicProgress = epicProgress;
+        this.isActiveSprint = isActiveSprint;
+        this.addActivityUsecase = addActivityUsecase;
 
     }
 
@@ -86,6 +93,8 @@ export class BacklogController implements IBacklogController {
 
             const { title, description, startDate, endDate, epicId } = req.body;
             const result = await this.updateEpicUsecase.execute(title, description, startDate, endDate, epicId);
+
+            await this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, 'updated the epic', title);
 
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
@@ -102,6 +111,7 @@ export class BacklogController implements IBacklogController {
 
             const { title, description, startDate, endDate, projectId } = req.body;
             const result = await this.createEpicUsecase.execute(title, description, startDate, endDate, projectId, req.user.id);
+            await this.addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'created new epic', title);
             res.status(HttpStatusCode.CREATED).json({ status: true, result });
             return;
 
@@ -119,8 +129,10 @@ export class BacklogController implements IBacklogController {
             const { projectId, issueType, issueName, taskGroup, epicId } = req.body;
             const result = await this.createIssueUsecase.execute(projectId, issueType, issueName, taskGroup, epicId);
 
+            await this.addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, `created new ${issueType}`, issueName);
+
             if (result.epicId) {
-                
+
                 const epicId = typeof result.epicId === 'string' ? result.epicId : result.epicId?._id.toString();
                 const updateEpicProgress = await this.epicProgress.execute(epicId);
             }
@@ -140,6 +152,8 @@ export class BacklogController implements IBacklogController {
         try {
             const { projectId, issueIds } = req.body;
             const result = await this.createSprintUsecase.execute(projectId, issueIds, req.user.id);
+
+            await this.addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'created new', 'sprint');
 
             res.status(HttpStatusCode.CREATED).json({ status: true, result, message: RESPONSE_MESSAGES.SPRINT.CREATED });
             return;
@@ -204,6 +218,9 @@ export class BacklogController implements IBacklogController {
             }
 
             const result = await this.assignIssueUsecase.execute(issueId, assigneeId);
+            if (result?.projectId) {
+                await this.addActivityUsecase.execute(result.projectId, req.user.companyId, req.user.id, 'changed assignee to', result?.assignedTo?.email || assigneeId)
+            }
 
             if (!result) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'No issue found with this id' });
@@ -237,6 +254,7 @@ export class BacklogController implements IBacklogController {
             }
 
             const result = await this.dragDropUsecase.execute(prevContainerId, containerId, movedTaskId);
+            await this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `moved ${result.title} to`, containerId);
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
 
         } catch (err) {
@@ -256,6 +274,7 @@ export class BacklogController implements IBacklogController {
             const files = req.files as Express.Multer.File[] || [];
 
             const result = await this.updateTaskDetailsUse.execute(taskData, assigneeId, files);
+            await this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `updated`, taskData.title)
 
             res.status(HttpStatusCode.OK).json({ status: false, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
             return;
@@ -301,6 +320,7 @@ export class BacklogController implements IBacklogController {
             }
 
             const result = await this.changeTaskStatusUsecase.execute(taskId, status);
+            await this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `updated ${result.title} status to`, status)
 
             if (result.epicId) {
                 const epicId = typeof result.epicId === 'string' ? result.epicId : result.epicId?.toString();
@@ -319,13 +339,20 @@ export class BacklogController implements IBacklogController {
 
         try {
 
-            const { sprintId, sprintName, duration, startDate } = req.body;
+            const { sprintId, sprintName, duration, startDate, projectId } = req.body;
             if (!sprintId || !sprintName || !duration || !startDate) {
                 res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'sprint id, sprintname, duration and startdate are required' });
                 return;
             }
 
+            const isActiveSprint = await this.isActiveSprint.execute(projectId);
+            if (isActiveSprint) {
+                res.status(HttpStatusCode.CONFLICT).json({ status: false, message: 'Complete the active sprint before starting next.' });
+                return;
+            }
+
             const result = await this.startSprintUsecase.execute(sprintId, sprintName, duration, startDate);
+            await this.addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'started sprint', sprintName)
 
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.SPRINT.STARTED, result });
             return;
@@ -342,6 +369,7 @@ export class BacklogController implements IBacklogController {
             const { completingSprintId, movingSprintId, projectId } = req.body
 
             const result = await this.completeSprintUse.execute(completingSprintId, movingSprintId, projectId);
+            await this.addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'completed last active', 'sprint')
 
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.SPRINT.UPDATED, result });
             return;
@@ -376,12 +404,13 @@ export class BacklogController implements IBacklogController {
 
         try {
 
-            const { taskId, content } = req.body;
+            const { taskId, content, projectId } = req.body;
             if (!taskId || !content) {
                 throw new Error('Task ID or content cannot be null');
             }
 
             const result = await this.addCommentUse.execute(req.user.id, taskId, content);
+            await this.addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, `added comment to`, taskId);
             res.status(HttpStatusCode.CREATED).json({ status: true, result });
             return
 
