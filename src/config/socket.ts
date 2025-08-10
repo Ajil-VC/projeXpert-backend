@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { addUser, getUserSocket, removeUser } from '../infrastructure/services/socket.manager';
+import { addUser, getAllUsers, getUserSocket, removeUser } from '../infrastructure/services/socket.manager';
 import { config } from './config';
 import jwt from 'jsonwebtoken';
 import { saveVideoCallUse } from './Dependency/user/chat.di';
@@ -47,8 +47,21 @@ export const setupSocket = (server: any) => {
 
 
         const userId = socket.data.user?.id;
+        const companyId = socket.data.user?.companyId;
+
         if (userId) {
             addUser(userId, socket.id);
+
+            // Join the room for this company
+            socket.join(`company_${companyId}`);
+            
+            socket.emit('online-users', Array.from(getAllUsers().keys()));
+
+            // Notify others in the same company
+            socket.broadcast
+                .to(`company_${companyId}`)
+                .emit('user_online', userId);
+
             console.log(`User ${userId} connected with socket ${socket.id}`);
         }
 
@@ -85,6 +98,11 @@ export const setupSocket = (server: any) => {
 
         socket.on('disconnect', () => {
             removeUser(socket.id);
+
+            socket.broadcast
+                .to(`company_${companyId}`)
+                .emit('user_offline', userId);
+
             console.log('user disconnected');
         });
     });
