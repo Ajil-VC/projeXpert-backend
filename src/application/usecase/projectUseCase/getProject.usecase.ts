@@ -1,7 +1,8 @@
+import { IGetCurrentProject } from "../../../config/Dependency/user/project.di";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 
 
-export class GetProjectUseCase {
+export class GetProjectUseCase implements IGetCurrentProject {
 
     constructor(private projectRepo: IProjectRepository) { }
     async execute(workSpaceId: string, projectId: string) {

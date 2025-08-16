@@ -1,9 +1,10 @@
+import { ISubscribe } from "../../../config/Dependency/user/subscription.di";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { ISubscription } from "../../../domain/repositories/subscription.repo";
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
-export class SubscriptionUsecase {
+export class SubscriptionUsecase implements ISubscribe {
 
     constructor(private company: ICompanyRepository, private subcribe: ISubscription) { }
 

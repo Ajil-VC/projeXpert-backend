@@ -1,7 +1,8 @@
+import { IStartSprint } from "../../../config/Dependency/user/backlog.di";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 
 
-export class StartSprintUsecase {
+export class StartSprintUsecase implements IStartSprint {
 
     constructor(private backlogRepo: IBacklogRepository) { }
 

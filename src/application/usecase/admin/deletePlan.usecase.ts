@@ -1,10 +1,11 @@
+import { IDeletePlan } from "../../../config/Dependency/admin/subscriptionplan.di";
 import { ISubscriptionPlanRepository } from "../../../domain/repositories/adminRepo/subscriptionplan.repo";
 
 
 
 
 
-export class DeletePlanUseCase {
+export class DeletePlanUseCase implements IDeletePlan {
 
     constructor(private subscriptionRepo: ISubscriptionPlanRepository) { }
 

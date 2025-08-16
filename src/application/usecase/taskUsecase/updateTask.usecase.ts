@@ -1,9 +1,10 @@
 import { Task } from "../../../infrastructure/database/models/task.interface";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
 import { ICloudinary } from "../../../domain/services/cloudinary.interface";
+import { IUpdateTaskDetails } from "../../../config/Dependency/user/task.di";
 
 
-export class UpdateTaskDetailsUsecase {
+export class UpdateTaskDetailsUsecase implements IUpdateTaskDetails {
 
     constructor(private taskRepo: ITaskRepository, private cloudinary: ICloudinary) { }
 

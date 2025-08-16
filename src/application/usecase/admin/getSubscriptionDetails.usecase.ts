@@ -1,12 +1,9 @@
+import { IGetSubscriptionAdmin } from "../../../config/Dependency/admin/comapanymanage.di";
 import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.repo";
-import { ISubscription } from "../../../domain/repositories/subscription.repo";
 import { Company } from "../../../infrastructure/database/models/company.interface";
-import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
-
-
-export class GetSubscriptions {
+export class GetSubscriptions implements IGetSubscriptionAdmin {
 
     constructor(private adminRepo: IAdminRepository) { }
 

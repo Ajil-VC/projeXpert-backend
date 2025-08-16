@@ -1,10 +1,11 @@
+import { IProjectStatus } from "../../../config/Dependency/user/project.di";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
 
-export class ProjectStatsUseCase {
+export class ProjectStatsUseCase implements IProjectStatus {
 
     constructor(private projectRepo: IProjectRepository) { }
 

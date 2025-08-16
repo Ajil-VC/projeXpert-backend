@@ -4,9 +4,10 @@ import { useCaseResult } from "../../shared/useCaseResult";
 import { config } from "../../../config/config";
 import jwt from 'jsonwebtoken';
 import { Company } from "../../../infrastructure/database/models/company.interface";
+import { ISignin } from "../../../config/Dependency/auth/auth.di";
 
 
-export class SigninUseCase {
+export class SigninUseCase implements ISignin {
 
     constructor(
         private userRepo: IUserRepository,

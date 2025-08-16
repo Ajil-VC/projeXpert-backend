@@ -1,8 +1,9 @@
+import { IDragDrop } from "../../../config/Dependency/user/backlog.di";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
-export class DragDropUseCase {
+export class DragDropUseCase implements IDragDrop {
 
     constructor(private backlogRepo: IBacklogRepository) { }
 

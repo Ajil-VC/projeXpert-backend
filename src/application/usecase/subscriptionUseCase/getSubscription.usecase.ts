@@ -1,9 +1,10 @@
 
+import { IGetSubscription } from "../../../config/Dependency/user/subscription.di";
 import { ISubscription } from "../../../domain/repositories/subscription.repo";
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
-export class GetSubscriptionPlans {
+export class GetSubscriptionPlans implements IGetSubscription {
 
     constructor(private subscribe: ISubscription) { }
 

@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import { config } from "../../config/config";
-import { isCompanyBlocked } from "../../config/Dependency/auth/auth.di";
+import { isCompanyBlocked } from "../../routes/dependency/auth.inter";
 import { Company } from "../database/models/company.interface";
-import { isUserBlocked } from "../../config/Dependency/auth/auth.di";
+import { isUserBlocked } from "../../routes/dependency/auth.inter";
 
 
 

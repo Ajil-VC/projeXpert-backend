@@ -15,13 +15,16 @@ export class PlanPolicy {
     async execute(companyId: string, operationType: 'createWorkspace' | 'createProject' | 'maxMembers' | 'canVideoCall'): Promise<useCaseResult> {
 
         const companyData = await this.company.findCompanyById(companyId);
-        const membersCount = (await this.teamRepo.getCompanyUsers(companyId)).length;
+        const membersCount = (await this.teamRepo.getCompanyUsers(companyId)).users.length;
         const subscriptionPlan = companyData.plan as unknown as Subscription;
 
 
         if (companyData.subscriptionStatus !== 'active' || !companyData.plan) {
-            if (operationType === 'maxMembers' && membersCount < 3) {
-                return { status: true, message: 'ok' };
+            if (operationType === 'maxMembers') {
+                if (membersCount < 3) {
+                    return { status: true, message: 'ok' };
+                }
+                return { status: false, message: 'Please subscribe to a plan to add more members' };
             } else if (operationType === 'createProject') {
 
                 const projectCount = await this.projectRepo.countProjects(companyId);

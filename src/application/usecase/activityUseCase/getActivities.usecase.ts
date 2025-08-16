@@ -1,9 +1,10 @@
+import { IGetActivity } from "../../../config/Dependency/user/activity.di";
 import { IActivityRepository } from "../../../domain/repositories/activity.repo";
 import { Activity } from "../../../infrastructure/database/models/activity.interface";
 
 
 
-export class GetActivities {
+export class GetActivities implements IGetActivity {
 
     constructor(private activityRepo: IActivityRepository) { }
 

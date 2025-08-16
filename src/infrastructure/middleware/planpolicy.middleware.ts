@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { PLAN_PERMISSIONS } from "../../config/planpermissions";
-import { ISubscription } from "../../domain/repositories/subscription.repo";
 import { HttpStatusCode } from "../../config/http-status.enum";
-import { planPolicyUsecase } from "../../config/Dependency/user/subscription.di";
+import { planPolicyUsecase } from "../../routes/dependency/user/subscription.inter";
 import { PlanPolicy } from "../../application/usecase/subscriptionUseCase/planpolicy.usecase";
 import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 

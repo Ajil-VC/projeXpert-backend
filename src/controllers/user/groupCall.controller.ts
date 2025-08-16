@@ -1,34 +1,25 @@
 import { Request, Response, NextFunction } from "express";
 import { IGroupcallController } from "../../interfaces/user/groupCall.controller.usecase";
-import { GenerateRoomIdUsecase } from "../../application/usecase/groupcallUsecase/getroomId.usecase";
-import { createMeeting, deletemeeting, generateRoomId, upcomingMeetings } from "../../config/Dependency/user/groupcall.di";
+import { ICreateMeeting, IDeleteMeeting, IGenerateRoomId, IUpcomingMeeting } from "../../config/Dependency/user/groupcall.di";
 import { config } from "../../config/config";
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { IGenerateKitToken } from "../../domain/services/generateKitToken.interface";
-import { CreateMeetingUsecase } from "../../application/usecase/groupcallUsecase/createMeeting.usecase";
-import { CreateNotification } from "../../application/usecase/notificationUseCase/notification.usecase";
-import { notification } from "../../config/Dependency/user/notification.di";
+import { ICreateNotification } from "../../config/Dependency/user/notification.di";
 import { getUserSocket } from "../../infrastructure/services/socket.manager";
 import { getIO } from "../../config/socket";
-import { GetUpcomingMeetingsUsecase } from "../../application/usecase/groupcallUsecase/getupcomingMeetings.usecase";
-import { RemoveMeetingUsecase } from "../../application/usecase/groupcallUsecase/removeMeeting.usecase";
 
 
 export class GroupcallController implements IGroupcallController {
 
-    private generateRoomId: GenerateRoomIdUsecase;
-    private createMeeting: CreateMeetingUsecase;
-    private notification: CreateNotification;
-    private upcomingMeetings: GetUpcomingMeetingsUsecase;
-    private deletemeeting: RemoveMeetingUsecase;
 
-    constructor(private genToken: IGenerateKitToken) {
-        this.generateRoomId = generateRoomId;
-        this.createMeeting = createMeeting;
-        this.notification = notification;
-        this.upcomingMeetings = upcomingMeetings;
-        this.deletemeeting = deletemeeting;
-    }
+    constructor(
+        private genToken: IGenerateKitToken,
+        private generateRoomId: IGenerateRoomId,
+        private createMeeting: ICreateMeeting,
+        private notification: ICreateNotification,
+        private upcomingMeetings: IUpcomingMeeting,
+        private deletemeeting: IDeleteMeeting
+    ) { }
 
 
     removeMeeting = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

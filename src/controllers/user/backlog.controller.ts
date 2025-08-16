@@ -1,92 +1,46 @@
 import { NextFunction, Request, Response } from "express";
 
-import { createEpicUsecase, isActiveSprint, updateEpicUse } from "../../config/Dependency/user/backlog.di";
-import { createIssueUsecase } from "../../config/Dependency/user/backlog.di";
-import { createSprintUsecase } from "../../config/Dependency/user/backlog.di";
-import { getSprintsUsecase } from "../../config/Dependency/user/backlog.di";
-import { getTasksUsecase } from "../../config/Dependency/user/backlog.di";
-import { assignIssueUsecase } from "../../config/Dependency/user/backlog.di";
-import { dragDropUsecase } from "../../config/Dependency/user/backlog.di";
-import { changeTaskStatusUsecase } from "../../config/Dependency/user/backlog.di";
-import { startSprintUsecase } from "../../config/Dependency/user/backlog.di";
-import { addCommentUse, epicProgress, removeAttachment, updateTaskDetailsUse } from "../../config/Dependency/user/task.di";
-import { completeSprintUse } from "../../config/Dependency/user/task.di";
+import {
+    IAssignIssue, IChangeTaskStatus,
+    ICreateEpic, ICreateIssue, ICreateSprint, IDragDrop, IGetSprint, IGetTasks, IIsActiveSprint, IStartSprint, IUpdateEpic
+} from "../../config/Dependency/user/backlog.di";
+
+import { IAddComment, ICompleteSprint, IEpicProgress, IGetComments, IRemoveAttachment, IUpdateTaskDetails } from "../../config/Dependency/user/task.di";
+
 import { getIO } from "../../config/socket";
 import { getUserSocket } from "../../infrastructure/services/socket.manager";
-import { notification } from "../../config/Dependency/user/notification.di";
+import { ICreateNotification } from "../../config/Dependency/user/notification.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
-
-import { getCommentsUse } from "../../config/Dependency/user/task.di";
 import { IBacklogController } from "../../interfaces/user/backlog.controller.interface";
-import { CreateEpicUsecase } from "../../application/usecase/backlogUseCase/createEpic.usecase";
-import { UpdateEpicUsecase } from "../../application/usecase/backlogUseCase/updateEpic.usecase";
-import { CreateIssueUsecase } from "../../application/usecase/backlogUseCase/createIssue.usecase";
-import { CreateSprintUsecase } from "../../application/usecase/backlogUseCase/createSprint.usecase";
-import { GetSprintsUseCase } from "../../application/usecase/backlogUseCase/getSprint.usecase";
-import { GetTasksUseCase } from "../../application/usecase/backlogUseCase/getTasks.usecase";
-import { AssignIssueUseCase } from "../../application/usecase/backlogUseCase/assignIssue.usecase";
-import { CreateNotification } from "../../application/usecase/notificationUseCase/notification.usecase";
-import { DragDropUseCase } from "../../application/usecase/backlogUseCase/dragDrop.usecase";
-import { UpdateTaskDetailsUsecase } from "../../application/usecase/taskUsecase/updateTask.usecase";
-import { DeleteAttachmentUsecase } from "../../application/usecase/taskUsecase/deleteAttachment.usecase";
-import { ChangeTaskStatus } from "../../application/usecase/backlogUseCase/changeTaskStatus.usecase";
-import { StartSprintUsecase } from "../../application/usecase/backlogUseCase/startSprint.usecase";
-import { CompleteSprintUsecase } from "../../application/usecase/taskUsecase/completesprint.usecase";
-import { GetCommentsUseCase } from "../../application/usecase/taskUsecase/getComment.usecase";
-import { AddCommentUseCase } from "../../application/usecase/taskUsecase/addComment.usecase";
-import { EpicProgressUsecase } from "../../application/usecase/taskUsecase/epicprogress.usecase";
-import { IsActiveSprintUsecase } from "../../application/usecase/backlogUseCase/isActiveSprint.usecase";
-import { AddActivityUsecase } from "../../application/usecase/activityUseCase/addActivity.usecase";
-import { addActivityUsecase } from "../../config/Dependency/user/activity.di";
-
-
+import { IAddActivity } from "../../config/Dependency/user/activity.di";
 
 export class BacklogController implements IBacklogController {
 
-    private createEpicUsecase: CreateEpicUsecase;
-    private updateEpicUsecase: UpdateEpicUsecase;
-    private createIssueUsecase: CreateIssueUsecase;
-    private createSprintUsecase: CreateSprintUsecase;
-    private getSprintsUsecase: GetSprintsUseCase;
-    private getTasksUsecase: GetTasksUseCase;
-    private assignIssueUsecase: AssignIssueUseCase;
-    private notification: CreateNotification;
-    private dragDropUsecase: DragDropUseCase;
-    private updateTaskDetailsUse: UpdateTaskDetailsUsecase;
-    private removeAttachment: DeleteAttachmentUsecase;
-    private changeTaskStatusUsecase: ChangeTaskStatus;
-    private startSprintUsecase: StartSprintUsecase;
-    private completeSprintUse: CompleteSprintUsecase;
-    private getCommentsUse: GetCommentsUseCase;
-    private addCommentUse: AddCommentUseCase;
-    private epicProgress: EpicProgressUsecase
-    private isActiveSprint: IsActiveSprintUsecase;
-    private addActivityUsecase: AddActivityUsecase;
 
-    constructor() {
-        this.createEpicUsecase = createEpicUsecase;
-        this.updateEpicUsecase = updateEpicUse;
-        this.createIssueUsecase = createIssueUsecase;
-        this.createSprintUsecase = createSprintUsecase;
-        this.getSprintsUsecase = getSprintsUsecase;
-        this.getTasksUsecase = getTasksUsecase;
-        this.assignIssueUsecase = assignIssueUsecase;
-        this.notification = notification;
-        this.dragDropUsecase = dragDropUsecase;
-        this.updateTaskDetailsUse = updateTaskDetailsUse;
-        this.removeAttachment = removeAttachment;
-        this.changeTaskStatusUsecase = changeTaskStatusUsecase;
-        this.startSprintUsecase = startSprintUsecase;
-        this.completeSprintUse = completeSprintUse;
-        this.getCommentsUse = getCommentsUse;
-        this.addCommentUse = addCommentUse;
-        this.epicProgress = epicProgress;
-        this.isActiveSprint = isActiveSprint;
-        this.addActivityUsecase = addActivityUsecase;
+    constructor(
+        private createEpicUsecase: ICreateEpic,
+        private updateEpicUsecase: IUpdateEpic,
+        private createIssueUsecase: ICreateIssue,
+        private createSprintUsecase: ICreateSprint,
+        private getSprintsUsecase: IGetSprint,
+        private getTasksUsecase: IGetTasks,
+        private assignIssueUsecase: IAssignIssue,
+        private notification: ICreateNotification,
+        private dragDropUsecase: IDragDrop,
+        private updateTaskDetailsUse: IUpdateTaskDetails,
+        private removeAttachment: IRemoveAttachment,
+        private changeTaskStatusUsecase: IChangeTaskStatus,
+        private startSprintUsecase: IStartSprint,
+        private completeSprintUse: ICompleteSprint,
+        private getCommentsUse: IGetComments,
+        private addCommentUse: IAddComment,
+        private epicProgress: IEpicProgress,
+        private isActiveSprint: IIsActiveSprint,
+        private addActivityUsecase: IAddActivity
 
-    }
+    ) { }
 
     updateEpic = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {

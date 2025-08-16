@@ -1,22 +1,18 @@
 import { NextFunction, Request, Response } from "express";
-import { createWorkspaceUsecase, selectWorkSpace } from "../../config/Dependency/user/workspace.di";
+import { ICreateWorkspace, ISelectWorkspace } from "../../config/Dependency/user/workspace.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { IWorkSpace } from "../../interfaces/user/workspace.controller.interface";
-import { CreateWorkspaceUsecase } from "../../application/usecase/workspaceUsecase/createWorkspace.usecase";
-import { SelectWorkspaceUsecase } from "../../application/usecase/workspaceUsecase/selectWorkspace.usecase";
 import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
-
 
 
 export class WorkSpaceController implements IWorkSpace {
 
-    private createWorkspaceUsecase: CreateWorkspaceUsecase;
-    private selectWorkSpace: SelectWorkspaceUsecase;
-    constructor() {
-        this.createWorkspaceUsecase = createWorkspaceUsecase;
-        this.selectWorkSpace = selectWorkSpace;
-    }
+
+    constructor(
+        private createWorkspaceUsecase: ICreateWorkspace,
+        private selectWorkSpace: ISelectWorkspace
+    ) { }
 
 
     getWorkspace = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

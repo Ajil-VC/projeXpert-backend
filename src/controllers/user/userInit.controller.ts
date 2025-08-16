@@ -1,26 +1,19 @@
 import { NextFunction, Request, Response } from "express";
 
-import { initDashboardUsecase } from "../../config/Dependency/user/userInit.di";
-import { getNotificationsUse, readNotifications } from "../../config/Dependency/user/notification.di";
+import { IInitDashboard } from "../../config/Dependency/user/userInit.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { IUserInit } from "../../interfaces/user/userInit.controller.interface";
-import { InitDashBoardUseCase } from "../../application/usecase/workspaceUsecase/initDashboard.usecase";
-import { GetNotificationUsecase } from "../../application/usecase/notificationUseCase/getNotificationusecase";
-import { ReadNotificationsUsecase } from "../../application/usecase/notificationUseCase/readNotification.usecase";
+import { IGetNotification, IReadNotification } from "../../config/Dependency/user/notification.di";
 
 
 export class UserInitController implements IUserInit {
 
-    private initDashboardUsecase: InitDashBoardUseCase;
-    private getNotificationsUse: GetNotificationUsecase;
-    private readNotifications: ReadNotificationsUsecase;
-    constructor() {
-
-        this.initDashboardUsecase = initDashboardUsecase;
-        this.getNotificationsUse = getNotificationsUse;
-        this.readNotifications = readNotifications;
-    }
+    constructor(
+        private initDashboardUsecase: IInitDashboard,
+        private getNotificationsUse: IGetNotification,
+        private readNotifications: IReadNotification
+    ) { }
 
     getInitData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 

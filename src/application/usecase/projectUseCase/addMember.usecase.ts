@@ -4,8 +4,9 @@ import { IEmailService } from "../../../domain/services/email.interface";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { Project } from "../../../infrastructure/database/models/project.interface";
 import { ISecurePassword } from "../../../domain/services/securepassword.interface";
+import { IAddMember } from "../../../config/Dependency/user/project.di";
 
-export class AddMemberUseCase {
+export class AddMemberUseCase implements IAddMember {
 
     constructor(
         private userRepo: IUserRepository,

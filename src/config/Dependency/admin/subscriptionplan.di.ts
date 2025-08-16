@@ -1,15 +1,33 @@
-import { ChangePlanStatusUsecase } from "../../../application/usecase/admin/changePlanStatus.usecase";
-import { CreatePlanUseCase } from "../../../application/usecase/admin/createPlan.usecase";
-import { DeletePlanUseCase } from "../../../application/usecase/admin/deletePlan.usecase";
-import { GetPlansUsecase } from "../../../application/usecase/admin/getPlans.usecase";
-import { ISubscriptionPlanRepository } from "../../../domain/repositories/adminRepo/subscriptionplan.repo";
-import { SubscriptionPlanImp } from "../../../infrastructure/repositories/adminRepo/subscriptionplan.repository";
+
+import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
 
-const subscriptionRepo: ISubscriptionPlanRepository = new SubscriptionPlanImp();
 
-export const subscriptionPlanUsecase = new CreatePlanUseCase(subscriptionRepo);
-export const getPlansCase = new GetPlansUsecase(subscriptionRepo);
-export const deletePlanCase = new DeletePlanUseCase(subscriptionRepo);
-export const changePlanStatusCase = new ChangePlanStatusUsecase(subscriptionRepo);
+export interface ISubscriptionPlan {
+    execute(
+        name: string,
+        description: string,
+        stripeProductId: string,
+        stripePriceId: string,
+        price: number,
+        interval: 'month' | 'year',
+        maxWorkspace: number,
+        maxProjects: number,
+        maxMembers: number,
+        videoCall: boolean
+    ): Promise<Subscription>
+}
+
+
+export interface IGetPlan {
+    execute(limit: number, skip: number): Promise<any>;
+}
+
+export interface IDeletePlan {
+    execute(planId: string): Promise<any>;
+}
+
+export interface IChangePlanStatus {
+    execute(planId: string): Promise<Subscription>;
+}

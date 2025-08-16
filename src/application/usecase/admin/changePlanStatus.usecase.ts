@@ -1,8 +1,9 @@
+import { IChangePlanStatus } from "../../../config/Dependency/admin/subscriptionplan.di";
 import { ISubscriptionPlanRepository } from "../../../domain/repositories/adminRepo/subscriptionplan.repo";
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
-export class ChangePlanStatusUsecase {
+export class ChangePlanStatusUsecase implements IChangePlanStatus {
 
     constructor(private subscriptionRepo: ISubscriptionPlanRepository) { }
 

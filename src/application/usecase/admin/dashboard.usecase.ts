@@ -1,9 +1,10 @@
+import { IGetDashBoard } from "../../../config/Dependency/admin/comapanymanage.di";
 import { Doughnut } from "../../../domain/entities/additional.interface.ts/doughnut.interface";
 import { SummaryCard } from "../../../domain/entities/additional.interface.ts/summarycard.interface";
 import { IAdminDashboardRepository } from "../../../domain/repositories/adminRepo/dashboard.repo";
 
 
-export class GetDashboardDataUsecase {
+export class GetDashboardDataUsecase implements IGetDashBoard {
 
     constructor(private dashBoardRepo: IAdminDashboardRepository) { }
 

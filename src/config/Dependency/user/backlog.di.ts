@@ -1,28 +1,49 @@
-import { CreateEpicUsecase } from "../../../application/usecase/backlogUseCase/createEpic.usecase";
-import { GetTasksUseCase } from "../../../application/usecase/backlogUseCase/getTasks.usecase";
-import { CreateIssueUsecase } from "../../../application/usecase/backlogUseCase/createIssue.usecase";
-import { AssignIssueUseCase } from "../../../application/usecase/backlogUseCase/assignIssue.usecase";
-import { CreateSprintUsecase } from "../../../application/usecase/backlogUseCase/createSprint.usecase";
-import { GetSprintsUseCase } from "../../../application/usecase/backlogUseCase/getSprint.usecase";
-import { DragDropUseCase } from "../../../application/usecase/backlogUseCase/dragDrop.usecase";
-import { ChangeTaskStatus } from "../../../application/usecase/backlogUseCase/changeTaskStatus.usecase";
-import { StartSprintUsecase } from "../../../application/usecase/backlogUseCase/startSprint.usecase";
 
-import { BacklogRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/backlog.repositoryImp";
-import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
-import { UpdateEpicUsecase } from "../../../application/usecase/backlogUseCase/updateEpic.usecase";
-import { IsActiveSprintUsecase } from "../../../application/usecase/backlogUseCase/isActiveSprint.usecase";
+import { Task } from "../../../infrastructure/database/models/task.interface";
+import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
+import { TaskResponseDetailedDTO } from "../../../dtos/task/taskResponseDTO";
 
-const backlogRepository: IBacklogRepository = new BacklogRepositoryImp();
 
-export const updateEpicUse = new UpdateEpicUsecase(backlogRepository);
-export const createEpicUsecase = new CreateEpicUsecase(backlogRepository);
-export const createIssueUsecase = new CreateIssueUsecase(backlogRepository);
-export const createSprintUsecase = new CreateSprintUsecase(backlogRepository);
-export const getSprintsUsecase = new GetSprintsUseCase(backlogRepository);
-export const getTasksUsecase = new GetTasksUseCase(backlogRepository);
-export const assignIssueUsecase = new AssignIssueUseCase(backlogRepository);
-export const dragDropUsecase = new DragDropUseCase(backlogRepository);
-export const changeTaskStatusUsecase = new ChangeTaskStatus(backlogRepository);
-export const startSprintUsecase = new StartSprintUsecase(backlogRepository);
-export const isActiveSprint = new IsActiveSprintUsecase(backlogRepository);
+export interface ICreateEpic {
+    execute(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task>
+}
+
+export interface IUpdateEpic {
+    execute(title: string, description: string, startDate: string, endDate: string, epicId: string): Promise<Task>
+}
+
+export interface ICreateIssue {
+    execute(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<any>;
+}
+
+export interface ICreateSprint {
+    execute(projectId: string, sprintIds: Array<string>, userId: string): Promise<Sprint>;
+}
+
+export interface IGetSprint {
+    execute(projectId: string, userRole: string, userId: string, kanban: boolean): Promise<any>
+}
+
+export interface IGetTasks {
+    execute(projectId: string, userRole: string, userId: string, isKanban?: boolean): Promise<any>;
+}
+
+export interface IAssignIssue {
+    execute(issueId: string, userId: string): Promise<TaskResponseDetailedDTO | null>;
+}
+
+export interface IDragDrop {
+    execute(prevContainerId: string, containerId: string, movedTaskId: string): Promise<Task>;
+}
+
+export interface IChangeTaskStatus {
+    execute(taskId: string, status: string): Promise<Task>;
+}
+
+export interface IStartSprint {
+    execute(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<any>;
+}
+
+export interface IIsActiveSprint {
+    execute(projectId: string): Promise<boolean>;
+}

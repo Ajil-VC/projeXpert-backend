@@ -1,10 +1,27 @@
-import { TeamRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/team.repositoryImp";
-import { ITeamRepository } from "../../../domain/repositories/team.repo";
-import { GetTeamMembers } from "../../../application/usecase/teamManagement/getTeam.usecase";
+
 import { GetUsersInCompany } from "../../../application/usecase/teamManagement/getusers.usecase";
 import { RestrictUser } from "../../../application/usecase/teamManagement/restrictUser.usecase";
+import { Team } from "../../../infrastructure/database/models/team.interface";
+import { UserResponseDTO } from "../../../dtos/user/userResponseDTO";
 
-const teamRepository: ITeamRepository = new TeamRepositoryImp();
-export const getTeammembersUsecase = new GetTeamMembers(teamRepository);
-export const getCompanyUsersUsecase = new GetUsersInCompany(teamRepository);
-export const restrictUserUsecase = new RestrictUser(teamRepository);
+
+export interface IGetTeamMembers {
+    execute(projectId: string | null, userId: string): Promise<Array<Team>>;
+}
+
+export interface IGetCompanyUsers {
+    execute(
+        companyId: string,
+        pageNum: number | null,
+        limit: number,
+        skip: number,
+        userId: string,
+        searchTerm: string,
+        role: string,
+        status: boolean | null
+    ): Promise<{ users: UserResponseDTO[], totalPages: number }>
+}
+
+export interface IRestrictUser {
+    execute(userId: string, status: boolean | null, userRole: string): Promise<UserResponseDTO>;
+}

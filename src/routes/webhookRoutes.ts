@@ -1,10 +1,10 @@
 
 import express from 'express';
 import bodyParser from 'body-parser';
-import { StripeController } from '../controllers/user/stripe.controller';
+import { subscriptionInterface } from './dependency/user/subscription.inter';
 
 const webhookRouter = express.Router();
-const stripeController = new StripeController();
 
-webhookRouter.post('/', bodyParser.raw({ type: 'application/json' }), stripeController.webhookHandler);
+
+webhookRouter.post('/', bodyParser.raw({ type: 'application/json' }), subscriptionInterface.webhookHandler);
 export default webhookRouter;

@@ -24,19 +24,29 @@ import { ChangePsdUseCase } from "../../../application/usecase/auth/changePswd.u
 import { RefreshTokenUseCase } from "../../../application/usecase/auth/refreshToken.usecase";
 import { IsCompanyBlockedUsecase } from "../../../application/usecase/auth/isCompanyBlocked.usecase";
 import { IsUserBlockedUsecase } from "../../../application/usecase/auth/isUserBloced.usecase";
+import { useCaseResult } from "../../../application/shared/useCaseResult";
 
-const otpRepository: IOtpRepository = new OtpRepoImp();
-const userRepository: IUserRepository = new userRepositoryImp();
-const emailService: IEmailService = new EmailServiceImp();
-const securePassword: ISecurePassword = new SecurePasswordImp();
-const companyRepository: ICompanyRepository = new CompanyRepositoryImp();
-const authRepository: IAuthRepository = new AuthRepositoryImp();
 
-export const isUserBlocked = new IsUserBlockedUsecase(userRepository);
-export const isCompanyBlocked = new IsCompanyBlockedUsecase(companyRepository);
-export const sendOtpUsecase = new SendOtpUseCase(userRepository, otpRepository, emailService);
-export const verifyOtpUsecase = new VerifyOtpUseCase(otpRepository);
-export const signinUsecase = new SigninUseCase(userRepository, securePassword);
-export const registerUsecase = new RegisterUseCase(securePassword, userRepository, companyRepository);
-export const changePasswordUsecase = new ChangePsdUseCase(securePassword, authRepository, userRepository);
-export const refreshTokenUsecase = new RefreshTokenUseCase(userRepository);
+export interface ISendOtpUsecase {
+    execute(email: string): Promise<useCaseResult>
+}
+
+export interface IVerifyOtp {
+    execute(email: string, otp: string): Promise<boolean>
+}
+
+export interface ISignin {
+    execute(email: string, passWord: string): Promise<useCaseResult>
+}
+
+export interface IRegister {
+    execute(email: string, companyName: string, passWord: string): Promise<useCaseResult>;
+}
+
+export interface IChangePassword {
+    execute(email: string, oldPassword: string, passWord: string): Promise<boolean>
+}
+
+export interface IRefreshToken {
+    execute(refreshToken: string): Promise<useCaseResult>;
+}

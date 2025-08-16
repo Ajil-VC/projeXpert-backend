@@ -1,8 +1,9 @@
+import { IGetTeamMembers } from "../../../config/Dependency/user/team.di";
 import { ITeamRepository } from "../../../domain/repositories/team.repo";
 import { Team } from "../../../infrastructure/database/models/team.interface";
 
 
-export class GetTeamMembers {
+export class GetTeamMembers implements IGetTeamMembers {
 
     constructor(private teamRepo: ITeamRepository) { }
 

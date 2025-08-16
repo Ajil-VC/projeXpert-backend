@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { IUserController } from "../../interfaces/user/user.controller.interface";
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
-import { UpdateProfileUsecase } from "../../application/usecase/user/user.usecase";
-import { updateProfile } from "../../config/Dependency/user/user.di";
+import { IUpdateProfile} from "../../config/Dependency/user/user.di";
 
 
 
@@ -12,15 +11,14 @@ import { updateProfile } from "../../config/Dependency/user/user.di";
 
 export class userController implements IUserController {
 
-    private updateProfilePic: UpdateProfileUsecase;
-    constructor() {
-        this.updateProfilePic = updateProfile;
-    }
+    constructor(
+        private updateProfilePic: IUpdateProfile
+    ) { }
 
     updateProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         try {
-            
+
             const name = req.body.name;
             const files = req.files as Express.Multer.File[] || [];
 

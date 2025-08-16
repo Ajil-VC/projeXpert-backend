@@ -1,53 +1,52 @@
 
-
-import { GetWorkSpaceUseCase } from "../../../application/usecase/workspaceUsecase/getWorkspace.usecase";
-import { createProjectUseCase } from "../../../application/usecase/projectUseCase/createProject.usecase";
-import { GetAllProjectsInWorkspaceUseCase } from "../../../application/usecase/projectUseCase/getAllProjectsInWorkspace.usecase";
-import { AddMemberUseCase } from "../../../application/usecase/projectUseCase/addMember.usecase";
-import { DeleteProjectUsecase } from "../../../application/usecase/projectUseCase/deleteProject.usecase";
-import { UpdateProjectUseCase } from "../../../application/usecase/projectUseCase/updateProject.usecase";
-import { RemoveMemberUseCase } from "../../../application/usecase/projectUseCase/removeMember.usecase";
-import { GetProjectUseCase } from "../../../application/usecase/projectUseCase/getProject.usecase";
-import { GetTasksUseCase } from "../../../application/usecase/backlogUseCase/getTasks.usecase";
-
-import { WorkspaceRepoImp } from "../../../infrastructure/repositories/repoImplementations/workspace.repositoryImp";
-import { IWorkspaceRepository } from "../../../domain/repositories/workspace.repo";
-
-import { projectRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/project.repositoryImp";
-import { IProjectRepository } from "../../../domain/repositories/project.repo";
-
-import { userRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/user.repositoryImp";
-import { IUserRepository } from "../../../domain/repositories/user.repo";
-
-import { EmailServiceImp } from "../../../infrastructure/services/email.serviceImp";
-import { IEmailService } from "../../../domain/services/email.interface";
-
-import { SecurePasswordImp } from "../../../infrastructure/services/securepassword.serviceImp";
-import { ISecurePassword } from "../../../domain/services/securepassword.interface";
-
-import { BacklogRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/backlog.repositoryImp";
-import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
-import { ProjectStatsUseCase } from "../../../application/usecase/projectUseCase/projectstats.usecase";
-import { ICompanyRepository } from "../../../domain/repositories/company.repo";
-import { CompanyRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/company.repositoryImp";
-import { RetrieveProjectUseCase } from "../../../application/usecase/projectUseCase/retrieveProject.usecase";
+import { Company } from "../../../infrastructure/database/models/company.interface";
+import { DecodedData } from "../../../application/shared/decodedData";
+import { Project } from "../../../infrastructure/database/models/project.interface";
 
 
-const userRepository: IUserRepository = new userRepositoryImp();
-const projectRepository: IProjectRepository = new projectRepositoryImp(userRepository);
-const emailService: IEmailService = new EmailServiceImp();
-const securePassword: ISecurePassword = new SecurePasswordImp();
-const backlogRepository: IBacklogRepository = new BacklogRepositoryImp();
-const companyRepository: ICompanyRepository = new CompanyRepositoryImp();
+export interface IGetWorkspace {
+    execute(user: DecodedData): Promise<Company | null>
+}
 
-export const getWorkspaceUsecase = new GetWorkSpaceUseCase(companyRepository);
-export const createProjectUsecase = new createProjectUseCase(projectRepository);
-export const getProjectsInWorkspaceUsecase = new GetAllProjectsInWorkspaceUseCase(projectRepository);
-export const getCurrentProjectUsecase = new GetProjectUseCase(projectRepository);
-export const addMemberUsecase = new AddMemberUseCase(userRepository, emailService, projectRepository, securePassword);
-export const removeMemberUsecase = new RemoveMemberUseCase(projectRepository);
-export const updateProjectUsecase = new UpdateProjectUseCase(projectRepository, userRepository);
-export const deleteProjectUsecase = new DeleteProjectUsecase(projectRepository);
-export const getTasksUsecase = new GetTasksUseCase(backlogRepository);
-export const projectStatsUse = new ProjectStatsUseCase(projectRepository);
-export const retrieveProjectUsecase = new RetrieveProjectUseCase(projectRepository);
+export interface ICreateProject {
+    execute(projectName: String, workSpace: String, priority: String, user: DecodedData): Promise<Project | null>
+}
+
+export interface IGetProjectsinWorkspace {
+    execute(workSpaceId: String, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }>;
+}
+
+export interface IGetCurrentProject {
+    execute(workSpaceId: string, projectId: string): Promise<any>;
+}
+
+export interface IAddMember {
+    execute(email: string, projectId: string, workSpaceId: string, companyId: string): Promise<Project | null>;
+}
+
+export interface IRemoveMember {
+    execute(projectId: string, userId: string, currUserId: string): Promise<boolean>
+}
+
+export interface IUpdateProject {
+    execute(
+
+        projectId: string,
+        projectName: string,
+        status: string,
+        priority: string,
+        members: Array<{ email: string, role: string }>,
+        adminEmail: string): Promise<any>
+}
+
+export interface IDeleteProject {
+    execute(projectId: string, workSpaceId: string): Promise<boolean>;
+}
+
+export interface IProjectStatus {
+    execute(projectId: string, userId: string, userRole: 'admin' | 'user'): Promise<any>;
+}
+
+export interface IRetrieveProject {
+    execute(projectId: string): Promise<Project>;
+}

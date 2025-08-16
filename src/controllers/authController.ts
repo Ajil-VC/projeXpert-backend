@@ -1,44 +1,24 @@
 
 import { NextFunction, Request, Response } from "express";
-import { sendOtpUsecase } from "../config/Dependency/auth/auth.di";
-import { verifyOtpUsecase } from "../config/Dependency/auth/auth.di";
-import { signinUsecase } from "../config/Dependency/auth/auth.di";
-import { registerUsecase } from "../config/Dependency/auth/auth.di";
-import { changePasswordUsecase } from "../config/Dependency/auth/auth.di";
-import { refreshTokenUsecase } from "../config/Dependency/auth/auth.di";
+import { IChangePassword, IRefreshToken, IRegister, ISendOtpUsecase, ISignin, IVerifyOtp } from "../config/Dependency/auth/auth.di";
 
 import { HttpStatusCode } from "../config/http-status.enum";
 import { RESPONSE_MESSAGES } from "../config/response-messages.constant";
 
 import { useCaseResult } from "../application/shared/useCaseResult";
 import { IAuthController } from "../interfaces/auth.controller.interface";
-import { SendOtpUseCase } from "../application/usecase/auth/sendOtp.usecase";
-import { VerifyOtpUseCase } from "../application/usecase/auth/VerifyOtp.usecase";
-import { SigninUseCase } from "../application/usecase/auth/signin.usecase";
-import { RegisterUseCase } from "../application/usecase/auth/register.usecase";
-import { ChangePsdUseCase } from "../application/usecase/auth/changePswd.usecase";
-import { RefreshTokenUseCase } from "../application/usecase/auth/refreshToken.usecase";
-
 
 
 export class AuthController implements IAuthController {
 
-
-    private sendOtpUsecase: SendOtpUseCase;
-    private verifyOtpUsecase: VerifyOtpUseCase;
-    private signinUsecase: SigninUseCase;
-    private registerUsecase: RegisterUseCase;
-    private changePasswordUsecase: ChangePsdUseCase;
-    private refreshTokenUsecase: RefreshTokenUseCase;
-    constructor() {
-
-        this.sendOtpUsecase = sendOtpUsecase;
-        this.verifyOtpUsecase = verifyOtpUsecase;
-        this.signinUsecase = signinUsecase;
-        this.registerUsecase = registerUsecase;
-        this.changePasswordUsecase = changePasswordUsecase;
-        this.refreshTokenUsecase = refreshTokenUsecase;
-    }
+    constructor(
+        private sendOtpUsecase: ISendOtpUsecase,
+        private verifyOtpUsecase: IVerifyOtp,
+        private signinUsecase: ISignin,
+        private registerUsecase: IRegister,
+        private changePasswordUsecase: IChangePassword,
+        private refreshTokenUsecase: IRefreshToken
+    ) { }
 
     sendOtpToMail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 

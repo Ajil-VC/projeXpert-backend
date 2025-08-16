@@ -18,4 +18,8 @@ export interface IProjectController {
     deleteProject(req: Request, res: Response, next: NextFunction): Promise<void>;
 
     projectStats(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+    retrieveProject(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+    addMember(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

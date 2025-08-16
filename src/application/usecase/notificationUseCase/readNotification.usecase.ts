@@ -1,10 +1,11 @@
+import { IReadNotification } from "../../../config/Dependency/user/notification.di";
 import { INotificationRepository } from "../../../domain/repositories/notification.repo";
 
 
 
 
 
-export class ReadNotificationsUsecase {
+export class ReadNotificationsUsecase implements IReadNotification {
 
 
     constructor(private notificationSer: INotificationRepository) { }

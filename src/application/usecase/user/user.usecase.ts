@@ -2,9 +2,10 @@ import { IUserRepository } from "../../../domain/repositories/user.repo";
 import { ICloudinary } from "../../../domain/services/cloudinary.interface";
 import { UserMapper } from "../../../mappers/user/user.mapper";
 import { UserResponseDTO } from "../../../dtos/user/userResponseDTO";
+import { IUpdateProfile } from "../../../config/Dependency/user/user.di";
 
 
-export class UpdateProfileUsecase {
+export class UpdateProfileUsecase implements IUpdateProfile {
 
     constructor(private cloudinary: ICloudinary, private userRepo: IUserRepository) { }
 

@@ -1,8 +1,9 @@
+import { IGetMessages } from "../../../config/Dependency/user/chat.di";
 import { IChatRepository } from "../../../domain/repositories/chat.repo";
 import { Message } from "../../../infrastructure/database/models/message.interface";
 
 
-export class GetMessagesUseCase {
+export class GetMessagesUseCase implements IGetMessages {
 
     constructor(private chatRepo: IChatRepository) { }
 

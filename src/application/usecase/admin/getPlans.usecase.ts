@@ -1,9 +1,10 @@
+import { IGetPlan } from "../../../config/Dependency/admin/subscriptionplan.di";
 import { ISubscriptionPlanRepository } from "../../../domain/repositories/adminRepo/subscriptionplan.repo";
 
 
 
 
-export class GetPlansUsecase {
+export class GetPlansUsecase implements IGetPlan {
 
     constructor(private subscriptionRepo: ISubscriptionPlanRepository) { }
 

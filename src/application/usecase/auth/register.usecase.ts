@@ -5,9 +5,10 @@ import { config } from "../../../config/config";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { useCaseResult } from "../../shared/useCaseResult";
 import { Company } from "../../../infrastructure/database/models/company.interface";
+import { IRegister } from "../../../config/Dependency/auth/auth.di";
 
 
-export class RegisterUseCase {
+export class RegisterUseCase implements IRegister {
 
     constructor(
         private securePassword: ISecurePassword,
@@ -59,7 +60,7 @@ export class RegisterUseCase {
                         userName: userData.name,
                         role: userData.role,
                         companyId: company._id,
-                        systemRole : userData.systemRole
+                        systemRole: userData.systemRole
 
                     },
                     config.JWT_SECRETKEY,

@@ -1,6 +1,7 @@
+import { ICompanyStatusChange } from "../../../config/Dependency/admin/comapanymanage.di";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 
-export class ChangeCompanyStatusUsecase {
+export class ChangeCompanyStatusUsecase implements ICompanyStatusChange{
 
     constructor(private companyRepo: ICompanyRepository) { }
 

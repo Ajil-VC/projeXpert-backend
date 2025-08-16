@@ -3,8 +3,9 @@ import { Project } from "../../../infrastructure/database/models/project.interfa
 import { WorkSpace } from "../../../infrastructure/database/models/workspace.interface";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 import { UserDeepMapper } from "../../../mappers/user/userdeep.mapper";
+import { IInitDashboard } from "../../../config/Dependency/user/userInit.di";
 
-export class InitDashBoardUseCase {
+export class InitDashBoardUseCase implements IInitDashboard {
 
     constructor(
         private userRepo: IUserRepository

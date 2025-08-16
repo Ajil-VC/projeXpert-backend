@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { ITeamRepository } from "../../../domain/repositories/team.repo";
 import projectModel from "../../database/project.models";
 import { User } from "../../database/models/user.interface";
@@ -34,14 +34,63 @@ export class TeamRepositoryImp implements ITeamRepository {
         return user;
     }
 
-    async getCompanyUsers(companyId: string): Promise<User[]> {
+    async getCompanyUsers(
+        companyId: string,
+        pageNum: number | null,
+        limit: number = 0,
+        skip: number = 0,
+        userId: string = '',
+        searchTerm: string = '',
+        role: string = '',
+        status: boolean | null = null
+    ): Promise<{
+        users: User[], totalPages: number
+    }> {
 
         const companyIdOb = new mongoose.Types.ObjectId(companyId);
-        const users = await userModel.find({ companyId: companyIdOb });
+        const userIdOb = new mongoose.Types.ObjectId(userId);
+
+        let totalPages: number = 0;
+        let users;
+        if (!pageNum) {
+            users = await userModel.find({ companyId: companyIdOb });
+        } else {
+
+            const query: {
+                companyId: any,
+                _id: any,
+                role?: string,
+                restrict?: boolean,
+                $or?: any
+            } = {
+                companyId: companyIdOb,
+                _id: { $nin: [userIdOb] }
+            };
+
+            if (role) {
+                query.role = role;
+            }
+            if (status !== null) {
+                query.restrict = status;
+            }
+            if (searchTerm && searchTerm.trim() !== '') {
+                query.$or = [
+                    { name: { $regex: searchTerm, $options: 'i' } },
+                    { email: { $regex: searchTerm, $options: 'i' } }
+                ];
+            }
+
+            users = await userModel.find(query).skip(skip).limit(limit);
+
+            let totalCount = await userModel.countDocuments(query);
+
+            totalPages = Math.ceil(totalCount / limit);
+
+        }
 
         if (!users) throw new Error('Couldnt retrieve users.');
 
-        return users;
+        return { users, totalPages };
     }
 
     async getTeamMembers(projectId: string | null, userId: string): Promise<any> {

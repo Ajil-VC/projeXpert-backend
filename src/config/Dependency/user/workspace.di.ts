@@ -1,12 +1,12 @@
-import { CreateWorkspaceUsecase } from "../../../application/usecase/workspaceUsecase/createWorkspace.usecase";
-import { WorkspaceRepoImp } from "../../../infrastructure/repositories/repoImplementations/workspace.repositoryImp";
-import { IWorkspaceRepository } from "../../../domain/repositories/workspace.repo";
-import { SelectWorkspaceUsecase } from "../../../application/usecase/workspaceUsecase/selectWorkspace.usecase";
-import { IUserRepository } from "../../../domain/repositories/user.repo";
-import { userRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/user.repositoryImp";
 
-const workSpaceRepository: IWorkspaceRepository = new WorkspaceRepoImp();
-const userRepository: IUserRepository = new userRepositoryImp();
+import { useCaseResult } from "../../../application/shared/useCaseResult";
+import { WorkSpace } from "../../../infrastructure/database/models/workspace.interface";
 
-export const createWorkspaceUsecase = new CreateWorkspaceUsecase(workSpaceRepository);
-export const selectWorkSpace = new SelectWorkspaceUsecase(workSpaceRepository, userRepository);
+
+export interface ICreateWorkspace {
+    execute(workspaceName: string, companyId: string, userId: string): Promise<useCaseResult>
+}
+
+export interface ISelectWorkspace {
+    execute(workspaceId: string, userId: string): Promise<WorkSpace>;
+}

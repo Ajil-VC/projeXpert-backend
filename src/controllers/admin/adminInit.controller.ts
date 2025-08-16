@@ -1,24 +1,18 @@
 import { NextFunction, Request, Response } from "express";
-import { adminDataUsecase, adminInitUsecase } from "../../config/Dependency/admin/adminInit.di";
+import { IAdminData, IAdminInitUse } from "../../config/Dependency/admin/adminInit.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { IAdminInit } from "../../interfaces/admin/adminInit.controller.interface";
-import { AdminInitUseCase } from "../../application/usecase/admin/admininit.usecase";
-import { GetAdminUseCase } from "../../application/usecase/admin/getAdmin.usecase";
-import { GetDashboardDataUsecase } from "../../application/usecase/admin/dashboard.usecase";
-import { getDashBoardData } from "../../config/Dependency/admin/comapanymanage.di";
+import { IGetDashBoard } from "../../config/Dependency/admin/comapanymanage.di";
 
 
 export class AdminController implements IAdminInit {
 
-    private adminInitUsecase: AdminInitUseCase;
-    private adminDataUsecase: GetAdminUseCase;
-    private getDashBoardData: GetDashboardDataUsecase;
-    constructor() {
-        this.adminInitUsecase = adminInitUsecase;
-        this.adminDataUsecase = adminDataUsecase;
-        this.getDashBoardData = getDashBoardData;
-    }
+    constructor(
+        private adminInitUsecase: IAdminInitUse,
+        private adminDataUsecase: IAdminData,
+        private getDashBoardData: IGetDashBoard
+    ) { }
 
 
     dashBoard = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

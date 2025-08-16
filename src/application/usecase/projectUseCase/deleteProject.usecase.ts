@@ -1,7 +1,8 @@
+import { IDeleteProject } from "../../../config/Dependency/user/project.di";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 
 
-export class DeleteProjectUsecase {
+export class DeleteProjectUsecase implements IDeleteProject {
 
     constructor(private projectRepo: IProjectRepository) { }
     async execute(projectId: string, workSpaceId: string): Promise<boolean> {

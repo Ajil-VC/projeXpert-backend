@@ -1,8 +1,9 @@
+import { ICreateIssue } from "../../../config/Dependency/user/backlog.di";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 
 
 
-export class CreateIssueUsecase {
+export class CreateIssueUsecase implements ICreateIssue{
 
     constructor(private backlogRepo: IBacklogRepository) { }
 

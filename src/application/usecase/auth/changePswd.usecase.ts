@@ -1,10 +1,11 @@
+import { IChangePassword } from "../../../config/Dependency/auth/auth.di";
 import { IAuthRepository } from "../../../domain/repositories/auth.repo";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 import { ISecurePassword } from "../../../domain/services/securepassword.interface";
 
 
 
-export class ChangePsdUseCase {
+export class ChangePsdUseCase implements IChangePassword {
 
     constructor(private securePassWord: ISecurePassword, private authRepo: IAuthRepository, private userRepo: IUserRepository) { }
 

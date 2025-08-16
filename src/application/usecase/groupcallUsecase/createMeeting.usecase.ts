@@ -1,9 +1,10 @@
+import { ICreateMeeting } from "../../../config/Dependency/user/groupcall.di";
 import { IMeetingRepository } from "../../../domain/repositories/meeting.repo";
 import { Meeting } from "../../../infrastructure/database/models/meeting.interface";
 
 
 
-export class CreateMeetingUsecase {
+export class CreateMeetingUsecase implements ICreateMeeting {
 
     constructor(private meetRepo: IMeetingRepository) { }
 

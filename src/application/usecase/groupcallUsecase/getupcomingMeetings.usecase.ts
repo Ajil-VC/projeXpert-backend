@@ -1,3 +1,4 @@
+import { IUpcomingMeeting } from "../../../config/Dependency/user/groupcall.di";
 import { IMeetingRepository } from "../../../domain/repositories/meeting.repo";
 import { Meeting } from "../../../infrastructure/database/models/meeting.interface";
 
@@ -5,7 +6,7 @@ import { Meeting } from "../../../infrastructure/database/models/meeting.interfa
 
 
 
-export class GetUpcomingMeetingsUsecase {
+export class GetUpcomingMeetingsUsecase implements IUpcomingMeeting {
 
     constructor(private MeetingRepo: IMeetingRepository) { }
 

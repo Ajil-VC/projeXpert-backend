@@ -1,17 +1,20 @@
-import { ChatUseCase } from "../../../application/usecase/chatUseCase/startConversation.usecase";
-import { GetChats } from "../../../application/usecase/chatUseCase/getChats.usecase";
-import { GetMessagesUseCase } from "../../../application/usecase/chatUseCase/getMessages.usecase";
-import { SendMessageUsecase } from "../../../application/usecase/chatUseCase/sendMessage.usecase";
-
-import { ChatRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/chat.repositoryImp";
-import { IChatRepository } from "../../../domain/repositories/chat.repo";
 
 import { SaveVideoCallUsecase } from "../../../application/usecase/chatUseCase/saveVideocallRecord.usecase";
+import { Message } from "../../../infrastructure/database/models/message.interface";
 
-const chatRepository: IChatRepository = new ChatRepositoryImp();
 
-export const chatUsecase = new ChatUseCase(chatRepository);
-export const getChatsUsecase = new GetChats(chatRepository);
-export const getMessagesUsecase = new GetMessagesUseCase(chatRepository);
-export const sendMessagesUsecase = new SendMessageUsecase(chatRepository);
-export const saveVideoCallUse = new SaveVideoCallUsecase(chatRepository);
+export interface IChat {
+    execute(userId: string, currentUserId: string, companyId: string): Promise<any>;
+}
+
+export interface IGetChat {
+    execute(userId: string, companyId: string): Promise<any>;
+}
+
+export interface IGetMessages {
+    execute(convoId: string): Promise<Array<Message>>;
+}
+
+export interface ISendMessages {
+    execute(convoId: string, senderId: string, recieverId: string, message: string): Promise<any>;
+}

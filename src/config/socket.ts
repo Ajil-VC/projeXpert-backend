@@ -2,7 +2,7 @@ import { Server } from 'socket.io';
 import { addUser, getAllUsers, getUserSocket, removeUser } from '../infrastructure/services/socket.manager';
 import { config } from './config';
 import jwt from 'jsonwebtoken';
-import { saveVideoCallUse } from './Dependency/user/chat.di';
+import { saveVideoCallUse } from '../routes/dependency/user/chat.inter'; 
 
 let io: Server | null = null;
 

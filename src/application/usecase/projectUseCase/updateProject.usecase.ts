@@ -1,8 +1,9 @@
+import { IUpdateProject } from "../../../config/Dependency/user/project.di";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 
 
-export class UpdateProjectUseCase {
+export class UpdateProjectUseCase implements IUpdateProject {
 
     constructor(private projectRepo: IProjectRepository, private userRepo: IUserRepository) { }
 

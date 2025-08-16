@@ -1,7 +1,8 @@
+import { IChat } from "../../../config/Dependency/user/chat.di";
 import { IChatRepository } from "../../../domain/repositories/chat.repo";
 
 
-export class ChatUseCase {
+export class ChatUseCase implements IChat {
 
     constructor(private chatRepo: IChatRepository) { }
 

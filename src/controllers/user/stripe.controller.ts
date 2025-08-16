@@ -4,26 +4,17 @@ import { stripe } from "../../config/stripe.config";
 import Stripe from 'stripe';
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { config } from "../../config/config";
-import { companySubscription, isPlanAvailable, subscribe } from "../../config/Dependency/user/subscription.di";
-import { SubscriptionUsecase } from "../../application/usecase/subscriptionUseCase/subscription.usecase";
-import { getSubscription } from "../../config/Dependency/user/subscription.di";
-import { GetSubscriptionPlans } from "../../application/usecase/subscriptionUseCase/getSubscription.usecase";
-import { GetCompanySubscription } from "../../application/usecase/companyUsecase/getCompanySubscription.usecase";
-import { IsPlanAvailableUseCase } from "../../application/usecase/subscriptionUseCase/isPlanAvailable.usecase";
+import { ICompanySubscription, IGetSubscription, IIsPlanAvailable, ISubscribe } from "../../config/Dependency/user/subscription.di";
+
 
 export class StripeController implements IStripeController {
 
-    private subscribe: SubscriptionUsecase;
-    private getSubscriptionplans: GetSubscriptionPlans;
-    private isPlanAvailable: IsPlanAvailableUseCase
-
-    private companySubscription: GetCompanySubscription
-    constructor() {
-        this.subscribe = subscribe;
-        this.getSubscriptionplans = getSubscription;
-        this.companySubscription = companySubscription;
-        this.isPlanAvailable = isPlanAvailable;
-    }
+    constructor(
+        private subscribe: ISubscribe,
+        private getSubscriptionplans: IGetSubscription,
+        private isPlanAvailable: IIsPlanAvailable,
+        private companySubscription: ICompanySubscription
+    ) { }
 
 
     getSubscriptionDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

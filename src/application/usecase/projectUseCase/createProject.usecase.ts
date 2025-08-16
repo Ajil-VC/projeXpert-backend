@@ -1,9 +1,10 @@
 import { Project } from "../../../infrastructure/database/models/project.interface";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { DecodedData } from "../../shared/decodedData";
+import { ICreateProject } from "../../../config/Dependency/user/project.di";
 
 
-export class createProjectUseCase {
+export class createProjectUseCase implements ICreateProject {
 
     constructor(private projectRepo: IProjectRepository) { }
 

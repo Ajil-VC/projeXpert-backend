@@ -1,9 +1,10 @@
+import { IDeleteMeeting } from "../../../config/Dependency/user/groupcall.di";
 import { IMeetingRepository } from "../../../domain/repositories/meeting.repo";
 
 
 
 
-export class RemoveMeetingUsecase {
+export class RemoveMeetingUsecase implements IDeleteMeeting {
 
     constructor(private meetRepo: IMeetingRepository) { }
 

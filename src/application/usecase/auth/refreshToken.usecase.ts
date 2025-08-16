@@ -3,9 +3,10 @@ import { config } from '../../../config/config';
 import { useCaseResult } from '../../shared/useCaseResult';
 import { IUserRepository } from '../../../domain/repositories/user.repo';
 import { Company } from '../../../infrastructure/database/models/company.interface';
+import { IRefreshToken } from '../../../config/Dependency/auth/auth.di';
 
 
-export class RefreshTokenUseCase {
+export class RefreshTokenUseCase implements IRefreshToken {
 
     constructor(private userRepo: IUserRepository) { }
 

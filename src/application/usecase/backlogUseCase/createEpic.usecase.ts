@@ -1,9 +1,10 @@
 import { Task } from "../../../infrastructure/database/models/task.interface";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
+import { ICreateEpic } from "../../../config/Dependency/user/backlog.di";
 
 
 
-export class CreateEpicUsecase {
+export class CreateEpicUsecase implements ICreateEpic{
 
     constructor(private backlogRepo: IBacklogRepository) { }
 

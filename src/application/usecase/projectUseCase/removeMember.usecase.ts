@@ -1,7 +1,8 @@
+import { IRemoveMember } from "../../../config/Dependency/user/project.di";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 
 
-export class RemoveMemberUseCase {
+export class RemoveMemberUseCase implements IRemoveMember {
 
     constructor(private projectRepo: IProjectRepository) { }
 

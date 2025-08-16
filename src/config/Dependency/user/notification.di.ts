@@ -1,11 +1,15 @@
-import { GetNotificationUsecase } from "../../../application/usecase/notificationUseCase/getNotificationusecase";
-import { CreateNotification } from "../../../application/usecase/notificationUseCase/notification.usecase";
-import { ReadNotificationsUsecase } from "../../../application/usecase/notificationUseCase/readNotification.usecase";
-import { INotificationRepository } from "../../../domain/repositories/notification.repo";
-import { NotificationRepoImp } from "../../../infrastructure/repositories/repoImplementations/notification.repositoyImp";
+
+import { Notification } from "../../../infrastructure/database/models/notification.interface";
 
 
-const notificationRepo: INotificationRepository = new NotificationRepoImp();
-export const notification = new CreateNotification(notificationRepo);
-export const getNotificationsUse = new GetNotificationUsecase(notificationRepo);
-export const readNotifications = new ReadNotificationsUsecase(notificationRepo);
+export interface ICreateNotification {
+    execute(senderId: string, recieverId: string, type: "task" | "message", message: string, link: string): Promise<Notification>;
+}
+
+export interface IGetNotification {
+    execute(userId: string): Promise<Array<Notification>>;
+}
+
+export interface IReadNotification {
+    execute(userId: string, notificationId: string | null, removeAll: boolean): Promise<boolean>;
+}

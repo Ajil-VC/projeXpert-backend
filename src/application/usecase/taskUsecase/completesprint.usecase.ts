@@ -1,9 +1,10 @@
 import { Task } from "../../../infrastructure/database/models/task.interface";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
+import { ICompleteSprint } from "../../../config/Dependency/user/task.di";
 
 
 
-export class CompleteSprintUsecase {
+export class CompleteSprintUsecase implements ICompleteSprint {
 
     constructor(private taskRepo: ITaskRepository) { }
 

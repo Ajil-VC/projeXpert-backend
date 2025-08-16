@@ -1,10 +1,11 @@
 import { Task } from "../../../infrastructure/database/models/task.interface";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
+import { IGetTasks } from "../../../config/Dependency/user/backlog.di";
 
 
 
 
-export class GetTasksUseCase {
+export class GetTasksUseCase implements IGetTasks {
 
     constructor(private backlogRepo: IBacklogRepository) { }
 

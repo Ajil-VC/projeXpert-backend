@@ -2,10 +2,11 @@ import { Company } from "../../../infrastructure/database/models/company.interfa
 import { IWorkspaceRepository } from "../../../domain/repositories/workspace.repo";
 import { DecodedData } from "../../shared/decodedData";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
+import { IGetWorkspace } from "../../../config/Dependency/user/project.di";
 
 
 
-export class GetWorkSpaceUseCase {
+export class GetWorkSpaceUseCase implements IGetWorkspace {
 
     constructor(private companyRepo: ICompanyRepository) { }
 

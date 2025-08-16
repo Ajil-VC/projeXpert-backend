@@ -1,9 +1,10 @@
+import { IGetSprint } from "../../../config/Dependency/user/backlog.di";
 import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
 
-export class GetSprintsUseCase {
+export class GetSprintsUseCase implements IGetSprint {
 
     constructor(private backlogRepository: any) { }
 

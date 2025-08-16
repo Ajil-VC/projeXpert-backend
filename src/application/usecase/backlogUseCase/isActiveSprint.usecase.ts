@@ -1,7 +1,8 @@
+import { IIsActiveSprint } from "../../../config/Dependency/user/backlog.di";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 
 
-export class IsActiveSprintUsecase {
+export class IsActiveSprintUsecase implements IIsActiveSprint {
 
     constructor(private backlogRepo: IBacklogRepository) { }
 

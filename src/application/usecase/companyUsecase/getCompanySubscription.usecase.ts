@@ -1,8 +1,9 @@
+import { ICompanySubscription } from "../../../config/Dependency/user/subscription.di";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { Company } from "../../../infrastructure/database/models/company.interface";
 
 
-export class GetCompanySubscription {
+export class GetCompanySubscription implements ICompanySubscription {
 
     constructor(private companyRepo: ICompanyRepository) { }
 

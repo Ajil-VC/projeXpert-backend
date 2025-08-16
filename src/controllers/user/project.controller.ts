@@ -1,64 +1,41 @@
 import { NextFunction, Request, Response } from "express";
 
-import { getWorkspaceUsecase, retrieveProjectUsecase } from "../../config/Dependency/user/project.di";
-import { createProjectUsecase } from "../../config/Dependency/user/project.di";
-import { getProjectsInWorkspaceUsecase } from "../../config/Dependency/user/project.di";
-import { getCurrentProjectUsecase } from "../../config/Dependency/user/project.di";
-import { addMemberUsecase } from "../../config/Dependency/user/project.di";
-import { removeMemberUsecase } from "../../config/Dependency/user/project.di";
-import { updateProjectUsecase } from "../../config/Dependency/user/project.di";
-import { deleteProjectUsecase } from "../../config/Dependency/user/project.di";
-import { getTasksUsecase } from "../../config/Dependency/user/project.di";
-import { projectStatsUse } from "../../config/Dependency/user/project.di";
+import { 
+    IAddMember, 
+    ICreateProject, 
+    IDeleteProject, 
+    IGetCurrentProject, 
+    IGetProjectsinWorkspace, 
+    IGetWorkspace, 
+    IProjectStatus, 
+    IRemoveMember, 
+    IRetrieveProject, 
+    IUpdateProject } from "../../config/Dependency/user/project.di";
+
 
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 import { IProjectController } from "../../interfaces/user/project.controller.interface";
-import { GetWorkSpaceUseCase } from "../../application/usecase/workspaceUsecase/getWorkspace.usecase";
-import { createProjectUseCase } from "../../application/usecase/projectUseCase/createProject.usecase";
-import { GetAllProjectsInWorkspaceUseCase } from "../../application/usecase/projectUseCase/getAllProjectsInWorkspace.usecase";
-import { GetProjectUseCase } from "../../application/usecase/projectUseCase/getProject.usecase";
-import { GetTasksUseCase } from "../../application/usecase/backlogUseCase/getTasks.usecase";
-import { AddMemberUseCase } from "../../application/usecase/projectUseCase/addMember.usecase";
-import { RemoveMemberUseCase } from "../../application/usecase/projectUseCase/removeMember.usecase";
-import { UpdateProjectUseCase } from "../../application/usecase/projectUseCase/updateProject.usecase";
-import { DeleteProjectUsecase } from "../../application/usecase/projectUseCase/deleteProject.usecase";
-import { ProjectStatsUseCase } from "../../application/usecase/projectUseCase/projectstats.usecase";
-import { RetrieveProjectUseCase } from "../../application/usecase/projectUseCase/retrieveProject.usecase";
-import { AddActivityUsecase } from "../../application/usecase/activityUseCase/addActivity.usecase";
-import { addActivityUsecase } from "../../config/Dependency/user/activity.di";
+import { IAddActivity } from "../../config/Dependency/user/activity.di";
+import { IGetTasks } from "../../config/Dependency/user/backlog.di";
 
 
 export class ProjectController implements IProjectController {
 
-    private getWorkspaceUsecase: GetWorkSpaceUseCase;
-    private createProjectUsecase: createProjectUseCase;
-    private getProjectsInWorkspaceUsecase: GetAllProjectsInWorkspaceUseCase;
-    private getCurrentProjectUsecase: GetProjectUseCase;
-    private getTasksUsecase: GetTasksUseCase;
-    private addMemberUsecase: AddMemberUseCase;
-    private removeMemberUsecase: RemoveMemberUseCase;
-    private updateProjectUsecase: UpdateProjectUseCase;
-    private deleteProjectUsecase: DeleteProjectUsecase;
-    private projectStatsUse: ProjectStatsUseCase;
-    private retrieveProjectUsecase: RetrieveProjectUseCase;
-    private addActivityUsecase: AddActivityUsecase;
-
-    constructor() {
-
-        this.getWorkspaceUsecase = getWorkspaceUsecase;
-        this.createProjectUsecase = createProjectUsecase;
-        this.getProjectsInWorkspaceUsecase = getProjectsInWorkspaceUsecase;
-        this.getCurrentProjectUsecase = getCurrentProjectUsecase;
-        this.getTasksUsecase = getTasksUsecase;
-        this.addMemberUsecase = addMemberUsecase;
-        this.removeMemberUsecase = removeMemberUsecase;
-        this.updateProjectUsecase = updateProjectUsecase;
-        this.deleteProjectUsecase = deleteProjectUsecase;
-        this.projectStatsUse = projectStatsUse;
-        this.retrieveProjectUsecase = retrieveProjectUsecase;
-        this.addActivityUsecase = addActivityUsecase;
-    }
+    constructor(
+        private getWorkspaceUsecase: IGetWorkspace,
+        private createProjectUsecase: ICreateProject,
+        private getProjectsInWorkspaceUsecase: IGetProjectsinWorkspace,
+        private getCurrentProjectUsecase: IGetCurrentProject,
+        private getTasksUsecase: IGetTasks,
+        private addMemberUsecase: IAddMember,
+        private removeMemberUsecase: IRemoveMember,
+        private updateProjectUsecase: IUpdateProject,
+        private deleteProjectUsecase: IDeleteProject,
+        private projectStatsUse: IProjectStatus,
+        private retrieveProjectUsecase: IRetrieveProject,
+        private addActivityUsecase: IAddActivity
+    ) { }
 
 
     projectStats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

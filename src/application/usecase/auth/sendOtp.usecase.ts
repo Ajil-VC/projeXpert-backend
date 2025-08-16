@@ -4,9 +4,10 @@ import { IUserRepository } from "../../../domain/repositories/user.repo";
 import otpGenerator from 'otp-generator';
 import { IEmailService } from "../../../domain/services/email.interface";
 import { useCaseResult } from "../../shared/useCaseResult";
+import { ISendOtpUsecase } from "../../../config/Dependency/auth/auth.di";
 
 
-export class SendOtpUseCase {
+export class SendOtpUseCase implements ISendOtpUsecase {
 
     constructor(
         private userRepo: IUserRepository,

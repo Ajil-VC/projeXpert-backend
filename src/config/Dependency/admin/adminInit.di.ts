@@ -3,8 +3,13 @@ import { AdminRepositoryImp } from "../../../infrastructure/repositories/adminRe
 import { AdminInitUseCase } from "../../../application/usecase/admin/admininit.usecase";
 import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.repo";
 import { GetAdminUseCase } from "../../../application/usecase/admin/getAdmin.usecase";
+import { UserResponseDTO } from "../../../dtos/user/userResponseDTO";
 
-const adminRepository: IAdminRepository = new AdminRepositoryImp();
 
-export const adminInitUsecase = new AdminInitUseCase(adminRepository);
-export const adminDataUsecase = new GetAdminUseCase(adminRepository);
+export interface IAdminInitUse {
+    execute(): Promise<any>;
+}
+
+export interface IAdminData {
+    execute(adminId: string): Promise<UserResponseDTO>;
+}

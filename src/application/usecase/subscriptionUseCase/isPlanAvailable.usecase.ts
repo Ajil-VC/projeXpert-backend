@@ -1,8 +1,9 @@
+import { IIsPlanAvailable } from "../../../config/Dependency/user/subscription.di";
 import { ISubscription } from "../../../domain/repositories/subscription.repo";
 
 
 
-export class IsPlanAvailableUseCase {
+export class IsPlanAvailableUseCase implements IIsPlanAvailable {
 
     constructor(private subscriptionRepo: ISubscription) { }
 

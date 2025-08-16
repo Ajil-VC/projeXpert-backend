@@ -1,8 +1,9 @@
+import { IAddActivity } from "../../../config/Dependency/user/activity.di";
 import { IActivityRepository } from "../../../domain/repositories/activity.repo";
 
 
 
-export class AddActivityUsecase {
+export class AddActivityUsecase implements IAddActivity {
 
     constructor(private activityRepo: IActivityRepository) { }
 

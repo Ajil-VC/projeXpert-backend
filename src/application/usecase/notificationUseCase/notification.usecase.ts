@@ -1,9 +1,10 @@
+import { ICreateNotification } from "../../../config/Dependency/user/notification.di";
 import { INotificationRepository } from "../../../domain/repositories/notification.repo";
 import { Notification } from "../../../infrastructure/database/models/notification.interface";
 
 
 
-export class CreateNotification {
+export class CreateNotification implements ICreateNotification {
 
     constructor(private notificationRepo: INotificationRepository) { }
 

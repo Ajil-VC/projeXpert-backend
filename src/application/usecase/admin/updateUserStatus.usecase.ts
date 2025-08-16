@@ -1,7 +1,8 @@
+import { ICompanyManagementUse } from "../../../config/Dependency/admin/comapanymanage.di";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 
 
-export class changeUserStatusUseCase {
+export class changeUserStatusUseCase implements ICompanyManagementUse {
 
     constructor(private userRepo: IUserRepository) { }
 

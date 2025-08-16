@@ -1,27 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import { IStripeAdminController } from "../../interfaces/admin/stripeadmin.controller.interface";
 import { stripe } from "../../config/stripe.config";
-import Stripe from 'stripe';
-import { CreatePlanUseCase } from "../../application/usecase/admin/createPlan.usecase";
-import { changePlanStatusCase, deletePlanCase, getPlansCase, subscriptionPlanUsecase } from "../../config/Dependency/admin/subscriptionplan.di";
+import { IChangePlanStatus, IDeletePlan, IGetPlan, ISubscriptionPlan } from "../../config/Dependency/admin/subscriptionplan.di";
 import { HttpStatusCode } from "../../config/http-status.enum";
-import { GetPlansUsecase } from "../../application/usecase/admin/getPlans.usecase";
-import { DeletePlanUseCase } from "../../application/usecase/admin/deletePlan.usecase";
-import { ChangePlanStatusUsecase } from "../../application/usecase/admin/changePlanStatus.usecase";
+
 
 
 export class StripeAdminController implements IStripeAdminController {
 
-    private subscriptionPlanUsecase: CreatePlanUseCase;
-    private getPlansCase: GetPlansUsecase;
-    private deletePlanCase: DeletePlanUseCase;
-    private changePlanStatusCase: ChangePlanStatusUsecase;
-    constructor() {
-        this.subscriptionPlanUsecase = subscriptionPlanUsecase;
-        this.getPlansCase = getPlansCase;
-        this.deletePlanCase = deletePlanCase;
-        this.changePlanStatusCase = changePlanStatusCase;
-    }
+    constructor(
+        private subscriptionPlanUsecase: ISubscriptionPlan,
+        private getPlansCase: IGetPlan,
+        private deletePlanCase: IDeletePlan,
+        private changePlanStatusCase: IChangePlanStatus
+    ) { }
 
 
     changePlanStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

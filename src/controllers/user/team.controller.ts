@@ -1,26 +1,18 @@
 import { NextFunction, Request, Response } from "express";
-import { getCompanyUsersUsecase, getTeammembersUsecase, restrictUserUsecase } from "../../config/Dependency/user/team.di";
+import { IGetCompanyUsers, IGetTeamMembers, IRestrictUser } from "../../config/Dependency/user/team.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
-import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 import { ITeamController } from "../../interfaces/user/team.controller.interface";
-import { GetTeamMembers } from "../../application/usecase/teamManagement/getTeam.usecase";
-import { GetUsersInCompany } from "../../application/usecase/teamManagement/getusers.usecase";
-import { RestrictUser } from "../../application/usecase/teamManagement/restrictUser.usecase";
 
 
 export class TeamController implements ITeamController {
 
-    private getTeammembersUsecase: GetTeamMembers;
-    private getCompanyUsersUsecase: GetUsersInCompany;
-    private restrictUserUsecase: RestrictUser;
 
-    constructor() {
-
-        this.getTeammembersUsecase = getTeammembersUsecase;
-        this.getCompanyUsersUsecase = getCompanyUsersUsecase;
-        this.restrictUserUsecase = restrictUserUsecase;
-    }
+    constructor(
+        private getTeammembersUsecase: IGetTeamMembers,
+        private getCompanyUsersUsecase: IGetCompanyUsers,
+        private restrictUserUsecase: IRestrictUser
+    ) { }
 
 
     restrictUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -54,7 +46,27 @@ export class TeamController implements ITeamController {
 
         try {
 
-            const result = await this.getCompanyUsersUsecase.execute(req.user.companyId);
+            const pageNum = req.query.page ? Number(req.query.page) : null;
+            const limit = 2;
+            const skip = pageNum ? (pageNum - 1) * limit : 0;
+
+            const searchTerm = req.query.searchTerm ?? '';
+            const role = req.query.role ?? '';
+            let status: boolean | null = null;
+            if (req.query.status) {
+                status = req.query.status === 'active' ? false : true;
+            }
+
+            const result = await this.getCompanyUsersUsecase.execute(
+                req.user.companyId,
+                pageNum,
+                limit,
+                skip,
+                req.user.id,
+                searchTerm as string,
+                role as string,
+                status);
+
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
 

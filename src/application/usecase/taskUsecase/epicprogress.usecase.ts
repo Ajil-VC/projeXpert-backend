@@ -1,8 +1,9 @@
+import { IEpicProgress } from "../../../config/Dependency/user/task.di";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
-export class EpicProgressUsecase {
+export class EpicProgressUsecase implements IEpicProgress {
 
     constructor(private taskRepo: ITaskRepository) { }
 

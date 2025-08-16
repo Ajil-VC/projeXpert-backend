@@ -1,39 +1,26 @@
 import { NextFunction, Request, Response } from "express";
 
-import { chatUsecase } from "../../config/Dependency/user/chat.di";
-import { getChatsUsecase } from "../../config/Dependency/user/chat.di";
-import { getMessagesUsecase } from "../../config/Dependency/user/chat.di";
-import { sendMessagesUsecase } from "../../config/Dependency/user/chat.di";
+import { IChat, IGetChat, IGetMessages, ISendMessages } from "../../config/Dependency/user/chat.di";
+
 
 import { getUserSocket } from "../../infrastructure/services/socket.manager";
 import { getIO } from "../../config/socket";
-import { notification } from "../../config/Dependency/user/notification.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
-import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 import { IChatController } from "../../interfaces/user/chat.controller.interface";
-import { ChatUseCase } from "../../application/usecase/chatUseCase/startConversation.usecase";
-import { GetChats } from "../../application/usecase/chatUseCase/getChats.usecase";
-import { GetMessagesUseCase } from "../../application/usecase/chatUseCase/getMessages.usecase";
-import { SendMessageUsecase } from "../../application/usecase/chatUseCase/sendMessage.usecase";
-import { CreateNotification } from "../../application/usecase/notificationUseCase/notification.usecase";
+
+import { ICreateNotification } from "../../config/Dependency/user/notification.di";
 
 
 export class ChatController implements IChatController {
 
-    private chatUsecase: ChatUseCase;
-    private getChatsUsecase: GetChats;
-    private getMessagesUsecase: GetMessagesUseCase;
-    private sendMessagesUsecase: SendMessageUsecase;
-    private notification: CreateNotification;
-    constructor() {
-
-        this.chatUsecase = chatUsecase;
-        this.getChatsUsecase = getChatsUsecase;
-        this.getMessagesUsecase = getMessagesUsecase;
-        this.sendMessagesUsecase = sendMessagesUsecase;
-        this.notification = notification;
-    }
+    constructor(
+        private notification: ICreateNotification,
+        private chatUsecase: IChat,
+        private getChatsUsecase: IGetChat,
+        private getMessagesUsecase: IGetMessages,
+        private sendMessagesUsecase: ISendMessages
+    ) { }
 
     startConversation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
