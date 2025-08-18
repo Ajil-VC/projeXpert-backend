@@ -39,7 +39,7 @@ export class MeetingRepositoryImp implements IMeetingRepository {
             .populate({
                 path: 'createdBy',
                 select: '_id name email profilePicUrl role createdAt updatedAt'
-            });
+            }).sort({ recurring: -1 });
 
 
         if (!upcomingMeetings) {
@@ -53,16 +53,19 @@ export class MeetingRepositoryImp implements IMeetingRepository {
 
 
     async createMeeting(companyId: string,
-        userId: string, roomName: string, meetingDate: string, meetingTime: string, description: string, members: [string], roomId: string, url: string): Promise<Meeting> {
+        userId: string, roomName: string, meetingDate: string, meetingTime: string, description: string, members: [string], roomId: string, url: string, recurring: boolean): Promise<Meeting> {
 
         const companyOb = new mongoose.Types.ObjectId(companyId);
         const userOb = new mongoose.Types.ObjectId(userId);
 
+        const newMeetingDate = recurring ? null : new Date(meetingDate);
+
         const newMeeting = new MeetingModel({
             companyId: companyOb,
             roomName,
-            meetingDate: new Date(meetingDate),
+            meetingDate: newMeetingDate,
             meetingTime,
+            recurring,
             description,
             members: members.map(member => new mongoose.Types.ObjectId(member)),
             status: 'upcoming',

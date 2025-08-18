@@ -13,7 +13,8 @@ export interface IMeetingRepository {
         description: string,
         members: [string],
         roomId: string,
-        url: string
+        url: string,
+        recurring: boolean
     ): Promise<Meeting>;
 
 

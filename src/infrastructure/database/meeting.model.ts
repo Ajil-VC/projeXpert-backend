@@ -6,8 +6,13 @@ const MeetingSchema = new Schema<Meeting>({
 
     companyId: { type: Schema.Types.ObjectId, ref: 'Company' },
     roomName: { type: String, default: 'New Room' },
-    meetingDate: { type: Date, required: true },
+    meetingDate: {
+        type: Date, required: function () {
+            return !this.recurring;
+        }
+    },
     meetingTime: { type: String, required: true },
+    recurring: { type: Boolean, required: true, default: false },
     description: { type: String },
     members: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }], ref: 'User' },
     status: { type: String, enum: ['upcoming', 'ongoing', 'completed'] },

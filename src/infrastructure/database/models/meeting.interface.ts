@@ -15,6 +15,8 @@ export interface Meeting extends Document {
     status: 'upcoming' | 'ongoing' | 'completed';
     createdBy: ObjectId;
 
+    recurring: boolean;
+
     url: string;
     roomId: string;
 

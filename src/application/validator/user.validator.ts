@@ -94,10 +94,15 @@ export const meetingSchema = yup.object({
         .trim()
         .required('Room name is required'),
 
-    meetingDate: yup
-        .string()
-        .required('Meeting date is required')
-        .matches(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (YYYY-MM-DD)'),
+    recurring: yup.boolean().required(),
+    meetingDate: yup.string().when('recurring', {
+        is: false,
+        then: schema =>
+            schema
+                .required('Meeting date is required')
+                .matches(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (YYYY-MM-DD)'),
+        otherwise: schema => schema.notRequired()
+    }),
 
     meetingTime: yup
         .string()

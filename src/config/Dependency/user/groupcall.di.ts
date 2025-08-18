@@ -1,10 +1,5 @@
-import { CreateMeetingUsecase } from "../../../application/usecase/groupcallUsecase/createMeeting.usecase";
-import { GenerateRoomIdUsecase } from "../../../application/usecase/groupcallUsecase/getroomId.usecase";
-import { GetUpcomingMeetingsUsecase } from "../../../application/usecase/groupcallUsecase/getupcomingMeetings.usecase";
-import { RemoveMeetingUsecase } from "../../../application/usecase/groupcallUsecase/removeMeeting.usecase";
-import { IMeetingRepository } from "../../../domain/repositories/meeting.repo";
+
 import { Meeting } from "../../../infrastructure/database/models/meeting.interface";
-import { MeetingRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/meeting.repositoryImp";
 
 
 export interface IGenerateRoomId {
@@ -21,7 +16,8 @@ export interface ICreateMeeting {
         description: string,
         members: [string],
         roomId: string,
-        url: string): Promise<Meeting>
+        url: string,
+        recurring: boolean): Promise<Meeting>
 }
 
 export interface IUpcomingMeeting {

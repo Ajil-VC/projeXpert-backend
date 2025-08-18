@@ -2513,3 +2513,43 @@
     at RefreshTokenUseCase.execute (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\application\usecase\auth\refreshToken.usecase.ts:41:47)
     at processTicksAndRejections (node:internal/process/task_queues:95:5)
     at AuthController.refreshToken (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\controllers\authController.ts:213:28)
+2025-08-17T15:08:39.218Z error: ValidationError: Activity validation failed: target: Path `target` is required.
+    at model.Document.invalidate (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:3351:32)
+    at D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:3112:17
+    at D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\schemaType.js:1407:9
+    at processTicksAndRejections (node:internal/process/task_queues:77:11)
+2025-08-17T15:08:53.827Z error: ValidationError: Activity validation failed: target: Path `target` is required.
+    at model.Document.invalidate (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:3351:32)
+    at D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:3112:17
+    at D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\schemaType.js:1407:9
+    at processTicksAndRejections (node:internal/process/task_queues:77:11)
+2025-08-17T15:08:55.352Z error: ValidationError: Activity validation failed: target: Path `target` is required.
+    at model.Document.invalidate (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:3351:32)
+    at D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:3112:17
+    at D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\schemaType.js:1407:9
+    at processTicksAndRejections (node:internal/process/task_queues:77:11)
+2025-08-17T15:09:04.236Z error: ValidationError: Activity validation failed: target: Path `target` is required.
+    at model.Document.invalidate (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:3351:32)
+    at D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:3112:17
+    at D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\schemaType.js:1407:9
+    at processTicksAndRejections (node:internal/process/task_queues:77:11)
+2025-08-18T11:52:25.196Z error: ValidationError: Meeting validation failed: meetingDate: Cast to date failed for value "Invalid Date" (type Date) at path "meetingDate"
+    at model.Document.invalidate (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:3351:32)
+    at model.$set (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:1480:12)
+    at model.$set (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:1132:16)
+    at model.Document (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\document.js:178:12)
+    at model.Model (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\model.js:128:12)
+    at new model (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\model.js:4800:15)
+    at MeetingRepositoryImp.createMeeting (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\infrastructure\repositories\repoImplementations\meeting.repositoryImp.ts:61:28)
+    at CreateMeetingUsecase.execute (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\application\usecase\groupcallUsecase\createMeeting.usecase.ts:14:48)
+    at GroupcallController.createRoom (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\controllers\user\groupCall.controller.ts:69:61)
+    at Layer.handleRequest (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\router\lib\layer.js:152:17)
+2025-08-18T13:14:17.345Z error: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+    at new ObjectId (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\bson\src\objectid.ts:120:15)
+    at ActivityRepositoryImp.getActivities (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\infrastructure\repositories\repoImplementations\activity.repositoryImp.ts:14:24)
+    at GetActivities.execute (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\application\usecase\activityUseCase\getActivities.usecase.ts:13:48)
+    at ActivityController.getActivity (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\controllers\user\activity.controller.ts:26:57)
+    at Layer.handleRequest (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\router\lib\layer.js:152:17)
+    at next (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\router\lib\route.js:157:13)
+    at authenticateUser (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\infrastructure\middleware\user.middleware.ts:79:9)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
