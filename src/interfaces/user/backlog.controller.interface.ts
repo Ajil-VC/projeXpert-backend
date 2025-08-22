@@ -5,9 +5,15 @@ export interface IBacklogController {
 
     createEpic(req: Request, res: Response, next: NextFunction): Promise<void>;
 
+    removeTask(req: Request, res: Response, next: NextFunction): Promise<void>;
+
     updateEpic(req: Request, res: Response, next: NextFunction): Promise<void>;
 
     createIssue(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+    createSubtask(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+    getSubtasks(req: Request, res: Response, next: NextFunction): Promise<void>;
 
     createSprint(req: Request, res: Response, next: NextFunction): Promise<void>;
 

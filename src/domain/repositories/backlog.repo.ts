@@ -8,9 +8,15 @@ export interface IBacklogRepository {
 
     createEpic(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task | null>;
 
-    getTasks(projectId: string, userRole: string, userId: string): Promise<any>;
+    getTasks(projectId: string, userRole: string, userId: string, isKanban?: boolean): Promise<any>;
+
+    removeTask(taskId: string): Promise<boolean>;
 
     createIssue(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<any>;
+
+    createSubtask(title: string, type: string, parentId: string, projectId: string): Promise<Task>;
+
+    getSubtasks(parentId: string, isKanban?: boolean, parentIdArray?: string[]): Promise<Task[]>;
 
     assignIssue(issueId: string, userId: string): Promise<any>;
 
@@ -20,7 +26,7 @@ export interface IBacklogRepository {
 
     dragDropUpdation(prevContainerId: string, containerId: string, movedTaskId: string): Promise<Task>;
 
-    changeTaskStatus(taskId: string, status: string): Promise<Task>;
+    changeTaskStatus(taskId: string, status: string): Promise<Task | null>;
 
     startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<Sprint>;
 

@@ -18,19 +18,22 @@ export class DashboardRepositoryImp implements IAdminDashboardRepository {
             activeCompanySubscriptions,
             companyCount,
             subscriptions,
-            planUsage
+            planUsage,
+            top5Companies
         ] = await Promise.all([
             this.companyRepo.activeCompanySubscriptions(),
             this.companyRepo.getTotalCompanyCountWithLastJoined(),
             this.companySubscriptionRepo.getMonthlySubscriptions(),
-            this.companySubscriptionRepo.getPlanUsage()
+            this.companySubscriptionRepo.getPlanUsage(),
+            this.companySubscriptionRepo.top5Companies()
         ]);
 
         return {
             activeCompanySubscriptions,
             companyCount,
             subscriptions,
-            planUsage
+            planUsage,
+            top5Companies
         }
     }
 

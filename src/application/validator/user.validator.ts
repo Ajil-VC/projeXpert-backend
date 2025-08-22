@@ -32,6 +32,11 @@ export const createIssueSchema = yup.object({
     taskGroup: yup.string().required('Task group is required')
 });
 
+export const createSubtaskSchema = yup.object({
+    title: yup.string().required('Title needed'),
+    parentId: yup.string().required('Parent Id Needed.')
+});
+
 export const assignIssueSchema = yup.object({
     issueId: yup.string().required('Issue Id is required')
 });

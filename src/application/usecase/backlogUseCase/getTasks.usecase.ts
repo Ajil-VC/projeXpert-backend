@@ -11,28 +11,25 @@ export class GetTasksUseCase implements IGetTasks {
 
     async execute(projectId: string, userRole: string, userId: string, isKanban: boolean = false) {
 
-        const result = await this.backlogRepo.getTasks(projectId, userRole, userId);
-        if (!result) {
-            throw new Error('Couldnt retrieve tasks');
-        }
+        if (!isKanban) {
+            const result = await this.backlogRepo.getTasks(projectId, userRole, userId);
 
-        if (isKanban) {
+            if (!result) {
+                throw new Error('Couldnt retrieve tasks');
+            }
+            return result;
 
-            const tasksInActiveSprint = (result as Array<Task>).filter(task => {
+        } else if (isKanban) {
 
-                if (userRole === 'admin') {
-                    return (task.sprintId && 'status' in task.sprintId && task.sprintId.status === 'active')
-                } else {
+            const activeTasks = await this.backlogRepo.getTasks(projectId, userRole, userId, isKanban);
 
-                    if (task.sprintId && 'status' in task.sprintId && task.sprintId.status === 'active') {
-                        return (task.assignedTo !== null && '_id' in task.assignedTo && String(task.assignedTo._id) === userId);
-                    }
-                }
-            });
+            const activeTaskIds = activeTasks.map((t: Task) => t._id);
 
-            return tasksInActiveSprint;
+            const availableSubtasks = await this.backlogRepo.getSubtasks('', isKanban, activeTaskIds);
+
+            const allTasks = [...activeTasks, ...availableSubtasks];
+            return allTasks;
 
         }
-        return result;
     }
 }

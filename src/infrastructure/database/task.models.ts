@@ -25,8 +25,8 @@ const TaskSchema = new Schema<Task>({
     progress: { type: Number, default: 0 },
 
     sprintId: { type: Schema.Types.ObjectId, default: null, ref: 'Sprint' },
-    parentId: { type: Schema.Types.ObjectId },
-    projectId: { type: Schema.Types.ObjectId, required: true, ref: 'Project' },
+    parentId: { type: Schema.Types.ObjectId, ref: 'Task' },
+    projectId: { type: Schema.Types.ObjectId, ref: 'Project' },
 
     attachments: {
         type: [AttachmentSchema],

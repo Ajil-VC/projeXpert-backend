@@ -147,4 +147,47 @@ export class userRepositoryImp implements IUserRepository {
 
     }
 
+    async largestEmployer(): Promise<Array<{
+        employerCount: number,
+        email: string,
+        companyName: string
+    }>> {
+
+        const data = await userModel.aggregate([
+            {
+                $group: {
+                    _id: "$companyId",
+                    employerCount: { $sum: 1 }
+                }
+            },
+            { $sort: { employerCount: -1 } },
+            { $limit: 5 },
+            {
+                $lookup: {
+                    from: "companies",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "company"
+                }
+            },
+            { $unwind: "$company" },
+            {
+                $project: {
+                    _id: 0,
+                    employerCount: 1,
+                    email: "$company.email",
+                    companyName: "$company.name"
+                }
+            }
+        ]);
+
+        if (!data) {
+
+            throw new Error("Couldnt retrieve the data.");
+        }
+
+        return data;
+
+    }
+
 }

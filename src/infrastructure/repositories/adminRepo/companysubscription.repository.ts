@@ -9,6 +9,70 @@ import { companySubscription } from "../../database/models/companySubscription.i
 export class CompanySubscriptionRepositoryImp implements ICompanySubscriptionRepository {
 
 
+    async top5Companies(): Promise<Array<{
+        totalAmount: number,
+        subscriptionCount: number,
+        companyId: any,
+        companyName: string
+    }>> {
+
+
+        const data = await companySubscriptionModel.aggregate([
+            {
+                $match: {
+                    createdAt: {
+                        $gte: new Date(new Date().getFullYear(), 0, 1),
+                        $lt: new Date(new Date().getFullYear() + 1, 0, 1)
+                    },
+                    subscriptionStatus: "active"
+                }
+            },
+            {
+                $lookup: {
+                    from: "subscriptions",
+                    localField: "plan",
+                    foreignField: "_id",
+                    as: "planData"
+                }
+            },
+            { $unwind: "$planData" },
+            {
+                $group: {
+                    _id: "$companyId",
+                    totalAmount: { $sum: "$planData.price" },
+                    subscriptionCount: { $sum: 1 }
+                }
+            },
+            { $sort: { totalAmount: -1 } },
+            { $limit: 5 },
+            {
+                $lookup: {
+                    from: "companies",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "company"
+                }
+            },
+            { $unwind: "$company" },
+            {
+                $project: {
+                    _id: 0,
+                    companyId: "$_id",
+                    companyName: "$company.name",
+                    totalAmount: 1,
+                    subscriptionCount: 1
+                }
+            }
+        ]);
+
+        if (!data) {
+
+            throw new Error("Couldnt findout top 5 companies.");
+        }
+        return data;
+    }
+
+
     async getPlanUsage(): Promise<any> {
 
         const currentYear = new Date().getFullYear();

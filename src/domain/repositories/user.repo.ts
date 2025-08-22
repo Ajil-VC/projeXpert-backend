@@ -26,4 +26,10 @@ export interface IUserRepository {
 
     updateDefaultWorkspace(workspaceId: string, userId: string): Promise<User>;
 
+    largestEmployer(): Promise<Array<{
+        employerCount: number,
+        email: string,
+        companyName: string
+    }>>;
+
 }

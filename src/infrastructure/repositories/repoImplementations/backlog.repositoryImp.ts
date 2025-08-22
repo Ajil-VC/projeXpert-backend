@@ -10,6 +10,66 @@ import { Sprint } from "../../database/models/sprint.interface";
 export class BacklogRepositoryImp implements IBacklogRepository {
 
 
+    async removeTask(taskId: string): Promise<boolean> {
+
+        const taskOb = new mongoose.Types.ObjectId(taskId);
+        const result = await taskModel.findByIdAndDelete(taskOb);
+
+        if (result) return true;
+        return false;
+
+    }
+
+
+    async getSubtasks(parentId: string, isKanban = false, parentIdArray = []): Promise<Task[]> {
+
+        if (!isKanban) {
+
+            const parentIdOb = new mongoose.Types.ObjectId(parentId);
+            const subtasks = await taskModel.find({ parentId: parentIdOb })
+                .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' });
+
+            if (!subtasks) {
+                throw new Error("Couldnt retrieve subtasks.");
+            }
+
+            return subtasks;
+        } else {
+
+            const subtasks = await taskModel.find({ parentId: { $in: parentIdArray } })
+                .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
+                .populate({
+                    path: "parentId",
+                    populate: { path: 'sprintId' }
+                });
+            return subtasks;
+
+        }
+
+    }
+
+
+    async createSubtask(title: string, type: string, parentId: string, projectId: string): Promise<Task> {
+
+        const parentIdOb = new mongoose.Types.ObjectId(parentId);
+        const projectOb = new mongoose.Types.ObjectId(projectId);
+
+        const newTask = new taskModel({
+            title,
+            type,
+            parentId: parentIdOb,
+            projectId: projectOb
+        });
+
+        const createdTask = await newTask.save();
+
+        if (!createdTask) throw new Error('Error occured while creating subtask');
+
+        return createdTask;
+
+    }
+
+
     async isActiveSprint(projectId: string): Promise<boolean> {
 
         const projectOb = new mongoose.Types.ObjectId(projectId);
@@ -65,15 +125,47 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async changeTaskStatus(taskId: string, status: string): Promise<Task> {
+    async changeTaskStatus(taskId: string, status: string): Promise<Task | null> {
 
         const taskIdOb = new mongoose.Types.ObjectId(taskId);
-        const updatedTask = await taskModel.findByIdAndUpdate(taskIdOb, { $set: { status: status } }, { new: true });
+        const childSubtasks = await taskModel.find({ parentId: taskIdOb });
+        const incompletedSubtasks = childSubtasks.filter(task => task.status !== 'done');
+        if (incompletedSubtasks.length > 0 && status === 'done') {
+            return null;
+        } else if (childSubtasks.length > 0 && childSubtasks.every(task => task.status === childSubtasks[0].status)) {
+            status = childSubtasks[0].status;
+        } else if (childSubtasks.some(task => task.status === 'in-progress')) {
+            status = 'in-progress';
+        } else if (status === 'in-progress' && childSubtasks.filter(task => task.status === 'in-progress').length == 0) {
+            if (childSubtasks.some(task => task.status === 'todo') && childSubtasks.some(task => task.status === 'done')) {
+                status = 'todo';
+            }
+        }
 
+        const updatedTask = await taskModel.findByIdAndUpdate(taskIdOb, { $set: { status: status } }, { new: true });
         if (!updatedTask) {
 
             throw new Error("Task couldnt update");
         }
+
+        const siblingTasks = await taskModel.find({ parentId: updatedTask.parentId });
+
+        if (siblingTasks.length > 0) {
+
+            const statuses = siblingTasks.map(s => s.status);
+            let finalStatusOfParent = 'in-progress';
+            if (statuses.includes('in-progress')) {
+                finalStatusOfParent = 'in-progress';
+            } else if (statuses.every(s => s === statuses[0])) {
+                finalStatusOfParent = statuses[0];
+            } else if (statuses.includes('todo') && statuses.includes('done')) {
+                finalStatusOfParent = 'todo';
+            }
+
+            await taskModel.updateOne({ _id: updatedTask.parentId }, { $set: { status: finalStatusOfParent } });
+
+        }
+
         return updatedTask;
     }
 
@@ -227,20 +319,73 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async getTasks(projectId: string, userRole: string, userId: string): Promise<any> {
+    async getTasks(projectId: string, userRole: string, userId: string, isKanban = false): Promise<any> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
         const userIdOb = new mongoose.Types.ObjectId(userId);
 
-        let query: any = { projectId: projectIdOb };
-        if (userRole === 'user') {
-            query.assignedTo = userIdOb;
+
+        if (!isKanban) {
+
+            let query: any = { projectId: projectIdOb, type: { $ne: 'subtask' } };
+            if (userRole === 'user') {
+                query.assignedTo = userIdOb;
+            }
+
+            const tasks = await taskModel.find(query)
+                .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
+                .populate({ path: 'sprintId' })
+                .populate({ path: 'epicId' });
+            return tasks;
+
+        } else if (isKanban) {
+
+            if (userRole === 'admin') {
+                const tasks = await taskModel.find({
+                    projectId: projectIdOb,
+                    sprintId: { $ne: null }
+                })
+                    .populate({
+                        path: "sprintId",
+                        match: { status: "active" },
+                    })
+                    .populate({
+                        path: "assignedTo",
+                        select: "_id name email profilePicUrl role createdAt updatedAt",
+                    })
+                    .populate({
+                        path: "epicId"
+                    });
+
+                const activeSprintTasks = tasks.filter(task => task.sprintId !== null);
+                return activeSprintTasks;
+
+            } else {
+
+                const tasks = await taskModel.find({
+                    projectId: projectIdOb,
+                    sprintId: { $ne: null },
+                    assignedTo: userIdOb
+                })
+                    .populate({
+                        path: "sprintId",
+                        match: { status: "active" },
+                    })
+                    .populate({
+                        path: "assignedTo",
+                        select: "_id name email profilePicUrl role createdAt updatedAt",
+                    })
+                    .populate({
+                        path: "epicId"
+                    });
+
+                const activeSprintTasks = tasks.filter(task => task.sprintId !== null);
+                return activeSprintTasks;
+
+            }
+
+
         }
-        const tasks = await taskModel.find(query)
-            .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
-            .populate({ path: 'sprintId' })
-            .populate({ path: 'epicId' });
-        return tasks;
 
     }
 

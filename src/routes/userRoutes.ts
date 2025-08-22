@@ -7,6 +7,7 @@ import { authenticateAsAdmin, authenticateUser } from '../infrastructure/middlew
 import {
     assignIssueSchema, completeSprintSchema, controlSchema, createEpicSchema,
     createIssueSchema, createSprintSchema,
+    createSubtaskSchema,
     createWorkspaceSchema,
     dragDropSchema,
     meetingSchema,
@@ -71,6 +72,11 @@ userRouter.delete('/delete-project/:projectId/:workSpaceId', authenticateAsAdmin
 userRouter.post('/create-epic', authenticateAsAdmin, validateBody(createEpicSchema), backlogControllerInterface.createEpic);
 userRouter.put('/update-epic', authenticateAsAdmin, validateBody(updateEpicSchema), backlogControllerInterface.updateEpic);
 userRouter.post('/create-issue', authenticateAsAdmin, validateBody(createIssueSchema), backlogControllerInterface.createIssue);
+
+userRouter.post('/create-subtask', authenticateAsAdmin, validateBody(createSubtaskSchema), backlogControllerInterface.createSubtask);
+userRouter.get('/get-subtask/:parentId', authenticateUser, backlogControllerInterface.getSubtasks);
+userRouter.delete('/remove-task/:taskId', authenticateAsAdmin, backlogControllerInterface.removeTask);
+
 userRouter.post('/create-sprint', authenticateAsAdmin, validateBody(createSprintSchema), backlogControllerInterface.createSprint);
 userRouter.get('/get-sprints/:projectId', authenticateAsAdmin, backlogControllerInterface.getSprints);
 userRouter.get('/get-sprints/kanban/:projectId', authenticateUser, backlogControllerInterface.getSprints);

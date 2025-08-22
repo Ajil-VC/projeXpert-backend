@@ -2,15 +2,19 @@ import { IGetDashBoard } from "../../../config/Dependency/admin/comapanymanage.d
 import { Doughnut } from "../../../domain/entities/additional.interface.ts/doughnut.interface";
 import { SummaryCard } from "../../../domain/entities/additional.interface.ts/summarycard.interface";
 import { IAdminDashboardRepository } from "../../../domain/repositories/adminRepo/dashboard.repo";
+import { IUserRepository } from "../../../domain/repositories/user.repo";
 
 
 export class GetDashboardDataUsecase implements IGetDashBoard {
 
-    constructor(private dashBoardRepo: IAdminDashboardRepository) { }
+    constructor(private dashBoardRepo: IAdminDashboardRepository, private userRepo: IUserRepository) { }
 
     async execute(): Promise<any> {
 
-        const data = await this.dashBoardRepo.getAdminDashboardView();
+        const [data, largestEmployer] = await Promise.all([
+            this.dashBoardRepo.getAdminDashboardView(),
+            this.userRepo.largestEmployer()
+        ]);
 
         const totalMonth = data.subscriptions.length;
         const yearTotalRevenue = data.subscriptions.reduce((acc: number, curr: { count: number, totalAmount: number, month: number }) => {
@@ -41,9 +45,16 @@ export class GetDashboardDataUsecase implements IGetDashBoard {
                 color: 'blue'
             },
             {
-                count: monthAvg,
+                count: `₹${monthAvg}`,
                 label: 'Monthly Average',
-                sublabel: `${lastMonth.totalAmount} from last month`,
+                sublabel: `₹${lastMonth.totalAmount} from last month`,
+                icon: 'fa-calendar-check',
+                color: 'orange'
+            },
+            {
+                count: `₹${yearTotalRevenue}`,
+                label: 'This year',
+                sublabel: `Total collected amount`,
                 icon: 'fa-calendar-check',
                 color: 'orange'
             }
@@ -66,7 +77,7 @@ export class GetDashboardDataUsecase implements IGetDashBoard {
             doughnutChart.data.push(plan.usageCount)
         })
 
-        return { barChartData, summaryCards, doughnutChart };
+        return { barChartData, summaryCards, doughnutChart, top5Companiesdata: data.top5Companies, largestEmployer };
 
     }
 }

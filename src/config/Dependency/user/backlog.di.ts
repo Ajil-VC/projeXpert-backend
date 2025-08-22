@@ -8,12 +8,24 @@ export interface ICreateEpic {
     execute(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task>
 }
 
+export interface IRemoveTask {
+    execute(taskId: string): Promise<boolean>;
+}
+
 export interface IUpdateEpic {
     execute(title: string, description: string, startDate: string, endDate: string, epicId: string): Promise<Task>
 }
 
 export interface ICreateIssue {
     execute(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<any>;
+}
+
+export interface ICreateSubTasks {
+    execute(title: string, type: string, parentId: string, projectId: string): Promise<Task>;
+}
+
+export interface IGetSubtasks {
+    execute(parentId: string): Promise<Task[]>;
 }
 
 export interface ICreateSprint {
@@ -37,7 +49,7 @@ export interface IDragDrop {
 }
 
 export interface IChangeTaskStatus {
-    execute(taskId: string, status: string): Promise<Task>;
+    execute(taskId: string, status: string): Promise<Task | null>;
 }
 
 export interface IStartSprint {

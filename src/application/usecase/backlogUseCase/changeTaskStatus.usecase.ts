@@ -7,12 +7,9 @@ export class ChangeTaskStatus implements IChangeTaskStatus {
 
     constructor(private backlogRepo: IBacklogRepository) { }
 
-    async execute(taskId: string, status: string): Promise<Task> {
+    async execute(taskId: string, status: string): Promise<Task | null> {
 
         const result = await this.backlogRepo.changeTaskStatus(taskId, status);
-        if (!result) {
-            throw new Error('Something went wrong while updating task status.');
-        }
         return result;
     }
 }

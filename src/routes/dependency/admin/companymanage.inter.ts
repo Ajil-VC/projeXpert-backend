@@ -25,7 +25,7 @@ const companyRepo: ICompanyRepository = new CompanyRepositoryImp();
 const dashboardRepository: IAdminDashboardRepository = new DashboardRepositoryImp(companySubscriptionRepo, companyRepo);
 
 
-export const getDashBoardData: IGetDashBoard = new GetDashboardDataUsecase(dashboardRepository);
+export const getDashBoardData: IGetDashBoard = new GetDashboardDataUsecase(dashboardRepository, userRepository);
 export const companyManagementUsecase: ICompanyManagementUse = new changeUserStatusUseCase(userRepository);
 export const companyStatusChangeUsecase: ICompanyStatusChange = new ChangeCompanyStatusUsecase(companyRepository);
 export const getSubscriptionsusecase: IGetSubscriptionAdmin = new GetSubscriptions(adminRepository);
