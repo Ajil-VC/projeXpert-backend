@@ -48,14 +48,14 @@ export class TeamRepositoryImp implements ITeamRepository {
     }> {
 
         const companyIdOb = new mongoose.Types.ObjectId(companyId);
-        const userIdOb = new mongoose.Types.ObjectId(userId);
-
+        
         let totalPages: number = 0;
         let users;
         if (!pageNum) {
             users = await userModel.find({ companyId: companyIdOb });
         } else {
-
+            
+            const userIdOb = new mongoose.Types.ObjectId(userId);
             const query: {
                 companyId: any,
                 _id: any,

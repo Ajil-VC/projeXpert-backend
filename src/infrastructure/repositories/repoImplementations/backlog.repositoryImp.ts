@@ -219,6 +219,10 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                     {
                         path: 'epicId',
                         model: 'Task'
+                    },
+                    {
+                        path: 'sprintId',
+                        model: 'Sprint'
                     }
                 ]
             }).exec();
@@ -336,6 +340,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                 .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
                 .populate({ path: 'sprintId' })
                 .populate({ path: 'epicId' });
+
             return tasks;
 
         } else if (isKanban) {

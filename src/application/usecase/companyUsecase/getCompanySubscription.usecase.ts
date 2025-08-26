@@ -10,12 +10,14 @@ export class GetCompanySubscription implements ICompanySubscription {
     async execute(companyId: string): Promise<{ company: Company, isExpired: boolean }> {
 
         const company = await this.companyRepo.findCompanyById(companyId);
-        if (!company?.currentPeriodEnd) {
-            return { company, isExpired: true }
+        const currentDate = new Date();
+
+        if (!company?.currentPeriodEnd || !company.plan) {
+            return { company, isExpired: true };
         }
 
-        const currentDate = new Date();
-        const endDate = new Date(company.currentPeriodEnd);
+        const endDate = company.currentPeriodEnd;
+
         const isExpired = endDate < currentDate;
         return { company, isExpired };
     }

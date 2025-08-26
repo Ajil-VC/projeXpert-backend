@@ -8,11 +8,13 @@ import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.r
 import { ICompanySubscriptionRepository } from "../../../domain/repositories/adminRepo/companysubscription.repo";
 import { IAdminDashboardRepository } from "../../../domain/repositories/adminRepo/dashboard.repo";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
+import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 import { AdminRepositoryImp } from "../../../infrastructure/repositories/adminRepo/admin.repository";
 import { CompanySubscriptionRepositoryImp } from "../../../infrastructure/repositories/adminRepo/companysubscription.repository";
 import { DashboardRepositoryImp } from "../../../infrastructure/repositories/adminRepo/dashboard.repository";
 import { CompanyRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/company.repositoryImp";
+import { projectRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/project.repositoryImp";
 import { userRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/user.repositoryImp";
 import { ICompanyManagement } from "../../../interfaces/admin/company.controller.interface";
 
@@ -23,12 +25,12 @@ const adminRepository: IAdminRepository = new AdminRepositoryImp();
 const companySubscriptionRepo: ICompanySubscriptionRepository = new CompanySubscriptionRepositoryImp();
 const companyRepo: ICompanyRepository = new CompanyRepositoryImp();
 const dashboardRepository: IAdminDashboardRepository = new DashboardRepositoryImp(companySubscriptionRepo, companyRepo);
+const projectRepository: IProjectRepository = new projectRepositoryImp(userRepository);
 
-
-export const getDashBoardData: IGetDashBoard = new GetDashboardDataUsecase(dashboardRepository, userRepository);
+export const getDashBoardData: IGetDashBoard = new GetDashboardDataUsecase(dashboardRepository, userRepository, projectRepository);
 export const companyManagementUsecase: ICompanyManagementUse = new changeUserStatusUseCase(userRepository);
 export const companyStatusChangeUsecase: ICompanyStatusChange = new ChangeCompanyStatusUsecase(companyRepository);
-export const getSubscriptionsusecase: IGetSubscriptionAdmin = new GetSubscriptions(adminRepository);
+export const getSubscriptionsusecase: IGetSubscriptionAdmin = new GetSubscriptions(companySubscriptionRepo);
 
 export const companyMangementInterface: ICompanyManagement = new CompanyManagementController(
     companyManagementUsecase,

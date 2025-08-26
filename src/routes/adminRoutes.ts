@@ -12,6 +12,7 @@ import { authInterface } from './dependency/auth.inter';
 import { adminInitInterface } from './dependency/admin/admininit.inter';
 import { companyMangementInterface } from './dependency/admin/companymanage.inter';
 import { stripeAdminInterface } from './dependency/admin/subscriptionplan.inter';
+import { revenueInterface } from './dependency/admin/revenue.inter';
 
 
 const adminRouter = express.Router();
@@ -34,5 +35,7 @@ adminRouter.delete('/delete-plan', authenticatePlatformAdmin, stripeAdminInterfa
 adminRouter.patch('/change-plan-status', authenticatePlatformAdmin, stripeAdminInterface.changePlanStatus);
 adminRouter.get('/get-plans', authenticatePlatformAdmin, stripeAdminInterface.getAllPlans);
 adminRouter.get('/get-subscriptions', authenticatePlatformAdmin, companyMangementInterface.getSubscriptions);
+
+adminRouter.get('/revenue', authenticatePlatformAdmin, revenueInterface.getRevenueReport);
 
 export default adminRouter;

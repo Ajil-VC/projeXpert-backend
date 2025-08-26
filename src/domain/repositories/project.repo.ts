@@ -35,4 +35,6 @@ export interface IProjectRepository {
 
     countProjects(companyId: string): Promise<number>;
 
+    avgProjectsOnPlans(): Promise<any>;
+
 }

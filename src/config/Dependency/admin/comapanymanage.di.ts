@@ -1,6 +1,5 @@
 
-
-import { Company } from "../../../infrastructure/database/models/company.interface";
+import { companySubscription } from "../../../infrastructure/database/models/companySubscription.interface";
 
 
 export interface IGetDashBoard {
@@ -17,5 +16,5 @@ export interface ICompanyStatusChange {
 }
 
 export interface IGetSubscriptionAdmin {
-    execute(): Promise<Company[]>;
+    execute(searchTerm: string, sort: 1 | -1, limit: number, skip: number): Promise<{ subscriptions: Array<companySubscription>, totalPage: number }>;
 }

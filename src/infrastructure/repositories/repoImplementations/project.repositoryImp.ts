@@ -8,11 +8,12 @@ import userModel from "../../database/user.models";
 import { Task } from "../../database/models/task.interface";
 import taskModel from "../../database/task.models";
 import { BaseRepository } from "../base.repository";
+import companyModel from "../../database/company.models";
 
 
 export class projectRepositoryImp extends BaseRepository<Project> implements IProjectRepository {
 
-    constructor(private userRepo: IUserRepository) { 
+    constructor(private userRepo: IUserRepository) {
         super(projectModel);
     }
 
@@ -248,4 +249,11 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
         return createdProject;
     }
 
+
+    async avgProjectsOnPlans(): Promise<any> {
+
+
+    
+        // throw new Error("Couldnt find out  the data.");
+    }
 }

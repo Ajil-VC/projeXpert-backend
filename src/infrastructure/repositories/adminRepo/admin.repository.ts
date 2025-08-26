@@ -1,6 +1,7 @@
 import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.repo";
 import companyModel from "../../database/company.models";
 import { Company } from "../../database/models/company.interface";
+import { companySubscription } from "../../database/models/companySubscription.interface";
 import { User } from "../../database/models/user.interface";
 import userModel from "../../database/user.models";
 import { BaseRepository } from "../base.repository";
@@ -10,20 +11,6 @@ export class AdminRepositoryImp extends BaseRepository<User> implements IAdminRe
 
     constructor() {
         super(userModel);
-    }
-
-
-    async getCopmaniesWithPlans(): Promise<Company[]> {
-
-        const subscribedCompanies = await companyModel.find({ plan: { $ne: null } })
-            .populate({ path: 'plan' });
-
-        if (!subscribedCompanies) {
-
-            throw new Error("Data not available.");
-        }
-
-        return subscribedCompanies;
     }
 
     async getAdmin(adminId: string): Promise<User> {

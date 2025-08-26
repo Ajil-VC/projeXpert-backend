@@ -1,6 +1,4 @@
-import { GetCompanySubscription } from "../../../application/usecase/companyUsecase/getCompanySubscription.usecase";
-import { GetSubscriptionPlans } from "../../../application/usecase/subscriptionUseCase/getSubscription.usecase";
-import { IsPlanAvailableUseCase } from "../../../application/usecase/subscriptionUseCase/isPlanAvailable.usecase";
+
 import { Company } from "../../../infrastructure/database/models/company.interface";
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 

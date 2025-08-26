@@ -4,7 +4,9 @@ import { companySubscription } from "../../../infrastructure/database/models/com
 
 export interface ICompanySubscriptionRepository {
 
-    getMonthlySubscriptions(): Promise<any>;
+    getMonthlySubscriptions(plans?: string[]): Promise<any>;
+
+    subscriptionWithinTimeperiod(plans: string[], startDate?: Date | null, endDate?: Date | null): Promise<any>;
 
     getPlanUsage(): Promise<any>;
 
@@ -14,4 +16,7 @@ export interface ICompanySubscriptionRepository {
         companyId: any,
         companyName: string
     }>>;
+
+    getSubscriptionData(searchTerm: string, sort: 1 | -1, limit: number, skip: number): Promise<{ subscriptions: Array<companySubscription>, totalPage: number }>;
+
 }

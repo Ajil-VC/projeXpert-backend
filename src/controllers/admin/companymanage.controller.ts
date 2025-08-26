@@ -18,7 +18,18 @@ export class CompanyManagementController implements ICompanyManagement {
 
         try {
 
-            const result = await this.getSubscriptionsusecase.execute();
+            const searchTerm = typeof req.query.searchTerm === 'string' ? req.query.searchTerm.trim() : '';
+            const sort = req.query.sort === '1' ? 1 : -1;
+            const page = req.query.page;
+            const pageNum =
+                typeof page === "string"
+                    ? parseInt(page)
+                    : 1;
+
+            const limit = 2;
+            const skip = (pageNum - 1) * limit;
+
+            const result = await this.getSubscriptionsusecase.execute(searchTerm, sort, limit, skip);
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
 

@@ -10,6 +10,7 @@ export class GetPlansUsecase implements IGetPlan {
 
     async execute(limit: number, skip: number) {
 
+        
         const plansWithTotalPage = await this.subscriptionRepo.getAllPlans(limit, skip);
         return plansWithTotalPage;
     }
