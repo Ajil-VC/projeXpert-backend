@@ -52,8 +52,14 @@ export class MeetingRepositoryImp implements IMeetingRepository {
     }
 
 
-    async createMeeting(companyId: string,
-        userId: string, roomName: string, meetingDate: string, meetingTime: string, description: string, members: [string], roomId: string, url: string, recurring: boolean): Promise<Meeting> {
+    async createMeeting(
+        companyId: string,
+        userId: string,
+        roomName: string,
+        meetingDate: string,
+        meetingTime: string,
+        description: string,
+        members: [string], roomId: string, url: string, recurring: boolean, days: Array<string>): Promise<Meeting> {
 
         const companyOb = new mongoose.Types.ObjectId(companyId);
         const userOb = new mongoose.Types.ObjectId(userId);
@@ -67,6 +73,7 @@ export class MeetingRepositoryImp implements IMeetingRepository {
             meetingTime,
             recurring,
             description,
+            days,
             members: members.map(member => new mongoose.Types.ObjectId(member)),
             status: 'upcoming',
             createdBy: userOb,

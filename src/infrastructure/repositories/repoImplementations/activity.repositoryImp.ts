@@ -18,7 +18,7 @@ export class ActivityRepositoryImp implements IActivityRepository {
 
     }
 
-    async addActivity(projectId: string, companyId: string, userId: string, action: string, target: string): Promise<void> {
+    async addActivity(projectId: string, companyId: string, userId: string, action: string, target: string | null): Promise<void> {
 
         const companyOb = new mongoose.Types.ObjectId(companyId);
         const projectOb = new mongoose.Types.ObjectId(projectId);

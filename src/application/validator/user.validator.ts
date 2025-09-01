@@ -21,6 +21,7 @@ export const updateEpicSchema = yup.object({
     description: yup.string(),
     startDate: yup.string().required('Start date is required'),
     endDate: yup.string().required('End Date is required'),
+    status: yup.string(),
     epicId: yup.string().required('EpicId is required')
 });
 

@@ -14,7 +14,8 @@ export interface IMeetingRepository {
         members: [string],
         roomId: string,
         url: string,
-        recurring: boolean
+        recurring: boolean,
+        days: Array<string>
     ): Promise<Meeting>;
 
 

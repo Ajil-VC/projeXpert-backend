@@ -17,4 +17,6 @@ export interface ITaskRepository {
     getAllTasksUnderEpic(epicId: string): Promise<Task[]>;
 
     updateEpicProgress(epicId: string, progress: number): Promise<Task>;
+
+    getTask(taskId: string): Promise<Task>;
 }

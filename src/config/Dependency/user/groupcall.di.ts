@@ -17,7 +17,9 @@ export interface ICreateMeeting {
         members: [string],
         roomId: string,
         url: string,
-        recurring: boolean): Promise<Meeting>
+        recurring: boolean,
+        days: Array<string>
+    ): Promise<Meeting>
 }
 
 export interface IUpcomingMeeting {

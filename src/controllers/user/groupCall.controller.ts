@@ -76,7 +76,8 @@ export class GroupcallController implements IGroupcallController {
                 req.body.members,
                 req.body.roomId,
                 req.body.url,
-                req.body.recurring
+                req.body.recurring,
+                req.body.days || []
             );
 
             if (createdMeeting) {

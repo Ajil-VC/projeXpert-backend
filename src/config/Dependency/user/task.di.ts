@@ -25,3 +25,11 @@ export interface IAddComment {
 export interface IEpicProgress {
     execute(epicId: string): Promise<Task>;
 }
+
+export interface IGetTask {
+    execute(taskId: string): Promise<Task>;
+}
+
+export interface ICanChangeStatus {
+    execute(taskId: string): Promise<{ task: Task, canChange: boolean }>;
+}

@@ -8,7 +8,7 @@ export class AddActivityUsecase implements IAddActivity {
     constructor(private activityRepo: IActivityRepository) { }
 
 
-    async execute(projectId: string, companyId: string, userId: string, action: string, target: string): Promise<void> {
+    async execute(projectId: string, companyId: string, userId: string, action: string, target: string | null): Promise<void> {
 
         await this.activityRepo.addActivity(projectId, companyId, userId, action, target);
     }

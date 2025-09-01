@@ -7,5 +7,5 @@ export interface IGetActivity {
 }
 
 export interface IAddActivity {
-    execute(projectId: string, companyId: string, userId: string, action: string, target: string): Promise<void>;
+    execute(projectId: string, companyId: string, userId: string, action: string, target: string | null): Promise<void>;
 }

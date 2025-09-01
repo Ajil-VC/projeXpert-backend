@@ -85,6 +85,7 @@ userRouter.get('/tasks/kanban', authenticateUser, backlogControllerInterface.get
 userRouter.get('/get-comments', authenticateUser, backlogControllerInterface.getComments);
 userRouter.post('/add-comment', authenticateUser, backlogControllerInterface.addComment);
 userRouter.patch('/control-user', authenticateAsAdmin, validateBody(controlSchema), teamInterface.restrictUser);
+userRouter.get('/task-history', authenticateUser, backlogControllerInterface.taskHistory);
 
 userRouter.get('/get-users', authenticateAsAdmin, teamInterface.getCompanyUsers);
 userRouter.get('/team', authenticateUser, teamInterface.getTeam);

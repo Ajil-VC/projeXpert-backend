@@ -3,7 +3,7 @@ import { Activity } from "../../infrastructure/database/models/activity.interfac
 
 
 export interface IActivityRepository {
-    addActivity(projectId: string, companyId: string, userId: string, action: string, target: string): Promise<void>;
+    addActivity(projectId: string, companyId: string, userId: string, action: string, target: string | null): Promise<void>;
 
     getActivities(companyId: string, projectId: string): Promise<Activity[]>;
 }

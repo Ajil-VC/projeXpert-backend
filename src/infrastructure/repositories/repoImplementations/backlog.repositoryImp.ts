@@ -5,6 +5,7 @@ import taskModel from "../../database/task.models";
 import { Team } from "../../database/models/team.interface";
 import SprintModel from "../../database/sprint.models";
 import { Sprint } from "../../database/models/sprint.interface";
+import taskHistoryModel from "../../database/taskhistory.models";
 
 
 export class BacklogRepositoryImp implements IBacklogRepository {
@@ -14,7 +15,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
 
         const taskOb = new mongoose.Types.ObjectId(taskId);
         const result = await taskModel.findByIdAndDelete(taskOb);
-
+        await taskHistoryModel.deleteMany({ taskId: taskOb });
         if (result) return true;
         return false;
 
@@ -81,7 +82,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async updateEpic(title: string, description: string, startDate: string, endDate: string, epicId: string): Promise<Task | null> {
+    async updateEpic(title: string, description: string, startDate: string, endDate: string, status: string, epicId: string): Promise<Task | null> {
 
         const epicIdOb = new mongoose.Types.ObjectId(epicId);
         const updatedEpic = await taskModel.findOneAndUpdate(
@@ -91,7 +92,8 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                     title,
                     description,
                     startDate: new Date(startDate),
-                    endDate: new Date(endDate)
+                    endDate: new Date(endDate),
+                    status
                 }
             },
             { new: true }

@@ -8,7 +8,7 @@ const ActivitySchema = new Schema<Activity>({
     projectId: { type: Schema.Types.ObjectId, ref: 'Project', required: true },
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     action: { type: String, required: true },
-    target: { type: String, required: true }
+    target: { type: String }
 
 }, { timestamps: true });
 

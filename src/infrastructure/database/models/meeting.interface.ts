@@ -11,6 +11,9 @@ export interface Meeting extends Document {
     meetingDate: Date;
     meetingTime: string;
     description: string;
+
+    days: Array<string>;
+
     members: Array<ObjectId>;
     status: 'upcoming' | 'ongoing' | 'completed';
     createdBy: ObjectId;

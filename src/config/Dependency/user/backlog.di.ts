@@ -13,7 +13,7 @@ export interface IRemoveTask {
 }
 
 export interface IUpdateEpic {
-    execute(title: string, description: string, startDate: string, endDate: string, epicId: string): Promise<Task>
+    execute(title: string, description: string, startDate: string, endDate: string, status: string, epicId: string): Promise<Task>
 }
 
 export interface ICreateIssue {

@@ -5,7 +5,7 @@ import {
     ICreateEpic, ICreateIssue, ICreateSprint, ICreateSubTasks, IDragDrop, IGetSprint, IGetSubtasks, IGetTasks, IIsActiveSprint, IRemoveTask, IStartSprint, IUpdateEpic
 } from "../../config/Dependency/user/backlog.di";
 
-import { IAddComment, ICompleteSprint, IEpicProgress, IGetComments, IRemoveAttachment, IUpdateTaskDetails } from "../../config/Dependency/user/task.di";
+import { IAddComment, ICanChangeStatus, ICompleteSprint, IEpicProgress, IGetComments, IGetTask, IRemoveAttachment, IUpdateTaskDetails } from "../../config/Dependency/user/task.di";
 
 import { getIO } from "../../config/socket";
 import { getUserSocket } from "../../infrastructure/services/socket.manager";
@@ -15,6 +15,8 @@ import { HttpStatusCode } from "../../config/http-status.enum";
 import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 import { IBacklogController } from "../../interfaces/user/backlog.controller.interface";
 import { IAddActivity } from "../../config/Dependency/user/activity.di";
+import { IGetTaskHistory, ITaskHistoryUsecase } from "../../config/Dependency/user/taskhistory.di";
+import { Team } from "../../infrastructure/database/models/team.interface";
 
 export class BacklogController implements IBacklogController {
 
@@ -41,9 +43,33 @@ export class BacklogController implements IBacklogController {
         private addActivityUsecase: IAddActivity,
         private createSubtaskUsecase: ICreateSubTasks,
         private getSubtasksUsecase: IGetSubtasks,
-        private removeTaskUsecase: IRemoveTask
+        private removeTaskUsecase: IRemoveTask,
+        private addTaskHistory: ITaskHistoryUsecase,
+        private getTask: IGetTask,
+        private getTaskHistory: IGetTaskHistory,
+        private canChangeStatus: ICanChangeStatus
 
     ) { }
+
+    taskHistory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+        try {
+
+            if (req.query.taskId === 'undefined' || !req.query.taskId || typeof req.query.taskId !== 'string') {
+                res.status(HttpStatusCode.BAD_REQUEST).json({ status: false });
+                return;
+            }
+            const taskId = req.query.taskId;
+            const history = await this.getTaskHistory.execute(taskId);
+
+            res.status(HttpStatusCode.OK).json({ status: true, result: history });
+            return;
+
+        } catch (err) {
+            next(err);
+        }
+        throw new Error("Method not implemented.");
+    }
 
 
     removeTask = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -51,7 +77,21 @@ export class BacklogController implements IBacklogController {
         try {
 
             const taskId = req.params.taskId;
+
+            const task = await this.getTask.execute(taskId);
             const result = await this.removeTaskUsecase.execute(taskId);
+
+            this.addTaskHistory.execute(
+                task.parentId as unknown as string, req.user.id,
+                'DELETE_SUBTASK',
+                undefined,
+                undefined,
+                undefined,
+                task._id as unknown as string,
+                task.title,
+                task.assignedTo as unknown as string
+            )
+
             if (!result) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false });
                 return;
@@ -89,6 +129,17 @@ export class BacklogController implements IBacklogController {
             const type = 'subtask';
             const result = await this.createSubtaskUsecase.execute(title, type, parentId, projectId);
 
+            await this.addTaskHistory.execute(
+                result.parentId as unknown as string,
+                req.user.id,
+                'CREATE_SUBTASK',
+                undefined,
+                undefined,
+                undefined,
+                result._id as unknown as string,
+                result.title,
+            );
+
             res.status(HttpStatusCode.CREATED).json({ status: true, result });
             return;
 
@@ -99,9 +150,9 @@ export class BacklogController implements IBacklogController {
 
     updateEpic = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
+            const { title, description, startDate, endDate, status, epicId } = req.body;
 
-            const { title, description, startDate, endDate, epicId } = req.body;
-            const result = await this.updateEpicUsecase.execute(title, description, startDate, endDate, epicId);
+            const result = await this.updateEpicUsecase.execute(title, description, startDate, endDate, status, epicId);
 
             await this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, 'updated the epic', title);
 
@@ -228,14 +279,17 @@ export class BacklogController implements IBacklogController {
 
             const result = await this.assignIssueUsecase.execute(issueId, assigneeId);
             if (result?.projectId) {
-                await this.addActivityUsecase.execute(result.projectId, req.user.companyId, req.user.id, 'changed assignee to', result?.assignedTo?.email || assigneeId)
+
+                await Promise.all([
+                    this.addActivityUsecase.execute(result.projectId, req.user.companyId, req.user.id, 'changed assignee to', result?.assignedTo?.email || null),
+                    this.addTaskHistory.execute(issueId, req.user.id, 'ASSIGN', assigneeId)
+                ]);
             }
 
             if (!result) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'No issue found with this id' });
                 return;
             }
-
 
             res.status(HttpStatusCode.OK).json({ status: true, message: 'Issue reassigned successfully', data: result });
             if (assigneeId) {
@@ -263,6 +317,7 @@ export class BacklogController implements IBacklogController {
             }
 
             const result = await this.dragDropUsecase.execute(prevContainerId, containerId, movedTaskId);
+            console.log(result, 'result.');
             await this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `moved ${result.title} to`, containerId);
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
 
@@ -282,10 +337,20 @@ export class BacklogController implements IBacklogController {
             const taskData = JSON.parse(req.body.task);
             const files = req.files as Express.Multer.File[] || [];
 
-            const result = await this.updateTaskDetailsUse.execute(taskData, assigneeId, files);
-            await this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `updated`, taskData.title)
+            const skipStatus: boolean = req.query.skipStatus === 'true' ? true : false;
+            if (skipStatus) {
+                const oldData = await this.getTask.execute(taskData._id);
+                taskData.status = oldData.status;
+            }
 
-            res.status(HttpStatusCode.OK).json({ status: false, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
+            const result = await this.updateTaskDetailsUse.execute(taskData, assigneeId, files);
+            await Promise.all([
+                this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `updated`, taskData.title),
+                this.addTaskHistory.execute(taskData._id, req.user.id, 'UPDATED')
+            ]);
+
+
+            res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
             return;
 
         } catch (err) {
@@ -328,14 +393,25 @@ export class BacklogController implements IBacklogController {
                 return;
             }
 
+
+            const taskAndPermission = await this.canChangeStatus.execute(taskId);
+            if (!taskAndPermission.canChange) {
+                res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'Task is not in active sprint! Status cannot be changed.' });
+                return;
+            }
+
             const result = await this.changeTaskStatusUsecase.execute(taskId, status);
             if (!result) {
                 res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'Subtasks should be completed before moving the task to done' });
                 return;
             }
-            
-            await this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `updated ${result.title} status to`, status)
 
+            if (taskAndPermission.task.status !== status) {
+                await Promise.all([
+                    this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `updated ${result.title} status to`, status),
+                    this.addTaskHistory.execute(taskId, req.user.id, "STATUS_CHANGE", undefined, taskAndPermission.task.status, status)
+                ])
+            }
             if (result.epicId) {
                 const epicId = typeof result.epicId === 'string' ? result.epicId : result.epicId?.toString();
                 const updateEpicProgress = await this.epicProgress.execute(epicId);

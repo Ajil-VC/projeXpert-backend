@@ -14,6 +14,9 @@ const MeetingSchema = new Schema<Meeting>({
     meetingTime: { type: String, required: true },
     recurring: { type: Boolean, required: true, default: false },
     description: { type: String },
+
+    days: { type: [String] },
+
     members: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }], ref: 'User' },
     status: { type: String, enum: ['upcoming', 'ongoing', 'completed'] },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },

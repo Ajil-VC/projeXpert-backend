@@ -18,10 +18,20 @@ import { addActivityUsecase } from "../user.di";
 import { addCommentUse, completeSprintUse, epicProgress, getCommentsUse, removeAttachment, updateTaskDetailsUse } from "./task.inter";
 import { IAssignIssue, IChangeTaskStatus, ICreateEpic, ICreateIssue, ICreateSprint, ICreateSubTasks, IDragDrop, IGetSprint, IGetSubtasks, IGetTasks, IIsActiveSprint, IRemoveTask, IStartSprint, IUpdateEpic } from "../../../config/Dependency/user/backlog.di";
 
-import { getNotificationsUse, notification, readNotifications } from "./notification.inter";
+import { notification } from "./notification.inter";
 import { CreateSubTaskUsecase } from "../../../application/usecase/backlogUseCase/createSubtask.usecase";
 import { GetSubtasksUsecase } from "../../../application/usecase/backlogUseCase/getsubtasks..usecase";
 import { RemoveTaskUsecase } from "../../../application/usecase/backlogUseCase/removetask.usecase";
+import { IGetTaskHistory, ITaskHistoryUsecase } from "../../../config/Dependency/user/taskhistory.di";
+import { ITaskHistoryRepository } from "../../../domain/repositories/taskhistory.repo";
+import { TaskHistoryRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/taskhistory.repositoryImp";
+import { TaskHistoryUsecase } from "../../../application/usecase/taskhistoryUsecase/taskhistory.usecase";
+import { ICanChangeStatus, IGetTask } from "../../../config/Dependency/user/task.di";
+import { TaskRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/task.repositoryImp";
+import { GetTask } from "../../../application/usecase/taskUsecase/getTask.usecase";
+import { ITaskRepository } from "../../../domain/repositories/task.repo";
+import { GetTaskHistory } from "../../../application/usecase/taskhistoryUsecase/gettaskhistory.usecase";
+import { CanChangeTaskStatus } from "../../../application/usecase/taskUsecase/canchangestatus.usecase";
 
 const backlogRepository: IBacklogRepository = new BacklogRepositoryImp();
 
@@ -39,6 +49,13 @@ export const isActiveSprint: IIsActiveSprint = new IsActiveSprintUsecase(backlog
 export const createSubtaskUsecase: ICreateSubTasks = new CreateSubTaskUsecase(backlogRepository);
 export const getSubtasksUsecase: IGetSubtasks = new GetSubtasksUsecase(backlogRepository);
 export const removeTaskUsecase: IRemoveTask = new RemoveTaskUsecase(backlogRepository);
+
+const taskHistoryRepository: ITaskHistoryRepository = new TaskHistoryRepositoryImp();
+export const addTaskHistoryUse: ITaskHistoryUsecase = new TaskHistoryUsecase(taskHistoryRepository);
+export const taskHistoryUsecase: IGetTaskHistory = new GetTaskHistory(taskHistoryRepository);
+const taskRepository: ITaskRepository = new TaskRepositoryImp();
+export const getTaskUse: IGetTask = new GetTask(taskRepository);
+export const canChangeTaskStatus: ICanChangeStatus = new CanChangeTaskStatus(taskRepository);
 
 export const backlogControllerInterface: IBacklogController = new BacklogController(
     createEpicUsecase,
@@ -62,5 +79,9 @@ export const backlogControllerInterface: IBacklogController = new BacklogControl
     addActivityUsecase,
     createSubtaskUsecase,
     getSubtasksUsecase,
-    removeTaskUsecase
+    removeTaskUsecase,
+    addTaskHistoryUse,
+    getTaskUse,
+    taskHistoryUsecase,
+    canChangeTaskStatus
 )

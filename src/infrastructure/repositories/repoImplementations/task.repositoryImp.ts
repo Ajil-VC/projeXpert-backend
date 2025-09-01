@@ -10,6 +10,20 @@ import commentModel from "../../database/comment.models";
 export class TaskRepositoryImp implements ITaskRepository {
 
 
+    async getTask(taskId: string): Promise<Task> {
+
+        const taskOb = new mongoose.Types.ObjectId(taskId);
+        const task = await taskModel.findOne({ _id: taskOb })
+            .populate({ path: 'sprintId' });
+        if (!task) {
+
+            throw new Error("Coundnt findout the task.");
+        }
+
+        return task;
+    }
+
+
     async getAllTasksUnderEpic(epicId: string): Promise<Task[]> {
 
         const epicIdOb = new mongoose.Types.ObjectId(epicId);
@@ -203,7 +217,7 @@ export class TaskRepositoryImp implements ITaskRepository {
         if (!taskId) {
             throw new Error('Task Id is not valid.');
         }
-        
+
         const updatePayload: any = {
             title: taskDetails.title,
             type: taskDetails.type,
