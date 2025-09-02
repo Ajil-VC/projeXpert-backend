@@ -51,14 +51,15 @@ export class StripeAdminController implements IStripeAdminController {
         try {
 
             const page = req.query.page_num;
+            const searchTerm = typeof req.query.searchTerm !== 'string' || req.query.searchTerm === 'undefined' ? '' : req.query.searchTerm;
             const pageNum =
                 typeof page === "string"
                     ? parseInt(page)
                     : 1;
-            const limit = 6;
+            const limit = 3;
             const skip = (pageNum - 1) * limit;
 
-            const result = await this.getPlansCase.execute(limit, skip);
+            const result = await this.getPlansCase.execute(limit, skip, searchTerm);
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
 

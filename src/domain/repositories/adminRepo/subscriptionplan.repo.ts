@@ -23,5 +23,5 @@ export interface ISubscriptionPlanRepository {
 
     deletePlan(planId: string): Promise<boolean>;
 
-    getAllPlans(limit: number, skip: number): Promise<{ plans: Subscription[], totalPage: number }>;
+    getAllPlans(limit: number, skip: number, searchTerm: string): Promise<{ plans: Subscription[], totalPage: number }>;
 }

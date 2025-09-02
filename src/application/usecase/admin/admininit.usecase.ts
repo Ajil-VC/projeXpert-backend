@@ -6,9 +6,9 @@ import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.r
 export class AdminInitUseCase implements IAdminInitUse {
 
     constructor(private adminRepo: IAdminRepository) { }
-    async execute(): Promise<any> {
+    async execute(limit: number, skip: number, searchTerm: string): Promise<{ companyData: any, totalPages: number }> {
 
-        const result = await this.adminRepo.getAllCompanyDetails();
+        const result = await this.adminRepo.getAllCompanyDetails(limit, skip, searchTerm);
         return result;
     }
 }

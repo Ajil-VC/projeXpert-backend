@@ -21,7 +21,7 @@ export interface ISubscriptionPlan {
 
 
 export interface IGetPlan {
-    execute(limit: number, skip: number): Promise<any>;
+    execute(limit: number, skip: number, searchTerm: string): Promise<any>;
 }
 
 export interface IDeletePlan {

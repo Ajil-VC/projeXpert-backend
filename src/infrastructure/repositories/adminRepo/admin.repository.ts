@@ -18,54 +18,84 @@ export class AdminRepositoryImp extends BaseRepository<User> implements IAdminRe
         return await this.findByIdOrThrow(adminId, 'Couldnt findout admin details.');
     }
 
-    async getAllCompanyDetails(): Promise<any> {
+    async getAllCompanyDetails(limit: number, skip: number, searchTerm: string): Promise<{ companyData: any, totalPages: number }> {
 
-        const allCompanyData = await userModel.aggregate([
-            {
-                $lookup: {
-                    from: 'companies',
-                    localField: 'companyId',
-                    foreignField: '_id',
-                    as: 'company'
-                }
-            },
-            {
-                $unwind: '$company'
-            },
-            {
-                $group: {
-                    _id: '$company._id',
-                    companyDetails: { $first: '$company' },
-                    users: {
-                        $push: {
-                            _id: '$_id',
-                            name: '$name',
-                            email: '$email',
-                            role: '$role',
-                            isBlocked: '$isBlocked',
-                            profilePicUrl: '$profilePicUrl',
-                            forceChangePassword: '$forceChangePassword',
-                            systemRole: '$systemRole'
+        const [companyData, totalCountResult] = await Promise.all([
+
+            userModel.aggregate([
+                {
+                    $lookup: {
+                        from: 'companies',
+                        localField: 'companyId',
+                        foreignField: '_id',
+                        as: 'company'
+                    }
+                },
+                { $unwind: '$company' },
+                {
+                    $match: { 'company.name': { $regex: searchTerm, $options: 'i' } }
+                },
+                {
+                    $group: {
+                        _id: '$company._id',
+                        companyDetails: { $first: '$company' },
+                        users: {
+                            $push: {
+                                _id: '$_id',
+                                name: '$name',
+                                email: '$email',
+                                role: '$role',
+                                isBlocked: '$isBlocked',
+                                profilePicUrl: '$profilePicUrl',
+                                forceChangePassword: '$forceChangePassword',
+                                systemRole: '$systemRole'
+                            }
                         }
                     }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    companyId: '$_id',
-                    companyDetails: 1,
-                    users: 1
-                }
-            }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        companyId: '$_id',
+                        companyDetails: 1,
+                        users: 1
+                    }
+                },
+                { $skip: skip },
+                { $limit: limit }
+            ]),
+
+            userModel.aggregate([
+                {
+                    $lookup: {
+                        from: 'companies',
+                        localField: 'companyId',
+                        foreignField: '_id',
+                        as: 'company'
+                    }
+                },
+                { $unwind: '$company' },
+                {
+                    $match: { 'company.name': { $regex: searchTerm, $options: 'i' } }
+                },
+                {
+                    $group: {
+                        _id: '$company._id'
+                    }
+                },
+                { $count: 'total' }
+            ])
         ]);
 
 
-        if (!allCompanyData) {
+        if (!companyData) {
             throw new Error('Company data couldnt retrieve.');
         }
 
-        return allCompanyData;
+        const totalCount = totalCountResult[0]?.total || 0;
+        const totalPages = Math.ceil(totalCount / limit);
+
+        return { companyData, totalPages };
 
     }
 

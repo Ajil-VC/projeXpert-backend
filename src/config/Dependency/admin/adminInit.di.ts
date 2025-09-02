@@ -3,7 +3,7 @@ import { UserResponseDTO } from "../../../dtos/user/userResponseDTO";
 
 
 export interface IAdminInitUse {
-    execute(): Promise<any>;
+    execute(limit: number, skip: number, searchTerm: string): Promise<{ companyData: any, totalPages: number }>;
 }
 
 export interface IAdminData {

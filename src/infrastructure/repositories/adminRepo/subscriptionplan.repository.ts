@@ -46,13 +46,14 @@ export class SubscriptionPlanImp implements ISubscriptionPlanRepository {
     }
 
 
-    async getAllPlans(limit: number, skip: number): Promise<{ plans: Subscription[], totalPage: number }> {
+    async getAllPlans(limit: number, skip: number, searchTerm: string = ''): Promise<{ plans: Subscription[], totalPage: number }> {
 
-        const totalCount = await subscriptionModel.countDocuments({});
-
-        const allSubscriptionPlans = await subscriptionModel.find({})
-            .skip(skip)
-            .limit(limit)
+        const [totalCount, allSubscriptionPlans] = await Promise.all([
+            subscriptionModel.countDocuments({ name: { $regex: searchTerm, $options: 'i' } }),
+            subscriptionModel.find({ name: { $regex: searchTerm, $options: 'i' } })
+                .skip(skip)
+                .limit(limit)
+        ]);
 
         const totalPages = Math.ceil(totalCount / limit);
 

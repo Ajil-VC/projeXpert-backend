@@ -8,10 +8,10 @@ export class GetPlansUsecase implements IGetPlan {
 
     constructor(private subscriptionRepo: ISubscriptionPlanRepository) { }
 
-    async execute(limit: number, skip: number) {
+    async execute(limit: number, skip: number, searchTerm: string) {
 
-        
-        const plansWithTotalPage = await this.subscriptionRepo.getAllPlans(limit, skip);
+
+        const plansWithTotalPage = await this.subscriptionRepo.getAllPlans(limit, skip, searchTerm);
         return plansWithTotalPage;
     }
 }

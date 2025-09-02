@@ -45,13 +45,24 @@ export class AdminController implements IAdminInit {
 
         try {
 
-            const result = await this.adminInitUsecase.execute();
+            const page = req.query.page_num;
+            const searchTerm = typeof req.query.searchTerm !== 'string' || req.query.searchTerm === 'undefined' ? ''
+                : req.query.searchTerm;
+
+            const pageNum =
+                typeof page === "string"
+                    ? parseInt(page)
+                    : 1;
+            const limit = 4;
+            const skip = (pageNum - 1) * limit;
+
+            const result = await this.adminInitUsecase.execute(limit, skip, searchTerm);
             if (!result) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'Couldnt retirieve company details.' });
                 return;
             }
 
-            res.status(HttpStatusCode.OK).json({ status: true, message: 'Data retrieved.', result });
+            res.status(HttpStatusCode.OK).json({ status: true, message: 'Data retrieved.', companyData: result.companyData, totalPages: result.totalPages });
             return;
 
         } catch (err) {
