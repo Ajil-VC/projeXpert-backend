@@ -49,8 +49,19 @@ export class GroupcallController implements IGroupcallController {
 
         try {
 
-            const meetings = await this.upcomingMeetings.execute(req.user.companyId, req.user.id);
-            res.status(HttpStatusCode.OK).json({ status: true, data: meetings });
+            const page = req.query.page_num;
+            const searchTerm = typeof req.query.searchTerm !== 'string' || req.query.searchTerm === 'undefined' ? ''
+                : req.query.searchTerm;
+
+            const pageNum =
+                typeof page === "string"
+                    ? parseInt(page)
+                    : 1;
+            const limit = 3;
+            const skip = (pageNum - 1) * limit;
+
+            const result = await this.upcomingMeetings.execute(req.user.companyId, req.user.id, limit, skip, searchTerm);
+            res.status(HttpStatusCode.OK).json({ status: true, meetings: result.upcomingMeetings, totalPages: result.totalPages });
             return;
 
         } catch (err) {

@@ -19,7 +19,7 @@ export interface IMeetingRepository {
     ): Promise<Meeting>;
 
 
-    getUpcomingMeetings(companyId: string, userId: string): Promise<Array<Meeting>>;
+    getUpcomingMeetings(companyId: string, userId: string, limit: number, skip: number, searchTerm: string): Promise<{ upcomingMeetings: Array<Meeting>, totalPages: number }>;
 
     removeMeeting(meetId: string): Promise<boolean>;
 }

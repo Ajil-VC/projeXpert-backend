@@ -23,7 +23,7 @@ export interface ICreateMeeting {
 }
 
 export interface IUpcomingMeeting {
-    execute(companyId: string, userId: string): Promise<Meeting[]>
+    execute(companyId: string, userId: string, limit: number, skip: number, searchTerm: string): Promise<{ upcomingMeetings: Array<Meeting>, totalPages: number }>
 }
 
 export interface IDeleteMeeting {

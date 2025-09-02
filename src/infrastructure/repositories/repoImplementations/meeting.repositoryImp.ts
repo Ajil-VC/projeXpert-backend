@@ -20,26 +20,47 @@ export class MeetingRepositoryImp implements IMeetingRepository {
     }
 
 
-    async getUpcomingMeetings(companyId: string, userId: string): Promise<Array<Meeting>> {
+    async getUpcomingMeetings(companyId: string, userId: string, limit: number, skip: number, searchTerm: string): Promise<{ upcomingMeetings: Array<Meeting>, totalPages: number }> {
 
         const companyOb = new mongoose.Types.ObjectId(companyId);
         const userOb = new mongoose.Types.ObjectId(userId);
 
-        const upcomingMeetings = await MeetingModel.find({
+        const filter = {
             companyId: companyOb,
-            $or: [
-                { members: { $in: [userOb] } },
-                { createdBy: userOb }
+            $and: [
+                {
+                    $or: [
+                        { members: { $in: [userOb] } },
+                        { createdBy: userOb }
+                    ]
+                },
+                {
+                    $or: [
+                        { description: { $regex: searchTerm, $options: 'i' } },
+                        { roomName: { $regex: searchTerm, $options: 'i' } }
+                    ]
+                }
             ]
-        })
-            .populate({
-                path: 'members',
-                select: '_id name email profilePicUrl role createdAt updatedAt'
-            })
-            .populate({
-                path: 'createdBy',
-                select: '_id name email profilePicUrl role createdAt updatedAt'
-            }).sort({ recurring: -1 });
+
+        }
+
+        const [upcomingMeetings, totalData] = await Promise.all([
+
+            MeetingModel.find(filter)
+                .populate({
+                    path: 'members',
+                    select: '_id name email profilePicUrl role createdAt updatedAt'
+                })
+                .populate({
+                    path: 'createdBy',
+                    select: '_id name email profilePicUrl role createdAt updatedAt'
+                })
+                .sort({ recurring: -1 })
+                .skip(skip)
+                .limit(limit),
+
+            MeetingModel.countDocuments(filter)
+        ])
 
 
         if (!upcomingMeetings) {
@@ -47,7 +68,9 @@ export class MeetingRepositoryImp implements IMeetingRepository {
             throw new Error("No upcoming meetings avaialalble.");
         }
 
-        return upcomingMeetings;
+        const totalPages = Math.ceil(totalData / limit);
+
+        return { upcomingMeetings, totalPages };
 
     }
 
