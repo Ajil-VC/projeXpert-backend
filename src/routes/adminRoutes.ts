@@ -27,14 +27,16 @@ adminRouter.get('/dashboard', authenticatePlatformAdmin, adminInitInterface.dash
 
 adminRouter.put('/change-user-status', authenticatePlatformAdmin, validateBody(changeUserStatusSchema), companyMangementInterface.changeUserStatus);
 adminRouter.put('/change-company-status', authenticatePlatformAdmin, validateBody(changeCompanyStatusSchema), companyMangementInterface.changeCompanyStatus);
-adminRouter.get('/get-notifications', authenticatePlatformAdmin, userInitInterface.getNotifications);
+adminRouter.get('/notifications', authenticatePlatformAdmin, userInitInterface.getNotifications);
 adminRouter.put('/update-profile', authenticatePlatformAdmin, upload.any(), userControllerInterface.updateProfile);
 
-adminRouter.post('/create-plan', authenticatePlatformAdmin, validateBody(createPlanSchema), stripeAdminInterface.createPlan);
-adminRouter.delete('/delete-plan', authenticatePlatformAdmin, stripeAdminInterface.deletePlan);
-adminRouter.patch('/change-plan-status', authenticatePlatformAdmin, stripeAdminInterface.changePlanStatus);
-adminRouter.get('/get-plans', authenticatePlatformAdmin, stripeAdminInterface.getAllPlans);
-adminRouter.get('/get-subscriptions', authenticatePlatformAdmin, companyMangementInterface.getSubscriptions);
+adminRouter.route('/plans')
+    .post(authenticatePlatformAdmin, validateBody(createPlanSchema), stripeAdminInterface.createPlan)
+    .get(authenticatePlatformAdmin, stripeAdminInterface.getAllPlans)
+    .patch(authenticatePlatformAdmin, stripeAdminInterface.changePlanStatus)
+    .delete(authenticatePlatformAdmin, stripeAdminInterface.deletePlan)
+
+adminRouter.get('/subscriptions', authenticatePlatformAdmin, companyMangementInterface.getSubscriptions);
 
 adminRouter.get('/revenue', authenticatePlatformAdmin, revenueInterface.getRevenueReport);
 

@@ -25,7 +25,10 @@ export class GetTasksUseCase implements IGetTasks {
 
             const activeTaskIds = activeTasks.map((t: Task) => t._id);
 
-            const availableSubtasks = await this.backlogRepo.getSubtasks('', isKanban, activeTaskIds);
+            let availableSubtasks: Task[] = [];
+            if (userRole === 'admin') {
+                availableSubtasks = await this.backlogRepo.getSubtasks('', isKanban, activeTaskIds);
+            }
 
             const allTasks = [...activeTasks, ...availableSubtasks];
             return allTasks;

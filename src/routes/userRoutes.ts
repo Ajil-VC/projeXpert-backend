@@ -49,54 +49,69 @@ userRouter.get('/subscription', authenticateUser, subscriptionInterface.getSubsc
 userRouter.post('/checkout', authenticateUser, subscriptionInterface.checkout);
 userRouter.get('/stripe/session/:sessionId', authenticateUser, subscriptionInterface.verifySubscription);
 
-userRouter.get('/get-notifications', authenticateUser, userInitInterface.getNotifications);
-userRouter.patch('/update-notificaions', authenticateUser, userInitInterface.updateNotification);
+
+userRouter.route('/notifications')
+    .get(authenticateUser, userInitInterface.getNotifications)
+    .patch(authenticateUser, userInitInterface.updateNotification)
 
 userRouter.get('/init-data', authenticateUser, userInitInterface.getInitData);
 userRouter.get('/projects-initials', authenticateUser, projectControllerInterface.getProjectsInitData);
-userRouter.post('/create-project', validateBody(projectCreationSchema), authenticateAsAdmin, planPolicyMiddleware.checkPolicy('createProject'), projectControllerInterface.createProject);
 userRouter.get('/init-projects', authenticateAsAdmin, projectControllerInterface.getProjectData);
 userRouter.get('/get-project', authenticateUser, projectControllerInterface.getProject);
-userRouter.get('/project', authenticateUser, projectControllerInterface.retrieveProject);
-userRouter.post('/create-workspace', authenticateAsAdmin, validateBody(createWorkspaceSchema), planPolicyMiddleware.checkPolicy('createWorkspace'), workspaceInterface.createWorkspace);
-userRouter.get('/get-workspace', authenticateUser, workspaceInterface.getWorkspace);
 
-userRouter.put('/update-profile', authenticateUser, upload.any(), userControllerInterface.updateProfile);
+
+userRouter.delete('/project/:projectId/:workSpaceId', authenticateAsAdmin, projectControllerInterface.deleteProject);
+userRouter.route('/project')
+    .post(validateBody(projectCreationSchema), authenticateAsAdmin, planPolicyMiddleware.checkPolicy('createProject'), projectControllerInterface.createProject)
+    .put(authenticateAsAdmin, projectControllerInterface.updateProject)
+    .get(authenticateUser, projectControllerInterface.retrieveProject);
+
+userRouter.route('/workspace')
+    .get(authenticateUser, workspaceInterface.getWorkspace)
+    .post(authenticateAsAdmin, validateBody(createWorkspaceSchema), planPolicyMiddleware.checkPolicy('createWorkspace'), workspaceInterface.createWorkspace)
+
+userRouter.put('/profile', authenticateUser, upload.any(), userControllerInterface.updateProfile);
 userRouter.get('/dashboard/:projectId', authenticateUser, projectControllerInterface.projectStats);
 
-userRouter.post('/add-member', authenticateAsAdmin, planPolicyMiddleware.checkPolicy('maxMembers'), projectControllerInterface.addMember);
-userRouter.patch('/remove-member', authenticateAsAdmin, projectControllerInterface.removeMember);
-userRouter.put('/update-project', authenticateAsAdmin, projectControllerInterface.updateProject);
-userRouter.delete('/delete-project/:projectId/:workSpaceId', authenticateAsAdmin, projectControllerInterface.deleteProject);
+userRouter.route('/member')
+    .post(authenticateAsAdmin, planPolicyMiddleware.checkPolicy('maxMembers'), projectControllerInterface.addMember)
+    .patch(authenticateAsAdmin, projectControllerInterface.removeMember);
 
-userRouter.post('/create-epic', authenticateAsAdmin, validateBody(createEpicSchema), backlogControllerInterface.createEpic);
-userRouter.put('/update-epic', authenticateAsAdmin, validateBody(updateEpicSchema), backlogControllerInterface.updateEpic);
-userRouter.post('/create-issue', authenticateAsAdmin, validateBody(createIssueSchema), backlogControllerInterface.createIssue);
+userRouter.route('/epic')
+    .post(authenticateAsAdmin, validateBody(createEpicSchema), backlogControllerInterface.createEpic)
+    .put(authenticateAsAdmin, validateBody(updateEpicSchema), backlogControllerInterface.updateEpic);
 
-userRouter.post('/create-subtask', authenticateAsAdmin, validateBody(createSubtaskSchema), backlogControllerInterface.createSubtask);
-userRouter.get('/get-subtask/:parentId', authenticateUser, backlogControllerInterface.getSubtasks);
-userRouter.delete('/remove-task/:taskId', authenticateAsAdmin, backlogControllerInterface.removeTask);
+userRouter.route('/issue')
+    .post(authenticateAsAdmin, validateBody(createIssueSchema), backlogControllerInterface.createIssue)
+    .patch(authenticateUser, validateBody(assignIssueSchema), backlogControllerInterface.assignIssue)
 
-userRouter.post('/create-sprint', authenticateAsAdmin, validateBody(createSprintSchema), backlogControllerInterface.createSprint);
-userRouter.get('/get-sprints/:projectId', authenticateAsAdmin, backlogControllerInterface.getSprints);
-userRouter.get('/get-sprints/kanban/:projectId', authenticateUser, backlogControllerInterface.getSprints);
+userRouter.post('/subtask', authenticateAsAdmin, validateBody(createSubtaskSchema), backlogControllerInterface.createSubtask);
+userRouter.get('/subtask/:parentId', authenticateUser, backlogControllerInterface.getSubtasks);
+userRouter.delete('/task/:taskId', authenticateAsAdmin, backlogControllerInterface.removeTask);
+
+userRouter.route('/sprints')
+    .post(authenticateAsAdmin, validateBody(createSprintSchema), backlogControllerInterface.createSprint)
+    .put(authenticateAsAdmin, validateBody(startSprintSchema), backlogControllerInterface.startSprint);
+userRouter.put('/complete-sprint', authenticateUser, validateBody(completeSprintSchema), backlogControllerInterface.completeSprint);
+
+userRouter.get('/sprints/:projectId', authenticateAsAdmin, backlogControllerInterface.getSprints);
+userRouter.get('/sprints/kanban/:projectId', authenticateUser, backlogControllerInterface.getSprints);
+
+userRouter.route('/comments')
+    .get(authenticateUser, backlogControllerInterface.getComments)
+    .post(authenticateUser, backlogControllerInterface.addComment);
 userRouter.get('/tasks', authenticateUser, backlogControllerInterface.getTasks);
 userRouter.get('/tasks/kanban', authenticateUser, backlogControllerInterface.getTasks);
-userRouter.get('/get-comments', authenticateUser, backlogControllerInterface.getComments);
-userRouter.post('/add-comment', authenticateUser, backlogControllerInterface.addComment);
 userRouter.patch('/control-user', authenticateAsAdmin, validateBody(controlSchema), teamInterface.restrictUser);
 userRouter.get('/task-history', authenticateUser, backlogControllerInterface.taskHistory);
 
 userRouter.get('/get-users', authenticateAsAdmin, teamInterface.getCompanyUsers);
 userRouter.get('/team', authenticateUser, teamInterface.getTeam);
-userRouter.patch('/assign-issue', authenticateAsAdmin, validateBody(assignIssueSchema), backlogControllerInterface.assignIssue);
 userRouter.put('/update-task', authenticateAsAdmin, validateBody(dragDropSchema), backlogControllerInterface.dragDropUpdate);
 userRouter.put('/change-taskstatus', authenticateUser, validateBody(taskStatusUpdateSchema), backlogControllerInterface.changeTaskStatus);
 userRouter.put('/update-task-details', authenticateUser, upload.any(), backlogControllerInterface.updateTaskDetails);
 userRouter.delete('/delete-attachment', authenticateUser, backlogControllerInterface.deleteCloudinaryAttachment);
 
-userRouter.put('/start-sprint', authenticateAsAdmin, validateBody(startSprintSchema), backlogControllerInterface.startSprint);
-userRouter.put('/complete-sprint', authenticateUser, validateBody(completeSprintSchema), backlogControllerInterface.completeSprint);
 
 userRouter.post('/start-conversation', authenticateUser, validateBody(startConversationSchema), chatControllerInterface.startConversation);
 userRouter.get('/get-chats', authenticateUser, chatControllerInterface.getChats);

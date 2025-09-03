@@ -369,25 +369,56 @@ export class BacklogRepositoryImp implements IBacklogRepository {
 
             } else {
 
-                const tasks = await taskModel.find({
-                    projectId: projectIdOb,
-                    sprintId: { $ne: null },
-                    assignedTo: userIdOb
-                })
-                    .populate({
-                        path: "sprintId",
-                        match: { status: "active" },
+                const [assignedActiveTasks, allActiveTasks] = await Promise.all([
+
+                    taskModel.find({
+                        projectId: projectIdOb,
+                        sprintId: { $ne: null },
+                        assignedTo: userIdOb
                     })
-                    .populate({
-                        path: "assignedTo",
-                        select: "_id name email profilePicUrl role createdAt updatedAt",
+                        .populate({
+                            path: "sprintId",
+                            match: { status: "active" },
+                        })
+                        .populate({
+                            path: "assignedTo",
+                            select: "_id name email profilePicUrl role createdAt updatedAt",
+                        })
+                        .populate({
+                            path: "epicId"
+                        }),
+
+                    taskModel.find({
+                        projectId: projectIdOb,
+                        sprintId: { $ne: null }
                     })
+                        .populate({
+                            path: "sprintId",
+                            match: { status: "active" },
+                        })
+                        .populate({
+                            path: "assignedTo",
+                            select: "_id name email profilePicUrl role createdAt updatedAt",
+                        })
+                        .populate({
+                            path: "epicId"
+                        })
+
+                ]);
+
+
+                const activeTaskIds = allActiveTasks.filter(task => task.sprintId !== null)
+                    .map((t: Task) => t._id);
+
+                const subtasks = await taskModel.find({ parentId: { $in: activeTaskIds }, assignedTo: userIdOb })
+                    .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
                     .populate({
-                        path: "epicId"
+                        path: "parentId",
+                        populate: { path: 'sprintId' }
                     });
 
-                const activeSprintTasks = tasks.filter(task => task.sprintId !== null);
-                return activeSprintTasks;
+                const activeSprintTasks = assignedActiveTasks.filter(task => task.sprintId !== null);
+                return [...activeSprintTasks, ...subtasks];
 
             }
 

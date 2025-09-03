@@ -3363,3 +3363,23 @@
     at model.Query.exec (D:\FullStackDeveloper\Week22\ProjeXpert\backend\node_modules\mongoose\lib\query.js:4456:80)
     at processTicksAndRejections (node:internal/process/task_queues:95:5)
     at async Promise.all (index 0)
+2025-09-02T13:50:49.826Z error: Error: Somthing went wrong while fetching project data.
+    at GetProjectUseCase.execute (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\application\usecase\projectUseCase\getProject.usecase.ts:11:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at ProjectController.getProject (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\controllers\user\project.controller.ts:143:28)
+2025-09-02T13:51:32.150Z error: Error: Somthing went wrong while fetching project data.
+    at GetProjectUseCase.execute (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\application\usecase\projectUseCase\getProject.usecase.ts:11:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at ProjectController.getProject (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\controllers\user\project.controller.ts:143:28)
+2025-09-02T13:54:57.334Z error: Error: Somthing went wrong while fetching project data.
+    at GetProjectUseCase.execute (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\application\usecase\projectUseCase\getProject.usecase.ts:11:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at ProjectController.getProject (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\controllers\user\project.controller.ts:143:28)
+2025-09-02T13:55:01.662Z error: Error: Somthing went wrong while fetching project data.
+    at GetProjectUseCase.execute (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\application\usecase\projectUseCase\getProject.usecase.ts:11:28)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at ProjectController.getProject (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\controllers\user\project.controller.ts:143:28)
+2025-09-03T11:28:18.756Z error: TypeError: Cannot read properties of null (reading '_id')
+    at RefreshTokenUseCase.execute (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\application\usecase\auth\refreshToken.usecase.ts:42:47)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at AuthController.refreshToken (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\controllers\authController.ts:193:28)

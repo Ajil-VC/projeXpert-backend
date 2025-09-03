@@ -232,7 +232,7 @@ export class BacklogController implements IBacklogController {
             //THIs controller is for returning all the sprints in the project.
 
             //In this section  im sending the active and completed sprint data.
-            const isKanbanRequest = req.path.startsWith('/get-sprints/kanban');
+            const isKanbanRequest = req.path.startsWith('/sprints/kanban');
 
             const result = await this.getSprintsUsecase.execute(projectId, userRole, userId, isKanbanRequest);
 
