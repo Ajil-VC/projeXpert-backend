@@ -9,10 +9,23 @@ export const PERMISSIONS = [
     "assign_task",
     "comment_task",
 
+    "create_epic",
+    "edit_epic",
+
     "create_project",
     "view_project",
     "edit_project",
     "delete_project",
+
+    "create_sprint",
+    "start_sprint",
+    "close_sprint",
+    "view_sprint",
+
+    "create_workspace",
+
+    "create_room",
+    "remove_room",
 
     "invite_user",
     "remove_user",
@@ -21,6 +34,8 @@ export const PERMISSIONS = [
     "manage_billing"
 ] as const;
 export type Permissions = typeof PERMISSIONS[number];
+
+export const ORG_PERMISSIONS = ["manage_billing"];
 
 export interface Roles extends Document {
 

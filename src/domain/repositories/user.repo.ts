@@ -1,12 +1,12 @@
 
-import { Roles } from "../../infrastructure/database/models/role.interface";
+import { Permissions, Roles } from "../../infrastructure/database/models/role.interface";
 import { Attachment, User } from "../../infrastructure/database/models/user.interface";
 
 export interface IUserRepository {
 
     getRoles(companyId: string): Promise<Array<Roles>>;
 
-    createRole(roleName: string, permissions: Array<string>, description: string, companyId: string): Promise<Roles>;
+    createRole(roleName: string, permissions: Array<Permissions>, description: string, companyId: string): Promise<Roles>;
 
     updateUserProfile(file: Attachment | null, userId: string, name: string): Promise<User>;
 

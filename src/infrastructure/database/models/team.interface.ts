@@ -9,7 +9,7 @@ export interface Team {
     email: String,
 
     profilePicUrl: Attachment,
-    role: "user" | "admin",
+    role: ObjectId,
 
     createdAt?: Date,
     updatedAt?: Date,

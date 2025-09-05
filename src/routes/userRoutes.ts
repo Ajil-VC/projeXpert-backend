@@ -2,7 +2,7 @@
 import express from 'express';
 import { validateBody } from '../infrastructure/middleware/validateBody';
 import { passWordChangeSchema, signinSchema } from '../application/validator/authValidator';
-import { authenticateAsAdmin, authenticateUser } from '../infrastructure/middleware/user.middleware';
+import { authenticateUser } from '../infrastructure/middleware/user.middleware';
 
 import {
     assignIssueSchema, completeSprintSchema, controlSchema, createEpicSchema,
@@ -60,64 +60,64 @@ userRouter.route('/notifications')
 
 userRouter.get('/init-data', authenticateUser, userInitInterface.getInitData);
 userRouter.get('/projects-initials', authenticateUser, autherizer.execute(['view_project']), projectControllerInterface.getProjectsInitData);
-userRouter.get('/init-projects', authenticateAsAdmin, autherizer.execute(['view_project']), projectControllerInterface.getProjectData);
+userRouter.get('/init-projects', authenticateUser, autherizer.execute(['view_project']), projectControllerInterface.getProjectData);
 userRouter.get('/get-project', authenticateUser, autherizer.execute(['view_project']), projectControllerInterface.getProject);
 
 userRouter.route('/roles')
     .post(authenticateUser, autherizer.execute(['assign_role']), validateBody(roleSchema), userControllerInterface.createRole)
     .get(authenticateUser, autherizer.execute(['assign_role']), userControllerInterface.getRoles);
 
-userRouter.delete('/project/:projectId/:workSpaceId', authenticateAsAdmin, projectControllerInterface.deleteProject);
+userRouter.delete('/project/:projectId/:workSpaceId', authenticateUser, autherizer.execute(['delete_project']), projectControllerInterface.deleteProject);
 userRouter.route('/project')
-    .post(validateBody(projectCreationSchema), authenticateAsAdmin, planPolicyMiddleware.checkPolicy('createProject'), projectControllerInterface.createProject)
-    .put(authenticateAsAdmin, projectControllerInterface.updateProject)
-    .get(authenticateUser, projectControllerInterface.retrieveProject);
+    .post(validateBody(projectCreationSchema), authenticateUser, autherizer.execute(['create_project']), planPolicyMiddleware.checkPolicy('createProject'), projectControllerInterface.createProject)
+    .put(authenticateUser, autherizer.execute(['edit_project']), projectControllerInterface.updateProject)
+    .get(authenticateUser, autherizer.execute(['view_project']), projectControllerInterface.retrieveProject);
 
 userRouter.route('/workspace')
     .get(authenticateUser, workspaceInterface.getWorkspace)
-    .post(authenticateAsAdmin, validateBody(createWorkspaceSchema), planPolicyMiddleware.checkPolicy('createWorkspace'), workspaceInterface.createWorkspace)
+    .post(authenticateUser, autherizer.execute(['create_workspace']), validateBody(createWorkspaceSchema), planPolicyMiddleware.checkPolicy('createWorkspace'), workspaceInterface.createWorkspace)
 
 userRouter.put('/profile', authenticateUser, upload.any(), userControllerInterface.updateProfile);
 userRouter.get('/dashboard/:projectId', authenticateUser, projectControllerInterface.projectStats);
 
 userRouter.route('/member')
-    .post(authenticateAsAdmin, planPolicyMiddleware.checkPolicy('maxMembers'), projectControllerInterface.addMember)
-    .patch(authenticateAsAdmin, projectControllerInterface.removeMember);
+    .post(authenticateUser, autherizer.execute(['invite_user']), planPolicyMiddleware.checkPolicy('maxMembers'), projectControllerInterface.addMember)
+    .patch(authenticateUser, autherizer.execute(['remove_user']), projectControllerInterface.removeMember);
 
 userRouter.route('/epic')
-    .post(authenticateAsAdmin, validateBody(createEpicSchema), backlogControllerInterface.createEpic)
-    .put(authenticateAsAdmin, validateBody(updateEpicSchema), backlogControllerInterface.updateEpic);
+    .post(authenticateUser, autherizer.execute(['create_epic']), validateBody(createEpicSchema), backlogControllerInterface.createEpic)
+    .put(authenticateUser, autherizer.execute(['edit_epic']), validateBody(updateEpicSchema), backlogControllerInterface.updateEpic);
 
 userRouter.route('/issue')
-    .post(authenticateAsAdmin, validateBody(createIssueSchema), backlogControllerInterface.createIssue)
-    .patch(authenticateUser, validateBody(assignIssueSchema), backlogControllerInterface.assignIssue)
+    .post(authenticateUser, autherizer.execute(['create_task']), validateBody(createIssueSchema), backlogControllerInterface.createIssue)
+    .patch(authenticateUser, autherizer.execute(['assign_task']), validateBody(assignIssueSchema), backlogControllerInterface.assignIssue)
 
-userRouter.post('/subtask', authenticateAsAdmin, validateBody(createSubtaskSchema), backlogControllerInterface.createSubtask);
-userRouter.get('/subtask/:parentId', authenticateUser, backlogControllerInterface.getSubtasks);
-userRouter.delete('/task/:taskId', authenticateAsAdmin, backlogControllerInterface.removeTask);
+userRouter.post('/subtask', authenticateUser, autherizer.execute(['create_task']), validateBody(createSubtaskSchema), backlogControllerInterface.createSubtask);
+userRouter.get('/subtask/:parentId', authenticateUser, autherizer.execute(['view_task']), backlogControllerInterface.getSubtasks);
+userRouter.delete('/task/:taskId', authenticateUser, autherizer.execute(['delete_task']), backlogControllerInterface.removeTask);
 
 userRouter.route('/sprints')
-    .post(authenticateAsAdmin, validateBody(createSprintSchema), backlogControllerInterface.createSprint)
-    .put(authenticateAsAdmin, validateBody(startSprintSchema), backlogControllerInterface.startSprint);
-userRouter.put('/complete-sprint', authenticateUser, validateBody(completeSprintSchema), backlogControllerInterface.completeSprint);
+    .post(authenticateUser, autherizer.execute(['create_sprint']), validateBody(createSprintSchema), backlogControllerInterface.createSprint)
+    .put(authenticateUser, autherizer.execute(['start_sprint']), validateBody(startSprintSchema), backlogControllerInterface.startSprint);
+userRouter.put('/complete-sprint', authenticateUser, autherizer.execute(['close_sprint']), validateBody(completeSprintSchema), backlogControllerInterface.completeSprint);
 
-userRouter.get('/sprints/:projectId', authenticateAsAdmin, backlogControllerInterface.getSprints);
-userRouter.get('/sprints/kanban/:projectId', authenticateUser, backlogControllerInterface.getSprints);
+userRouter.get('/sprints/:projectId', authenticateUser, autherizer.execute(['view_sprint']), backlogControllerInterface.getSprints);
+userRouter.get('/sprints/kanban/:projectId', authenticateUser, autherizer.execute(['view_sprint']), backlogControllerInterface.getSprints);
 
 userRouter.route('/comments')
     .get(authenticateUser, backlogControllerInterface.getComments)
-    .post(authenticateUser, backlogControllerInterface.addComment);
-userRouter.get('/tasks', authenticateUser, backlogControllerInterface.getTasks);
-userRouter.get('/tasks/kanban', authenticateUser, backlogControllerInterface.getTasks);
-userRouter.patch('/control-user', authenticateAsAdmin, validateBody(controlSchema), teamInterface.restrictUser);
-userRouter.get('/task-history', authenticateUser, backlogControllerInterface.taskHistory);
+    .post(authenticateUser, autherizer.execute(['comment_task']), backlogControllerInterface.addComment);
+userRouter.get('/tasks', authenticateUser, autherizer.execute(['view_task']), backlogControllerInterface.getTasks);
+userRouter.get('/tasks/kanban', authenticateUser, autherizer.execute(['view_task']), backlogControllerInterface.getTasks);
+userRouter.get('/task-history', authenticateUser, autherizer.execute(['view_task']), backlogControllerInterface.taskHistory);
+// userRouter.patch('/control-user', authenticateUser, validateBody(controlSchema), teamInterface.restrictUser);
 
-userRouter.get('/get-users', authenticateAsAdmin, teamInterface.getCompanyUsers);
+userRouter.get('/get-users', authenticateUser, autherizer.execute(['assign_role']), teamInterface.getCompanyUsers);
 userRouter.get('/team', authenticateUser, teamInterface.getTeam);
-userRouter.put('/update-task', authenticateAsAdmin, validateBody(dragDropSchema), backlogControllerInterface.dragDropUpdate);
-userRouter.put('/change-taskstatus', authenticateUser, validateBody(taskStatusUpdateSchema), backlogControllerInterface.changeTaskStatus);
-userRouter.put('/update-task-details', authenticateUser, upload.any(), backlogControllerInterface.updateTaskDetails);
-userRouter.delete('/delete-attachment', authenticateUser, backlogControllerInterface.deleteCloudinaryAttachment);
+userRouter.put('/update-task', authenticateUser, autherizer.execute(['edit_task']), validateBody(dragDropSchema), backlogControllerInterface.dragDropUpdate);
+userRouter.put('/change-taskstatus', authenticateUser, autherizer.execute(['edit_task']), validateBody(taskStatusUpdateSchema), backlogControllerInterface.changeTaskStatus);
+userRouter.put('/update-task-details', authenticateUser, autherizer.execute(['edit_task']), upload.any(), backlogControllerInterface.updateTaskDetails);
+userRouter.delete('/delete-attachment', authenticateUser, autherizer.execute(['edit_task']), backlogControllerInterface.deleteCloudinaryAttachment);
 
 
 userRouter.post('/start-conversation', authenticateUser, validateBody(startConversationSchema), chatControllerInterface.startConversation);
@@ -127,8 +127,8 @@ userRouter.post('/send-message', authenticateUser, validateBody(sendMessageSchem
 userRouter.get('/activity', authenticateUser, getActivitiesInterface.getActivity);
 
 userRouter.get('/get-zegotoken', authenticateUser, groupCallInterface.getCallToken);
-userRouter.post('/create-room', authenticateUser, validateBody(meetingSchema), groupCallInterface.createRoom);
+userRouter.post('/create-room', authenticateUser, autherizer.execute(['create_room']), validateBody(meetingSchema), groupCallInterface.createRoom);
 userRouter.get('/get-upcoming-meetings', authenticateUser, groupCallInterface.getUpcomingMeetings);
-userRouter.delete('/remove-meeting', authenticateUser, groupCallInterface.removeMeeting);
+userRouter.delete('/remove-meeting', authenticateUser, autherizer.execute(['remove_room']), groupCallInterface.removeMeeting);
 
 export default userRouter;

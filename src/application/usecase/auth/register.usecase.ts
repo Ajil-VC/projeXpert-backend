@@ -6,6 +6,7 @@ import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { useCaseResult } from "../../shared/useCaseResult";
 import { Company } from "../../../infrastructure/database/models/company.interface";
 import { IRegister } from "../../../config/Dependency/auth/auth.di";
+import { ORG_PERMISSIONS, Permissions, PERMISSIONS } from "../../../infrastructure/database/models/role.interface";
 
 
 export class RegisterUseCase implements IRegister {
@@ -35,45 +36,10 @@ export class RegisterUseCase implements IRegister {
 
             const [ownerRole, adminRole, developerRole] = await Promise.all([
                 this.userRepo.createRole('Owner',
-                    [
-                        "create_task",
-                        "view_task",
-                        "edit_task",
-                        "delete_task",
-                        "assign_task",
-                        "comment_task",
-
-                        "create_project",
-                        "view_project",
-                        "edit_project",
-                        "delete_project",
-
-                        "invite_user",
-                        "remove_user",
-                        "assign_role",
-
-                        "manage_billing"
-                    ], '', companyIdStatus.additional),
-
+                    PERMISSIONS as unknown as Permissions[], '', companyIdStatus.additional),
 
                 this.userRepo.createRole('Admin',
-                    [
-                        "create_task",
-                        "view_task",
-                        "edit_task",
-                        "delete_task",
-                        "assign_task",
-                        "comment_task",
-
-                        "create_project",
-                        "view_project",
-                        "edit_project",
-                        "delete_project",
-
-                        "invite_user",
-                        "remove_user",
-                        "assign_role"
-                    ], '', companyIdStatus.additional),
+                    (PERMISSIONS as unknown as Permissions[]).filter(p => !ORG_PERMISSIONS.includes(p)), '', companyIdStatus.additional),
 
                 this.userRepo.createRole('Developer',
                     [
