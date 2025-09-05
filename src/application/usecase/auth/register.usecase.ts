@@ -32,6 +32,56 @@ export class RegisterUseCase implements IRegister {
             let workSpaceId = await this.companyRepo.createWorkspace('Default', companyIdStatus.additional);
             if (!workSpaceId || typeof workSpaceId !== 'string') return { status: false, message: 'Workspace probably have not created' };
 
+
+            const [ownerRole, adminRole, developerRole] = await Promise.all([
+                this.userRepo.createRole('Owner',
+                    [
+                        "create_task",
+                        "view_task",
+                        "edit_task",
+                        "delete_task",
+                        "assign_task",
+                        "comment_task",
+
+                        "create_project",
+                        "view_project",
+                        "edit_project",
+                        "delete_project",
+
+                        "invite_user",
+                        "remove_user",
+                        "assign_role",
+
+                        "manage_billing"
+                    ], '', companyIdStatus.additional),
+
+
+                this.userRepo.createRole('Admin',
+                    [
+                        "create_task",
+                        "view_task",
+                        "edit_task",
+                        "delete_task",
+                        "assign_task",
+                        "comment_task",
+
+                        "create_project",
+                        "view_project",
+                        "edit_project",
+                        "delete_project",
+
+                        "invite_user",
+                        "remove_user",
+                        "assign_role"
+                    ], '', companyIdStatus.additional),
+
+                this.userRepo.createRole('Developer',
+                    [
+                        "view_task", "edit_task", "assign_task", "comment_task",
+                    ], '', companyIdStatus.additional)
+            ]);
+
+
             const hashedPassword = await this.securePassword.secure(passWord);
             if (!hashedPassword) return { status: false, message: 'Password couldnt secured' };
 
@@ -39,7 +89,7 @@ export class RegisterUseCase implements IRegister {
                 email,
                 companyName,
                 hashedPassword,
-                'admin',
+                ownerRole._id as unknown as string,
                 companyIdStatus.additional,
                 workSpaceId,
                 false,

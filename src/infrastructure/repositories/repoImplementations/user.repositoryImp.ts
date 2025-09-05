@@ -1,11 +1,44 @@
 
 
-import mongoose, { model } from "mongoose";
+import mongoose from "mongoose";
 import { Attachment, User } from "../../database/models/user.interface";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 import userModel from "../../database/user.models";
+import { Roles } from "../../database/models/role.interface";
+import RolesModel from "../../database/roles.model";
 
 export class userRepositoryImp implements IUserRepository {
+
+
+    async getRoles(companyId: string): Promise<Array<Roles>> {
+
+        const companyOb = new mongoose.Types.ObjectId(companyId);
+        const roles = await RolesModel.find({ companyId: companyOb });
+        if (!roles) {
+
+            throw new Error("Couldnt retrieve the roles.");
+        }
+
+        return roles;
+    }
+
+    async createRole(roleName: string, permissions: Array<string>, description: string, companyId: string): Promise<Roles> {
+
+        const companyOb = new mongoose.Types.ObjectId(companyId);
+        const newRole = new RolesModel({
+            name: roleName,
+            permissions,
+            description,
+            companyId: companyOb
+        });
+
+        const createdRole = await newRole.save();
+        if (!createdRole) {
+            throw new Error("Couldnt create new role.");
+        }
+
+        return createdRole;
+    }
 
 
     async updateUserProfile(file: Attachment | null, userId: string, name: string): Promise<User> {
@@ -92,6 +125,7 @@ export class userRepositoryImp implements IUserRepository {
         const isEmailExist: any = await userModel.findOne({ email: email })
             .populate('workspaceIds')
             .populate('companyId')
+            .populate('role')
             .populate({
                 path: 'defaultWorkspace',
                 populate: {
@@ -109,17 +143,19 @@ export class userRepositoryImp implements IUserRepository {
         email: string,
         userName: string,
         passWord: string | undefined,
-        role: 'admin' | 'user' = 'user',
+        role: string,
         companyId: string,
         workspaceId: string,
         forceChangePassword: boolean = true,
         systemRole: 'platform-admin' | 'company-user' = 'company-user'): Promise<User | null> {
 
+        const roleId = new mongoose.Types.ObjectId(role);
+
         const newUser = new userModel({
             name: userName,
             email: email,
             password: passWord,
-            role: role,
+            role: roleId,
             companyId: new mongoose.Types.ObjectId(companyId),
             defaultWorkspace: new mongoose.Types.ObjectId(workspaceId),
             workspaceIds: [new mongoose.Types.ObjectId(workspaceId)],
@@ -140,6 +176,7 @@ export class userRepositoryImp implements IUserRepository {
         const userData: any = await userModel.findOne({ _id: userIdOb })
             .populate('workspaceIds')
             .populate('companyId')
+            .populate('role')
             .exec();
 
         if (!userData) return null;

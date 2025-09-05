@@ -1,7 +1,10 @@
 
 import { AddActivityUsecase } from "../../application/usecase/activityUseCase/addActivity.usecase";
 import { GetActivities } from "../../application/usecase/activityUseCase/getActivities.usecase";
+import { CreateRoleUsecase } from "../../application/usecase/user/createrole.usecase";
+import { GetRoles } from "../../application/usecase/user/getRoles.usecase";
 import { UpdateProfileUsecase } from "../../application/usecase/user/user.usecase";
+import { ICreateRole, IGetRoles } from "../../config/Dependency/user/user.di";
 import { ActivityController } from "../../controllers/user/activity.controller";
 import { userController } from "../../controllers/user/user.controller";
 import { IActivityRepository } from "../../domain/repositories/activity.repo";
@@ -22,8 +25,9 @@ export const getActivitiesInterface: IActivityController = new ActivityControlle
 
 
 
-
 const userRepository: IUserRepository = new userRepositoryImp();
 const cloudinarySer: ICloudinary = new CloudUploadService()
+export const createRoleUsecase: ICreateRole = new CreateRoleUsecase(userRepository);
+export const getRolesUsecase: IGetRoles = new GetRoles(userRepository);
 export const updateProfile = new UpdateProfileUsecase(cloudinarySer, userRepository);
-export const userControllerInterface: IUserController = new userController(updateProfile);
+export const userControllerInterface: IUserController = new userController(updateProfile, createRoleUsecase, getRolesUsecase);

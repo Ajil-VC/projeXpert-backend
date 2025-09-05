@@ -12,6 +12,7 @@ import {
     dragDropSchema,
     meetingSchema,
     projectCreationSchema,
+    roleSchema,
     sendMessageSchema,
     startConversationSchema,
     startSprintSchema,
@@ -34,18 +35,21 @@ import { teamInterface } from './dependency/user/team.inter';
 import { userControllerInterface } from './dependency/user.di';
 import { workspaceInterface } from './dependency/user/workspace.inter';
 import { authInterface } from './dependency/auth.inter';
+import { AuthorizeMiddleware } from '../infrastructure/middleware/authorize.middleware';
+
 
 const userRouter = express.Router();
 userRouter.use(express.urlencoded({ extended: true }));
 
 const planPolicyMiddleware = new PlanPolicyMiddleware();
+const autherizer = new AuthorizeMiddleware();
 
 userRouter.get('/authenticate-user', authenticateUser, authInterface.isVerified);
 userRouter.post('/login', validateBody(signinSchema), authInterface.signIn);
 userRouter.post('/change-password', validateBody(passWordChangeSchema), authenticateUser, authInterface.changePassword);
 userRouter.post('/refresh-token', authInterface.refreshToken);
 
-userRouter.get('/subscription', authenticateUser, subscriptionInterface.getSubscriptionDetails);
+userRouter.get('/subscription', authenticateUser, autherizer.execute(['manage_billing']), subscriptionInterface.getSubscriptionDetails);
 userRouter.post('/checkout', authenticateUser, subscriptionInterface.checkout);
 userRouter.get('/stripe/session/:sessionId', authenticateUser, subscriptionInterface.verifySubscription);
 
@@ -55,10 +59,13 @@ userRouter.route('/notifications')
     .patch(authenticateUser, userInitInterface.updateNotification)
 
 userRouter.get('/init-data', authenticateUser, userInitInterface.getInitData);
-userRouter.get('/projects-initials', authenticateUser, projectControllerInterface.getProjectsInitData);
-userRouter.get('/init-projects', authenticateAsAdmin, projectControllerInterface.getProjectData);
-userRouter.get('/get-project', authenticateUser, projectControllerInterface.getProject);
+userRouter.get('/projects-initials', authenticateUser, autherizer.execute(['view_project']), projectControllerInterface.getProjectsInitData);
+userRouter.get('/init-projects', authenticateAsAdmin, autherizer.execute(['view_project']), projectControllerInterface.getProjectData);
+userRouter.get('/get-project', authenticateUser, autherizer.execute(['view_project']), projectControllerInterface.getProject);
 
+userRouter.route('/roles')
+    .post(authenticateUser, autherizer.execute(['assign_role']), validateBody(roleSchema), userControllerInterface.createRole)
+    .get(authenticateUser, autherizer.execute(['assign_role']), userControllerInterface.getRoles);
 
 userRouter.delete('/project/:projectId/:workSpaceId', authenticateAsAdmin, projectControllerInterface.deleteProject);
 userRouter.route('/project')

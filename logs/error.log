@@ -3374,3 +3374,7 @@
     at RefreshTokenUseCase.execute (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\application\usecase\auth\refreshToken.usecase.ts:42:47)
     at processTicksAndRejections (node:internal/process/task_queues:95:5)
     at AuthController.refreshToken (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\controllers\authController.ts:193:28)
+2025-09-03T13:28:41.270Z error: TypeError: Cannot read properties of null (reading '_id')
+    at RefreshTokenUseCase.execute (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\application\usecase\auth\refreshToken.usecase.ts:42:47)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at AuthController.refreshToken (D:\FullStackDeveloper\Week22\ProjeXpert\backend\src\controllers\authController.ts:193:28)

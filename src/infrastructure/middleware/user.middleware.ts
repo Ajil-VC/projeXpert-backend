@@ -56,11 +56,6 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
             return;
         }
 
-        if (userData?.restrict && req.method !== 'GET') {
-            res.status(403).json({ status: false, message: 'Dont have permission to perform this operation' });
-            return;
-        }
-
         if (!req.user.companyId || !companyData) {
             res.status(401).json({ status: false, message: 'Company data not available.' });
             return;

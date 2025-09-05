@@ -46,4 +46,4 @@ export const authInterface: IAuthController = new AuthController(
     registerUsecase,
     changePasswordUsecase,
     refreshTokenUsecase
-)
+);

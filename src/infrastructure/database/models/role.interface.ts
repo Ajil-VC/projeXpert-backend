@@ -1,0 +1,34 @@
+import { Document, ObjectId } from "mongoose";
+
+export const PERMISSIONS = [
+
+    "create_task",
+    "view_task",
+    "edit_task",
+    "delete_task",
+    "assign_task",
+    "comment_task",
+
+    "create_project",
+    "view_project",
+    "edit_project",
+    "delete_project",
+
+    "invite_user",
+    "remove_user",
+    "assign_role",
+
+    "manage_billing"
+] as const;
+export type Permissions = typeof PERMISSIONS[number];
+
+export interface Roles extends Document {
+
+    _id: ObjectId;
+    companyId: ObjectId;
+    name: string;
+    description: string;
+    permissions: Array<string>;
+    createdAt?: Date;
+    updatedAt?: Date;
+}

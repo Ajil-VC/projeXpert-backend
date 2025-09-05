@@ -1,5 +1,6 @@
 import { Document, ObjectId } from "mongoose";
 import { Company } from "./company.interface";
+import { Roles } from "./role.interface";
 
 export interface Attachment {
     public_id: string;
@@ -13,7 +14,7 @@ export interface User extends Document {
     email: String;
     password: String;
     profilePicUrl: Attachment;
-    role: 'admin' | 'user';
+    role: ObjectId;
     companyId: ObjectId | Company;
     workspaceIds: ObjectId[];
     defaultWorkspace: ObjectId;
@@ -21,7 +22,7 @@ export interface User extends Document {
     forceChangePassword: boolean;
 
     isBlocked: boolean;
-    restrict:boolean;
+    restrict: boolean;
 
     systemRole: 'platform-admin' | 'company-user';
 

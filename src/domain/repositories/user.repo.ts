@@ -1,7 +1,12 @@
 
+import { Roles } from "../../infrastructure/database/models/role.interface";
 import { Attachment, User } from "../../infrastructure/database/models/user.interface";
 
 export interface IUserRepository {
+
+    getRoles(companyId: string): Promise<Array<Roles>>;
+
+    createRole(roleName: string, permissions: Array<string>, description: string, companyId: string): Promise<Roles>;
 
     updateUserProfile(file: Attachment | null, userId: string, name: string): Promise<User>;
 
@@ -13,7 +18,7 @@ export interface IUserRepository {
         email: string,
         userName: string,
         passWord: string | undefined,
-        role: 'admin' | 'user',
+        role: string,
         companyId: string,
         workspaceId: string,
         forceChangePassword: boolean,

@@ -5,6 +5,7 @@ import { config } from "../../../config/config";
 import jwt from 'jsonwebtoken';
 import { Company } from "../../../infrastructure/database/models/company.interface";
 import { ISignin } from "../../../config/Dependency/auth/auth.di";
+import { Roles } from "../../../infrastructure/database/models/role.interface";
 
 
 export class SigninUseCase implements ISignin {
@@ -42,7 +43,8 @@ export class SigninUseCase implements ISignin {
                 id: userData._id,
                 email: userData.email,
                 name: userData.name,
-                role: userData.role,
+                role: (userData.role as unknown as Roles).name,
+                permissions: (userData.role as unknown as Roles).permissions,
                 isBlocked: userData.isBlocked,
                 companyId: company,
                 systemRole: userData.systemRole

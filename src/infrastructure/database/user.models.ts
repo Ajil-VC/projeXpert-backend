@@ -14,7 +14,7 @@ const userSchema = new Schema<User>({
         },
         default: null
     },
-    role: { type: String, enum: ['admin', 'user'], required: true, default: 'user' },
+    role: { type: Schema.Types.ObjectId, required: true, ref: 'Roles' },
     companyId: { type: Schema.Types.ObjectId, ref: 'Company', default: null },
     workspaceIds: [{ type: Schema.Types.ObjectId, ref: 'Workspace' }],
     defaultWorkspace: { type: Schema.Types.ObjectId, ref: 'Workspace', default: null },

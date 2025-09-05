@@ -132,3 +132,12 @@ export const meetingSchema = yup.object({
     roomId: yup.string().required('Room Id is required'),
     url: yup.string().required('url is required')
 });
+
+
+export const roleSchema = yup.object({
+    roleName: yup.string().trim().required('Role name required.'),
+    permissions: yup.array().of(
+        yup.string().trim().required('Permissions required.')
+    ).min(1, 'Atleast 1 permission needed.'),
+    description: yup.string().optional()
+});
