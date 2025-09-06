@@ -1,6 +1,4 @@
 
-import { GetUsersInCompany } from "../../../application/usecase/teamManagement/getusers.usecase";
-import { RestrictUser } from "../../../application/usecase/teamManagement/restrictUser.usecase";
 import { Team } from "../../../infrastructure/database/models/team.interface";
 import { UserResponseDTO } from "../../../dtos/user/userResponseDTO";
 
@@ -22,6 +20,6 @@ export interface IGetCompanyUsers {
     ): Promise<{ users: UserResponseDTO[], totalPages: number }>
 }
 
-export interface IRestrictUser {
-    execute(userId: string, status: boolean | null, userRole: string): Promise<UserResponseDTO>;
+export interface IUpdateUserRoleAndStatus {
+    execute(userId: string, userRole: string, status: boolean | null): Promise<UserResponseDTO>;
 }

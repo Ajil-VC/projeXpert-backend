@@ -9,9 +9,9 @@ export class ProjectStatsUseCase implements IProjectStatus {
 
     constructor(private projectRepo: IProjectRepository) { }
 
-    async execute(projectId: string, userId: string, userRole: 'admin' | 'user') {
+    async execute(projectId: string, userId: string, userRole: 'admin' | 'user', companyId: string) {
 
-        const result = await this.projectRepo.projectStats(projectId, userId, userRole);
+        const result = await this.projectRepo.projectStats(projectId, userId, userRole, companyId);
 
         const today = new Date();
         const DUE_SOON_DAYS = 3;
@@ -19,7 +19,7 @@ export class ProjectStatsUseCase implements IProjectStatus {
         const groupData = result.reduce((acc: { epics: Task[], completed: Task[]; openTasks: Task[]; dueSoon: Task[]; overdue: Task[], unscheduled: Task[] }, task: Task) => {
 
             let endDate = null;
-            if(task.sprintId){
+            if (task.sprintId) {
                 endDate = (task.sprintId as Sprint).endDate || null;
             }
             if (task.type === "epic") {

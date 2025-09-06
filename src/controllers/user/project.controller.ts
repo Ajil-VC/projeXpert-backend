@@ -1,16 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 
-import { 
-    IAddMember, 
-    ICreateProject, 
-    IDeleteProject, 
-    IGetCurrentProject, 
-    IGetProjectsinWorkspace, 
-    IGetWorkspace, 
-    IProjectStatus, 
-    IRemoveMember, 
-    IRetrieveProject, 
-    IUpdateProject } from "../../config/Dependency/user/project.di";
+import {
+    IAddMember,
+    ICreateProject,
+    IDeleteProject,
+    IGetCurrentProject,
+    IGetProjectsinWorkspace,
+    IGetWorkspace,
+    IProjectStatus,
+    IRemoveMember,
+    IRetrieveProject,
+    IUpdateProject
+} from "../../config/Dependency/user/project.di";
 
 
 import { HttpStatusCode } from "../../config/http-status.enum";
@@ -43,7 +44,7 @@ export class ProjectController implements IProjectController {
         try {
 
             const projectId = req.params.projectId;
-            const groupedData = await this.projectStatsUse.execute(projectId, req.user.id, req.user.role);
+            const groupedData = await this.projectStatsUse.execute(projectId, req.user.id, req.user.role, req.user.companyId);
 
             if (!groupedData) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'No tasks found' });
@@ -135,7 +136,7 @@ export class ProjectController implements IProjectController {
 
             const projectId = req.query.project_id;
             const workspaceId = req.query.workspace_id;
-console.log('Yeeeess workingnnnn......................')
+            console.log('Yeeeess workingnnnn......................')
             if (typeof projectId !== 'string' || typeof workspaceId !== 'string') {
                 throw new Error('project id or workspace id is not valid string');
             }
@@ -157,7 +158,7 @@ console.log('Yeeeess workingnnnn......................')
         try {
 
             const projectId = req.query.project_id;
-console.log('\n\n\n\n\n\n\n\n\n\n\n\n\nAjil hahahaha \n\n\n\n\n\n\n\n\n\n\n\n\n\n')
+            console.log('\n\n\n\n\n\n\n\n\n\n\n\n\nAjil hahahaha \n\n\n\n\n\n\n\n\n\n\n\n\n\n')
             if (typeof projectId !== 'string') {
                 throw new Error('project id is not valid string');
             }
@@ -176,8 +177,8 @@ console.log('\n\n\n\n\n\n\n\n\n\n\n\n\nAjil hahahaha \n\n\n\n\n\n\n\n\n\n\n\n\n\
 
         try {
 
-            const { email, projectId, workSpaceId } = req.body;
-            const updatedProjectData = await this.addMemberUsecase.execute(email, projectId, workSpaceId, req.user.companyId);
+            const { email, projectId, workSpaceId, roleId } = req.body;
+            const updatedProjectData = await this.addMemberUsecase.execute(email, projectId, workSpaceId, req.user.companyId, roleId);
             await this.addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'Added', email);
 
             res.status(HttpStatusCode.OK).json({

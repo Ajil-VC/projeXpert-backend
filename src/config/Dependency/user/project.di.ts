@@ -21,7 +21,7 @@ export interface IGetCurrentProject {
 }
 
 export interface IAddMember {
-    execute(email: string, projectId: string, workSpaceId: string, companyId: string): Promise<Project | null>;
+    execute(email: string, projectId: string, workSpaceId: string, companyId: string, roleId: string): Promise<Project | null>;
 }
 
 export interface IRemoveMember {
@@ -44,7 +44,7 @@ export interface IDeleteProject {
 }
 
 export interface IProjectStatus {
-    execute(projectId: string, userId: string, userRole: 'admin' | 'user'): Promise<any>;
+    execute(projectId: string, userId: string, userRole: 'admin' | 'user', companyId: string): Promise<any>;
 }
 
 export interface IRetrieveProject {

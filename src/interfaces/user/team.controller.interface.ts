@@ -7,5 +7,5 @@ export interface ITeamController {
 
     getCompanyUsers(req: Request, res: Response, next: NextFunction): Promise<void>;
 
-    restrictUser(req: Request, res: Response, next: NextFunction): Promise<void>;
+    updateUserRole(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

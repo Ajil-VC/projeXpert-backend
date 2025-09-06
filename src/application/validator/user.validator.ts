@@ -8,6 +8,13 @@ export const projectCreationSchema = yup.object({
 
 });
 
+export const addMemberSchema = yup.object({
+    email: yup.string().required('Email required.'),
+    projectId: yup.string().required('Project Id required.'),
+    workSpaceId: yup.string().required('Workspace Id required.'),
+    roleId: yup.string().required('Role Id required.')
+})
+
 export const createEpicSchema = yup.object({
     title: yup.string().required('Epic name is required'),
     description: yup.string(),
@@ -91,7 +98,8 @@ export const sendMessageSchema = yup.object({
 export const controlSchema = yup.object({
     userId: yup.string().required('User Id required'),
     status: yup.string().nullable(),
-    userRole: yup.string()
+    userRole: yup.string(),
+    blockedStatus: yup.boolean().nullable()
 });
 
 export const meetingSchema = yup.object({

@@ -15,7 +15,7 @@ export class AddMemberUseCase implements IAddMember {
         private securePassword: ISecurePassword
     ) { }
 
-    async execute(email: string, projectId: string, workSpaceId: string, companyId: string): Promise<Project | null> {
+    async execute(email: string, projectId: string, workSpaceId: string, companyId: string, roleId: string): Promise<Project | null> {
 
         const isUserExist = await this.userRepo.findByEmail(email);
         if (!isUserExist) {
@@ -28,7 +28,13 @@ export class AddMemberUseCase implements IAddMember {
             })
             const hashedPassword = await this.securePassword.secure(otp);
             console.log(`Current password of new User : ${otp}`);
-            const createdUser = await this.userRepo.createUser(email, 'New User', hashedPassword, 'user', companyId, workSpaceId, true, 'company-user');
+            const createdUser = await this.userRepo.createUser(
+                email,
+                'New User',
+                hashedPassword,
+                roleId,
+                companyId,
+                workSpaceId, true, 'company-user');
             if (!createdUser) throw new Error('User couldnt create.');
 
             const isMailSent = await this.sendEmail.send(email, 'Projexpert Password', `Your password is: ${otp}`);

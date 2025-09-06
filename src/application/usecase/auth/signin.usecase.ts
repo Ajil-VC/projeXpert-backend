@@ -43,8 +43,7 @@ export class SigninUseCase implements ISignin {
                 id: userData._id,
                 email: userData.email,
                 name: userData.name,
-                role: (userData.role as unknown as Roles).name,
-                permissions: (userData.role as unknown as Roles).permissions,
+                role: (userData.role as unknown as Roles),
                 isBlocked: userData.isBlocked,
                 companyId: company,
                 systemRole: userData.systemRole

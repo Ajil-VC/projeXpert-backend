@@ -31,7 +31,7 @@ export interface IProjectRepository {
 
     deleteProject(projectId: string, workSpaceId: string): Promise<boolean>;
 
-    projectStats(projectId: string, userId: string, userRole: 'admin' | 'user'): Promise<Task[]>;
+    projectStats(projectId: string, userId: string, userRole: 'admin' | 'user', companyId: string): Promise<Task[]>;
 
     countProjects(companyId: string): Promise<number>;
 

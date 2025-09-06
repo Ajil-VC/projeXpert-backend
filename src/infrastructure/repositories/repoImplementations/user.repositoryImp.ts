@@ -143,19 +143,19 @@ export class userRepositoryImp implements IUserRepository {
         email: string,
         userName: string,
         passWord: string | undefined,
-        role: string,
+        roleId: string,
         companyId: string,
         workspaceId: string,
         forceChangePassword: boolean = true,
         systemRole: 'platform-admin' | 'company-user' = 'company-user'): Promise<User | null> {
 
-        const roleId = new mongoose.Types.ObjectId(role);
+        const roleIdOb = new mongoose.Types.ObjectId(roleId);
 
         const newUser = new userModel({
             name: userName,
             email: email,
             password: passWord,
-            role: roleId,
+            role: roleIdOb,
             companyId: new mongoose.Types.ObjectId(companyId),
             defaultWorkspace: new mongoose.Types.ObjectId(workspaceId),
             workspaceIds: [new mongoose.Types.ObjectId(workspaceId)],

@@ -18,6 +18,6 @@ export interface ITeamRepository {
         users: User[], totalPages: number
     }>;
 
-    restrictUser(userId: string, status: boolean | null, userRole: string): Promise<User>;
+    updateUserRoleAndStatus(userId: string, userRole: string, status: boolean | null): Promise<User>;
 
 }

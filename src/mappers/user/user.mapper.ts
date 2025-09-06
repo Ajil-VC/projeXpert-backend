@@ -1,5 +1,6 @@
 
 import { UserEntityDetailed } from "../../domain/entities/user.entity";
+import { Roles } from "../../infrastructure/database/models/role.interface";
 import { User } from "../../infrastructure/database/models/user.interface";
 
 export class UserMapper {
@@ -10,7 +11,7 @@ export class UserMapper {
             name: user.name.toString(),
             email: user.email.toString(),
             profilePicUrl: user.profilePicUrl,
-            role: user.role,
+            role: user.role as unknown as Roles,
             companyId: user.companyId?.toString(),
             workspaceIds: user.workspaceIds.map(ele => ele.toString()),
             defaultWorkspace: user.defaultWorkspace.toString(),
@@ -18,7 +19,6 @@ export class UserMapper {
             forceChangePassword: user.forceChangePassword,
 
             isBlocked: user.isBlocked,
-            restrict: user.restrict,
 
             systemRole: user.systemRole,
 

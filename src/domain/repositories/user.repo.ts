@@ -18,11 +18,12 @@ export interface IUserRepository {
         email: string,
         userName: string,
         passWord: string | undefined,
-        role: string,
+        roleId: string,
         companyId: string,
         workspaceId: string,
         forceChangePassword: boolean,
-        systemRole: 'platform-admin' | 'company-user'
+        systemRole: 'platform-admin' | 'company-user',
+
     ): Promise<User | null>
 
     findUserById(userId: string): Promise<User | null>

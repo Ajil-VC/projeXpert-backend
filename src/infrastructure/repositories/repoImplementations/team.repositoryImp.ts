@@ -11,14 +11,15 @@ import { BaseRepository } from "../base.repository";
 export class TeamRepositoryImp implements ITeamRepository {
 
 
-    async restrictUser(userId: string, status: boolean | null, userRole: string): Promise<User> {
+    async updateUserRoleAndStatus(userId: string, userRole: string, status: boolean | null): Promise<User> {
 
         const userOb = new mongoose.Types.ObjectId(userId);
 
-        const query: { restrict?: boolean, role: string } = { role: userRole };
-        if (status !== null) {
-            query.restrict = status;
+        const query: { role: string, isBlocked?: boolean } = { role: userRole };
+        if (typeof status === 'boolean') {
+            query.isBlocked = status;
         }
+
         const user = await userModel.findByIdAndUpdate(
             userOb,
             query,
@@ -48,19 +49,19 @@ export class TeamRepositoryImp implements ITeamRepository {
     }> {
 
         const companyIdOb = new mongoose.Types.ObjectId(companyId);
-        
+
         let totalPages: number = 0;
         let users;
         if (!pageNum) {
             users = await userModel.find({ companyId: companyIdOb });
         } else {
-            
+
             const userIdOb = new mongoose.Types.ObjectId(userId);
             const query: {
                 companyId: any,
                 _id: any,
                 role?: string,
-                restrict?: boolean,
+                isBlocked?: boolean,
                 $or?: any
             } = {
                 companyId: companyIdOb,
@@ -71,7 +72,7 @@ export class TeamRepositoryImp implements ITeamRepository {
                 query.role = role;
             }
             if (status !== null) {
-                query.restrict = status;
+                query.isBlocked = status;
             }
             if (searchTerm && searchTerm.trim() !== '') {
                 query.$or = [
@@ -80,7 +81,7 @@ export class TeamRepositoryImp implements ITeamRepository {
                 ];
             }
 
-            users = await userModel.find(query).skip(skip).limit(limit);
+            users = await userModel.find(query).populate('role').skip(skip).limit(limit);
 
             let totalCount = await userModel.countDocuments(query);
 
@@ -89,7 +90,6 @@ export class TeamRepositoryImp implements ITeamRepository {
         }
 
         if (!users) throw new Error('Couldnt retrieve users.');
-
         return { users, totalPages };
     }
 
@@ -111,7 +111,11 @@ export class TeamRepositoryImp implements ITeamRepository {
         }
 
         const projectData = await projectModel.findById(projectIdOb)
-            .populate({ path: 'members' });
+            .populate({
+                path: 'members',
+                populate: { path: 'role', model: 'Roles' }
+            })
+
 
         const membersPopulated = projectData?.members as unknown as Array<User>;
 

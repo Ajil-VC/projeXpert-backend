@@ -5,6 +5,7 @@ import { passWordChangeSchema, signinSchema } from '../application/validator/aut
 import { authenticateUser } from '../infrastructure/middleware/user.middleware';
 
 import {
+    addMemberSchema,
     assignIssueSchema, completeSprintSchema, controlSchema, createEpicSchema,
     createIssueSchema, createSprintSchema,
     createSubtaskSchema,
@@ -81,7 +82,11 @@ userRouter.put('/profile', authenticateUser, upload.any(), userControllerInterfa
 userRouter.get('/dashboard/:projectId', authenticateUser, projectControllerInterface.projectStats);
 
 userRouter.route('/member')
-    .post(authenticateUser, autherizer.execute(['invite_user']), planPolicyMiddleware.checkPolicy('maxMembers'), projectControllerInterface.addMember)
+    .post(authenticateUser,
+        autherizer.execute(['invite_user']),
+        validateBody(addMemberSchema),
+        planPolicyMiddleware.checkPolicy('maxMembers'),
+        projectControllerInterface.addMember)
     .patch(authenticateUser, autherizer.execute(['remove_user']), projectControllerInterface.removeMember);
 
 userRouter.route('/epic')
@@ -110,7 +115,7 @@ userRouter.route('/comments')
 userRouter.get('/tasks', authenticateUser, autherizer.execute(['view_task']), backlogControllerInterface.getTasks);
 userRouter.get('/tasks/kanban', authenticateUser, autherizer.execute(['view_task']), backlogControllerInterface.getTasks);
 userRouter.get('/task-history', authenticateUser, autherizer.execute(['view_task']), backlogControllerInterface.taskHistory);
-// userRouter.patch('/control-user', authenticateUser, validateBody(controlSchema), teamInterface.restrictUser);
+userRouter.patch('/control-user', authenticateUser, validateBody(controlSchema), teamInterface.updateUserRole);
 
 userRouter.get('/get-users', authenticateUser, autherizer.execute(['assign_role']), teamInterface.getCompanyUsers);
 userRouter.get('/team', authenticateUser, teamInterface.getTeam);

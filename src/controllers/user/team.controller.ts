@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { IGetCompanyUsers, IGetTeamMembers, IRestrictUser } from "../../config/Dependency/user/team.di";
+import { IGetCompanyUsers, IGetTeamMembers, IUpdateUserRoleAndStatus } from "../../config/Dependency/user/team.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { ITeamController } from "../../interfaces/user/team.controller.interface";
@@ -11,21 +11,16 @@ export class TeamController implements ITeamController {
     constructor(
         private getTeammembersUsecase: IGetTeamMembers,
         private getCompanyUsersUsecase: IGetCompanyUsers,
-        private restrictUserUsecase: IRestrictUser
+        private updateUserRoleUsecase: IUpdateUserRoleAndStatus
     ) { }
 
 
-    restrictUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    updateUserRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         try {
 
             const userId = req.body.userId;
-
-            let status!: boolean | null;
-            if (req.body.status === 'true') { status = true }
-            else if (req.body.status === 'false') { status = false }
-            else { status = null }
-
+            const status = req.body.blockedStatus;
             const userRole = req.body.userRole;
 
             if (userId === req.user.id) {
@@ -33,7 +28,7 @@ export class TeamController implements ITeamController {
                 return;
             }
 
-            const result = await this.restrictUserUsecase.execute(userId, status, userRole);
+            const result = await this.updateUserRoleUsecase.execute(userId, userRole, status);
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
 

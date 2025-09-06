@@ -4,6 +4,7 @@ export const PERMISSIONS = [
 
     "create_task",
     "view_task",
+    "view_all_task",
     "edit_task",
     "delete_task",
     "assign_task",
@@ -43,7 +44,7 @@ export interface Roles extends Document {
     companyId: ObjectId;
     name: string;
     description: string;
-    permissions: Array<string>;
+    permissions: Array<Permissions>;
     createdAt?: Date;
     updatedAt?: Date;
 }

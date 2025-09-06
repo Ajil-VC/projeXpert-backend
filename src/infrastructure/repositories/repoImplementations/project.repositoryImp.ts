@@ -33,10 +33,16 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
     }
 
 
-    async projectStats(projectId: string, userId: string, userRole: "admin" | "user"): Promise<Task[]> {
+    async projectStats(projectId: string, userId: string, userRole: "admin" | "user", companyId: string): Promise<Task[]> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
         const userIdOb = new mongoose.Types.ObjectId(userId);
+        const companyOb = new mongoose.Types.ObjectId(companyId);
+
+        const project = await projectModel.findOne({ _id: projectIdOb, companyId: companyOb });
+        if (!project) {
+            throw new Error('Project not found.');
+        }
 
         const query: any = { projectId: projectIdOb };
         if (userRole === 'user') {
@@ -253,7 +259,7 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
     async avgProjectsOnPlans(): Promise<any> {
 
 
-    
+
         // throw new Error("Couldnt find out  the data.");
     }
 }
