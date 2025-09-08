@@ -1,3 +1,4 @@
+import { Permissions } from "../../infrastructure/database/models/role.interface";
 import { Sprint } from "../../infrastructure/database/models/sprint.interface";
 import { Task } from "../../infrastructure/database/models/task.interface";
 
@@ -8,7 +9,7 @@ export interface IBacklogRepository {
 
     createEpic(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task | null>;
 
-    getTasks(projectId: string, userRole: string, userId: string, isKanban?: boolean): Promise<any>;
+    getTasks(projectId: string, permissions: Array<Permissions>, userId: string, isKanban?: boolean): Promise<any>;
 
     removeTask(taskId: string): Promise<boolean>;
 

@@ -59,7 +59,37 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
         stack: err.stack,
         status: err.status || 500,
     });
-    res.status(500).json({ message: 'Something went wrong' });
+
+    if (err.name === "ValidationError") {
+        res.status(400).json({
+            status: false,
+            message: "Validation failed",
+        });
+        return;
+    }
+
+    if (err.code === 11000) {
+        res.status(409).json({
+            status: false,
+            message: "Duplication error",
+        });
+        return;
+    }
+
+    if (err.name === "BSONError") {
+        res.status(400).json({ status: false, message: "Please re ensure the operation, something is wrong." });
+        return;
+    }
+
+    if (err.name === "CastError") {
+        res.status(400).json({
+            status: false,
+            message: "Invalid ID format"
+        });
+        return;
+    }
+
+    res.status(500).json({ message: err.message });
 });
 
 server.listen(config.PORT, () => {

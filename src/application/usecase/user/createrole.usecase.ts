@@ -1,15 +1,15 @@
 import { ICreateRole } from "../../../config/Dependency/user/user.di";
-import { IUserRepository } from "../../../domain/repositories/user.repo";
+import { IRoleRepository } from "../../../domain/repositories/role.repo";
 import { Permissions, Roles } from "../../../infrastructure/database/models/role.interface";
 
 
 export class CreateRoleUsecase implements ICreateRole {
-    constructor(private userRepo: IUserRepository) { }
+    constructor(private roleRepo: IRoleRepository) { }
 
 
     async execute(roleName: string, permissions: Array<Permissions>, description: string, companyId: string): Promise<Roles> {
 
-        const newRole = await this.userRepo.createRole(roleName, permissions, description, companyId);
+        const newRole = await this.roleRepo.createRole(roleName, permissions, description, companyId);
         return newRole;
     }
 }

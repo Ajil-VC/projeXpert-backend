@@ -4,10 +4,6 @@ import { Attachment, User } from "../../infrastructure/database/models/user.inte
 
 export interface IUserRepository {
 
-    getRoles(companyId: string): Promise<Array<Roles>>;
-
-    createRole(roleName: string, permissions: Array<Permissions>, description: string, companyId: string): Promise<Roles>;
-
     updateUserProfile(file: Attachment | null, userId: string, name: string): Promise<User>;
 
     changeUserStatus(userId: string, status: boolean): Promise<any>;

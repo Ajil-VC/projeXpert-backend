@@ -136,14 +136,14 @@ export class ProjectController implements IProjectController {
 
             const projectId = req.query.project_id;
             const workspaceId = req.query.workspace_id;
-            console.log('Yeeeess workingnnnn......................')
+
             if (typeof projectId !== 'string' || typeof workspaceId !== 'string') {
                 throw new Error('project id or workspace id is not valid string');
             }
 
             const result = await this.getCurrentProjectUsecase.execute(workspaceId, projectId);
 
-            const tasks = await this.getTasksUsecase.execute(projectId, req.user.role, req.user.id);
+            const tasks = await this.getTasksUsecase.execute(projectId, req.user.role.permissions, req.user.id);
 
             res.status(HttpStatusCode.OK).json({ status: true, result, tasks });
             return;
@@ -158,7 +158,6 @@ export class ProjectController implements IProjectController {
         try {
 
             const projectId = req.query.project_id;
-            console.log('\n\n\n\n\n\n\n\n\n\n\n\n\nAjil hahahaha \n\n\n\n\n\n\n\n\n\n\n\n\n\n')
             if (typeof projectId !== 'string') {
                 throw new Error('project id is not valid string');
             }

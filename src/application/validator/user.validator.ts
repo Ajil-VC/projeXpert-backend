@@ -149,3 +149,25 @@ export const roleSchema = yup.object({
     ).min(1, 'Atleast 1 permission needed.'),
     description: yup.string().optional()
 });
+
+export const roleEditSchema = yup.object({
+    formData: yup.object({
+        roleName: yup
+            .string()
+            .trim()
+            .required("Role name is required")
+            .min(3, "Role name must be at least 3 characters"),
+        permissions: yup
+            .array()
+            .of(yup.string().required())
+            .min(1, "At least one permission is required"),
+        description: yup
+            .string()
+            .trim()
+            .optional()
+    }),
+    roleId: yup
+        .string()
+        .required("Role ID is required")
+        .matches(/^[0-9a-fA-F]{24}$/, "Role ID must be a valid ObjectId")
+});

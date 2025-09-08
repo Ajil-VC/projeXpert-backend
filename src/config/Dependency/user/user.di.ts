@@ -13,3 +13,15 @@ export interface ICreateRole {
 export interface IGetRoles {
     execute(companyId: string): Promise<Array<Roles>>;
 }
+
+export interface IDeleteRole {
+    execute(roleId: string): Promise<boolean>;
+}
+
+export interface IGetRoleWithId {
+    execute(roleId: string): Promise<Roles>;
+}
+
+export interface IUpdateRole {
+    execute(roleName: string, permissions: Array<Permissions>, description: string, roleId: string): Promise<Roles>;
+}

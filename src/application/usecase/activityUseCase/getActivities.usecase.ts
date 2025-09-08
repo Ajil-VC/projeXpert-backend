@@ -9,7 +9,7 @@ export class GetActivities implements IGetActivity {
     constructor(private activityRepo: IActivityRepository) { }
 
     async execute(companyId: string, projectId: string): Promise<Activity[]> {
-
+        
         const result = await this.activityRepo.getActivities(companyId, projectId);
         return result;
     }

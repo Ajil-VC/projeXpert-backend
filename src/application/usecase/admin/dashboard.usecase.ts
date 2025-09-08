@@ -47,7 +47,7 @@ export class GetDashboardDataUsecase implements IGetDashBoard {
                 color: 'blue'
             },
             {
-                count: `₹${monthAvg}`,
+                count: `₹${Number.isNaN(monthAvg) ? 0 : monthAvg}`,
                 label: 'Monthly Average',
                 sublabel: `₹${lastMonth.totalAmount} from last month`,
                 icon: 'fa-calendar-check',

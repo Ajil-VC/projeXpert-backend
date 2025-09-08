@@ -6,6 +6,7 @@ import { Team } from "../../database/models/team.interface";
 import SprintModel from "../../database/sprint.models";
 import { Sprint } from "../../database/models/sprint.interface";
 import taskHistoryModel from "../../database/taskhistory.models";
+import { Permissions } from "../../database/models/role.interface";
 
 
 export class BacklogRepositoryImp implements IBacklogRepository {
@@ -325,16 +326,16 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async getTasks(projectId: string, userRole: string, userId: string, isKanban = false): Promise<any> {
+    async getTasks(projectId: string, permissions: Array<Permissions>, userId: string, isKanban = false): Promise<any> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
         const userIdOb = new mongoose.Types.ObjectId(userId);
 
-
         if (!isKanban) {
 
             let query: any = { projectId: projectIdOb, type: { $ne: 'subtask' } };
-            if (userRole === 'user') {
+            console.log("Here is the problem lies.",permissions)
+            if (!permissions.includes('view_all_task')) {
                 query.assignedTo = userIdOb;
             }
 
@@ -347,7 +348,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
 
         } else if (isKanban) {
 
-            if (userRole === 'admin') {
+            if (permissions.includes('view_all_task')) {
                 const tasks = await taskModel.find({
                     projectId: projectIdOb,
                     sprintId: { $ne: null }

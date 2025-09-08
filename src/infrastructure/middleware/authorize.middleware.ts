@@ -7,11 +7,30 @@ export class AuthorizeMiddleware {
 
     constructor() { }
 
-    execute = (requiredPermissions: Permissions[]) => {
+    has = (requiredPermissions: Permissions[]) => {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const userPermissions = req.user.role.permissions;
+                console.log(userPermissions)
                 const hasAccess = requiredPermissions.every(permission => userPermissions.includes(permission));
+
+                if (!hasAccess) {
+                    res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: 'User doesnt have permission to make this operation.' });
+                    return;
+                }
+                next();
+
+            } catch (err) {
+                next(err);
+            }
+        };
+    };
+
+    hasAny = (requiredPermissions: Permissions[]) => {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                const userPermissions = req.user.role.permissions;
+                const hasAccess = requiredPermissions.some(permission => userPermissions.includes(permission));
 
                 if (!hasAccess) {
                     res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: 'User doesnt have permission to make this operation.' });

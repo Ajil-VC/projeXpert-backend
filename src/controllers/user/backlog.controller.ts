@@ -17,6 +17,7 @@ import { IBacklogController } from "../../interfaces/user/backlog.controller.int
 import { IAddActivity } from "../../config/Dependency/user/activity.di";
 import { IGetTaskHistory, ITaskHistoryUsecase } from "../../config/Dependency/user/taskhistory.di";
 import { Team } from "../../infrastructure/database/models/team.interface";
+import { Permissions } from "../../infrastructure/database/models/role.interface";
 
 export class BacklogController implements IBacklogController {
 
@@ -82,15 +83,16 @@ export class BacklogController implements IBacklogController {
             const result = await this.removeTaskUsecase.execute(taskId);
 
             this.addTaskHistory.execute(
-                task.parentId as unknown as string, req.user.id,
-                'DELETE_SUBTASK',
-                undefined,
-                undefined,
-                undefined,
-                task._id as unknown as string,
-                task.title,
-                task.assignedTo as unknown as string
+                {
+                    taskId: task.parentId as unknown as string,
+                    updatedBy: req.user.id,
+                    actionType: 'DELETE_SUBTASK',
+                    subtaskId: task._id as unknown as string,
+                    subtaskTitle: task.title,
+                    assignedTo: task.assignedTo as unknown as string
+                }
             )
+
 
             if (!result) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false });
@@ -128,16 +130,15 @@ export class BacklogController implements IBacklogController {
             const { title, parentId, projectId } = req.body;
             const type = 'subtask';
             const result = await this.createSubtaskUsecase.execute(title, type, parentId, projectId);
-
+            console.log(result)
             await this.addTaskHistory.execute(
-                result.parentId as unknown as string,
-                req.user.id,
-                'CREATE_SUBTASK',
-                undefined,
-                undefined,
-                undefined,
-                result._id as unknown as string,
-                result.title,
+                {
+                    taskId: result.parentId as unknown as string,
+                    updatedBy: req.user.id,
+                    actionType: 'CREATE_SUBTASK',
+                    subtaskTitle: result.title,
+                    subtaskId: result._id as unknown as string
+                }
             );
 
             res.status(HttpStatusCode.CREATED).json({ status: true, result });
@@ -227,14 +228,14 @@ export class BacklogController implements IBacklogController {
         try {
             const projectId = req.params.projectId;
             if (typeof projectId !== 'string') throw new Error('Project id is not valid string');
-            const userRole = req.user.role;
+            const permissions = req.user.role.permissions as Array<Permissions>;
             const userId = req.user.id;
             //THIs controller is for returning all the sprints in the project.
 
             //In this section  im sending the active and completed sprint data.
             const isKanbanRequest = req.path.startsWith('/sprints/kanban');
 
-            const result = await this.getSprintsUsecase.execute(projectId, userRole, userId, isKanbanRequest);
+            const result = await this.getSprintsUsecase.execute(projectId, permissions, userId, isKanbanRequest);
 
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
@@ -254,7 +255,7 @@ export class BacklogController implements IBacklogController {
 
             //Using this variable to retrieve all the assigned tasks to send to kanban
             const isKanbanRequest = req.path.startsWith('/tasks/kanban');
-            const result = await this.getTasksUsecase.execute(projectId, req.user.role, req.user.id, isKanbanRequest);
+            const result = await this.getTasksUsecase.execute(projectId, req.user.role.permissions, req.user.id, isKanbanRequest);
 
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
@@ -282,7 +283,12 @@ export class BacklogController implements IBacklogController {
 
                 await Promise.all([
                     this.addActivityUsecase.execute(result.projectId, req.user.companyId, req.user.id, 'changed assignee to', result?.assignedTo?.email || null),
-                    this.addTaskHistory.execute(issueId, req.user.id, 'ASSIGN', assigneeId)
+                    this.addTaskHistory.execute({
+                        taskId: issueId,
+                        updatedBy: req.user.id,
+                        actionType: 'ASSIGN',
+                        assignedTo: assigneeId
+                    })
                 ]);
             }
 
@@ -317,7 +323,7 @@ export class BacklogController implements IBacklogController {
             }
 
             const result = await this.dragDropUsecase.execute(prevContainerId, containerId, movedTaskId);
-            console.log(result, 'result.');
+
             await this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `moved ${result.title} to`, containerId);
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
 
@@ -346,7 +352,11 @@ export class BacklogController implements IBacklogController {
             const result = await this.updateTaskDetailsUse.execute(taskData, assigneeId, files);
             await Promise.all([
                 this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `updated`, taskData.title),
-                this.addTaskHistory.execute(taskData._id, req.user.id, 'UPDATED')
+                this.addTaskHistory.execute({
+                    taskId: taskData._id,
+                    updatedBy: req.user.id,
+                    actionType: 'UPDATED'
+                })
             ]);
 
 
@@ -409,13 +419,19 @@ export class BacklogController implements IBacklogController {
             if (taskAndPermission.task.status !== status) {
                 await Promise.all([
                     this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `updated ${result.title} status to`, status),
-                    this.addTaskHistory.execute(taskId, req.user.id, "STATUS_CHANGE", undefined, taskAndPermission.task.status, status)
+                    this.addTaskHistory.execute({
+                        taskId: taskId,
+                        updatedBy: req.user.id,
+                        actionType: "STATUS_CHANGE",
+                        oldStatus: taskAndPermission.task.status,
+                        newStatus: status
+                    })
                 ])
             }
             if (result.epicId) {
                 const epicId = typeof result.epicId === 'string' ? result.epicId : result.epicId?.toString();
                 const updateEpicProgress = await this.epicProgress.execute(epicId);
-            }
+            }   
 
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
             return;

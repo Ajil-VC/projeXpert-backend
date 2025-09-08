@@ -6,6 +6,7 @@ import { Team } from "../../database/models/team.interface";
 import taskModel from "../../database/task.models";
 import userModel from "../../database/user.models";
 import { BaseRepository } from "../base.repository";
+import RolesModel from "../../database/roles.model";
 
 
 export class TeamRepositoryImp implements ITeamRepository {
@@ -50,6 +51,8 @@ export class TeamRepositoryImp implements ITeamRepository {
 
         const companyIdOb = new mongoose.Types.ObjectId(companyId);
 
+        const ownerRole = await RolesModel.findOne({ companyId: companyIdOb, canMutate: false });
+
         let totalPages: number = 0;
         let users;
         if (!pageNum) {
@@ -60,16 +63,25 @@ export class TeamRepositoryImp implements ITeamRepository {
             const query: {
                 companyId: any,
                 _id: any,
-                role?: string,
+                role?: any,
+                $and?: any,
                 isBlocked?: boolean,
                 $or?: any
             } = {
                 companyId: companyIdOb,
                 _id: { $nin: [userIdOb] }
             };
+            if (role && role !== ownerRole._id.toString()) {
 
-            if (role) {
-                query.role = role;
+                query.$and =
+                    [
+                        { role: { $nin: [ownerRole._id] } },
+                        { role: { $in: [new mongoose.Types.ObjectId(role)] } }
+                    ]
+                    ;
+            } else {
+
+                query.role = { $nin: [ownerRole._id] }
             }
             if (status !== null) {
                 query.isBlocked = status;

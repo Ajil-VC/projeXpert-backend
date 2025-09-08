@@ -16,10 +16,10 @@ export class ActivityController implements IActivityController {
     getActivity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         try {
-            
-            const projectId = req.query.projectId;
+
+            const projectId = req.query.projectId === 'null' ? null : req.query.projectId;
             if (typeof projectId !== 'string') {
-                res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: "Couldnt retrieve activities." });
+                res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: "Activities not available." });
                 return;
             }
 

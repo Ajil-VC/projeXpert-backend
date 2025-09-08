@@ -18,12 +18,12 @@ export class EpicProgressUsecase implements IEpicProgress {
             }
             return acc;
         }, 0)
-
         const completionPercentage = totalTasks > 0
             ? (completedTaskCount / totalTasks) * 100
             : 0;
 
-  
+
+
         const updatedTask = await this.taskRepo.updateEpicProgress(epicId, Math.floor(completionPercentage));
 
         return updatedTask;

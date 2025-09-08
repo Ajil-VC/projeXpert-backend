@@ -13,8 +13,8 @@ export class UserMapper {
             profilePicUrl: user.profilePicUrl,
             role: user.role as unknown as Roles,
             companyId: user.companyId?.toString(),
-            workspaceIds: user.workspaceIds.map(ele => ele.toString()),
-            defaultWorkspace: user.defaultWorkspace.toString(),
+            workspaceIds: user.workspaceIds.map(ele => ele !== null ? ele.toString() : ''),
+            defaultWorkspace: user.defaultWorkspace !== null ? user.defaultWorkspace.toString() : '',
             lastActiveProjectId: user.lastActiveProjectId ? user.lastActiveProjectId.toString() : null,
             forceChangePassword: user.forceChangePassword,
 

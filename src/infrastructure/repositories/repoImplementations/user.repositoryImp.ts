@@ -10,37 +10,6 @@ import RolesModel from "../../database/roles.model";
 export class userRepositoryImp implements IUserRepository {
 
 
-    async getRoles(companyId: string): Promise<Array<Roles>> {
-
-        const companyOb = new mongoose.Types.ObjectId(companyId);
-        const roles = await RolesModel.find({ companyId: companyOb });
-        if (!roles) {
-
-            throw new Error("Couldnt retrieve the roles.");
-        }
-
-        return roles;
-    }
-
-    async createRole(roleName: string, permissions: Array<string>, description: string, companyId: string): Promise<Roles> {
-
-        const companyOb = new mongoose.Types.ObjectId(companyId);
-        const newRole = new RolesModel({
-            name: roleName,
-            permissions,
-            description,
-            companyId: companyOb
-        });
-
-        const createdRole = await newRole.save();
-        if (!createdRole) {
-            throw new Error("Couldnt create new role.");
-        }
-
-        return createdRole;
-    }
-
-
     async updateUserProfile(file: Attachment | null, userId: string, name: string): Promise<User> {
 
         const userIdOb = new mongoose.Types.ObjectId(userId);
@@ -164,6 +133,7 @@ export class userRepositoryImp implements IUserRepository {
         });
 
         const userData = await newUser.save();
+        await userData.populate("role");
         if (!userData) return null;
         return userData;
 

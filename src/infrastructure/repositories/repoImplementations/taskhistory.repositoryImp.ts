@@ -3,6 +3,7 @@ import { ITaskHistoryRepository } from "../../../domain/repositories/taskhistory
 import taskHistoryModel from "../../database/taskhistory.models";
 import { TaskAction } from "../../../domain/entities/types/task.types";
 import { TaskHistory } from "../../database/models/taskhistory.interface";
+import { TaskHistoryParams } from "../../../domain/entities/types/taskHistoryParams";
 
 
 export class TaskHistoryRepositoryImp implements ITaskHistoryRepository {
@@ -25,16 +26,19 @@ export class TaskHistoryRepositoryImp implements ITaskHistoryRepository {
         return history;
     }
 
-    async addHistory(
-        taskId: string,
-        updatedBy: string,
-        actionType: TaskAction,
-        assignedTo?: string,
-        oldStatus?: string,
-        newStatus?: string,
-        subtaskId?: string,
-        subtaskTitle?: string,
-        subtaskAssignee?: string): Promise<void> {
+    async addHistory(params: TaskHistoryParams): Promise<void> {
+
+        const {
+            taskId,
+            updatedBy,
+            actionType,
+            assignedTo,
+            oldStatus,
+            newStatus,
+            subtaskId,
+            subtaskTitle,
+            subtaskAssignee
+        } = params;
 
         const taskOb = new mongoose.Types.ObjectId(taskId);
         const updatedByOb = new mongoose.Types.ObjectId(updatedBy);
@@ -92,7 +96,7 @@ export class TaskHistoryRepositoryImp implements ITaskHistoryRepository {
             if (subtaskAssignee) {
                 subtaskAssigneeOb = new mongoose.Types.ObjectId(subtaskAssignee);
             }
-
+            modelObject.details.subtaskTitle = subtaskTitle;
             modelObject.details.subtaskId = subTaskIdOb;
             modelObject.details.subtaskAssignee = subtaskAssigneeOb;
         }

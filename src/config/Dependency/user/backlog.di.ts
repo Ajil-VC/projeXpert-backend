@@ -2,6 +2,7 @@
 import { Task } from "../../../infrastructure/database/models/task.interface";
 import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
 import { TaskResponseDetailedDTO } from "../../../dtos/task/taskResponseDTO";
+import { Permissions } from "../../../infrastructure/database/models/role.interface";
 
 
 export interface ICreateEpic {
@@ -33,11 +34,11 @@ export interface ICreateSprint {
 }
 
 export interface IGetSprint {
-    execute(projectId: string, userRole: string, userId: string, kanban: boolean): Promise<any>
+    execute(projectId: string, permissions: Array<Permissions>, userId: string, kanban: boolean): Promise<any>
 }
 
 export interface IGetTasks {
-    execute(projectId: string, userRole: string, userId: string, isKanban?: boolean): Promise<any>;
+    execute(projectId: string, permissions: Array<Permissions>, userId: string, isKanban?: boolean): Promise<any>;
 }
 
 export interface IAssignIssue {

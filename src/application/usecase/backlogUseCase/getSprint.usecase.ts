@@ -1,4 +1,6 @@
 import { IGetSprint } from "../../../config/Dependency/user/backlog.di";
+import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
+import { Permissions } from "../../../infrastructure/database/models/role.interface";
 import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
@@ -6,17 +8,18 @@ import { Task } from "../../../infrastructure/database/models/task.interface";
 
 export class GetSprintsUseCase implements IGetSprint {
 
-    constructor(private backlogRepository: any) { }
+    constructor(private backlogRepository: IBacklogRepository) { }
 
-    async execute(projectId: string, userRole: string, userId: string, kanban: boolean = false): Promise<any> {
+    async execute(projectId: string, permissions: Array<Permissions>, userId: string, kanban: boolean = false): Promise<any> {
 
         const result = await this.backlogRepository.getSprints(projectId);
         if (!result) throw new Error('Error while getting sprints');
 
+        const canViewAll: boolean = permissions.includes('view_all_task');
 
         const startedSprints = (result as Array<Sprint>).filter(sprint => {
 
-            if (userRole === 'admin') {
+            if (canViewAll) {
                 if (kanban) {
 
                     return sprint.status === 'active';

@@ -7,6 +7,7 @@ import { useCaseResult } from "../../shared/useCaseResult";
 import { Company } from "../../../infrastructure/database/models/company.interface";
 import { IRegister } from "../../../config/Dependency/auth/auth.di";
 import { ORG_PERMISSIONS, Permissions, PERMISSIONS } from "../../../infrastructure/database/models/role.interface";
+import { IRoleRepository } from "../../../domain/repositories/role.repo";
 
 
 export class RegisterUseCase implements IRegister {
@@ -14,7 +15,8 @@ export class RegisterUseCase implements IRegister {
     constructor(
         private securePassword: ISecurePassword,
         private userRepo: IUserRepository,
-        private companyRepo: ICompanyRepository
+        private companyRepo: ICompanyRepository,
+        private roleRepo: IRoleRepository
     ) { }
 
     async execute(email: string, companyName: string, passWord: string): Promise<useCaseResult> {
@@ -35,13 +37,13 @@ export class RegisterUseCase implements IRegister {
 
 
             const [ownerRole, adminRole, developerRole] = await Promise.all([
-                this.userRepo.createRole('Owner',
-                    PERMISSIONS as unknown as Permissions[], '', companyIdStatus.additional),
+                this.roleRepo.createRole('Owner',
+                    PERMISSIONS as unknown as Permissions[], '', companyIdStatus.additional, false),
 
-                this.userRepo.createRole('Admin',
+                this.roleRepo.createRole('Admin',
                     (PERMISSIONS as unknown as Permissions[]).filter(p => !ORG_PERMISSIONS.includes(p)), '', companyIdStatus.additional),
 
-                this.userRepo.createRole('Developer',
+                this.roleRepo.createRole('Developer',
                     [
                         "view_task", "edit_task", "assign_task", "comment_task",
                     ], '', companyIdStatus.additional)

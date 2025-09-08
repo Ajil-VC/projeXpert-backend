@@ -45,6 +45,7 @@ export interface Roles extends Document {
     name: string;
     description: string;
     permissions: Array<Permissions>;
+    canMutate: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
