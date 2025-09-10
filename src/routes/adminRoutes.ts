@@ -28,7 +28,7 @@ adminRouter.get('/dashboard', authenticatePlatformAdmin, adminInitInterface.dash
 adminRouter.put('/change-user-status', authenticatePlatformAdmin, validateBody(changeUserStatusSchema), companyMangementInterface.changeUserStatus);
 adminRouter.put('/change-company-status', authenticatePlatformAdmin, validateBody(changeCompanyStatusSchema), companyMangementInterface.changeCompanyStatus);
 adminRouter.get('/notifications', authenticatePlatformAdmin, userInitInterface.getNotifications);
-adminRouter.put('/update-profile', authenticatePlatformAdmin, upload.any(), userControllerInterface.updateProfile);
+adminRouter.put('/profile', authenticatePlatformAdmin, upload.any(), userControllerInterface.updateProfile);
 
 adminRouter.route('/plans')
     .post(authenticatePlatformAdmin, validateBody(createPlanSchema), stripeAdminInterface.createPlan)

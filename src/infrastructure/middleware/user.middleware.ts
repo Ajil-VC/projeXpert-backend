@@ -4,6 +4,7 @@ import { config } from "../../config/config";
 import { isCompanyBlocked } from "../../routes/dependency/auth.inter";
 import { Company } from "../database/models/company.interface";
 import { isUserBlocked } from "../../routes/dependency/auth.inter";
+import { Roles } from "../database/models/role.interface";
 
 
 
@@ -70,6 +71,8 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
             res.status(403).json({ status: false, message: 'User account is blocked.' });
             return;
         }
+
+        req.user.role.permissions = (userData.role as unknown as Roles).permissions;
         console.log('Authentication: ', req.user)
         next();
 

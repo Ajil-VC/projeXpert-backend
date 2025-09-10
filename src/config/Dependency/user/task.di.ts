@@ -1,4 +1,5 @@
 
+import { Permissions } from "../../../infrastructure/database/models/role.interface";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
@@ -31,5 +32,5 @@ export interface IGetTask {
 }
 
 export interface ICanChangeStatus {
-    execute(taskId: string): Promise<{ task: Task, canChange: boolean }>;
+    execute(taskId: string, userId: string, permissions: Array<Permissions>): Promise<{ task: Task, canChange: boolean, notAssignee?: boolean }>;
 }

@@ -118,8 +118,8 @@ userRouter.get('/sprints/kanban/:projectId', authenticateUser,
 userRouter.route('/comments')
     .get(authenticateUser, autherizer.hasAny(['view_task', 'view_all_task', 'comment_task']), backlogControllerInterface.getComments)
     .post(authenticateUser, autherizer.has(['comment_task']), backlogControllerInterface.addComment);
-userRouter.get('/tasks', authenticateUser, autherizer.hasAny(['view_task', 'view_all_task']), backlogControllerInterface.getTasks);
-userRouter.get('/tasks/kanban', authenticateUser, autherizer.hasAny(['view_task', 'view_all_task']), backlogControllerInterface.getTasks);
+userRouter.get('/tasks', authenticateUser, autherizer.hasAny(['view_task', 'view_all_task', 'view_sprint']), backlogControllerInterface.getTasks);
+userRouter.get('/tasks/kanban', authenticateUser, autherizer.hasAny(['view_task', 'view_all_task', 'view_sprint']), backlogControllerInterface.getTasks);
 userRouter.get('/task-history', authenticateUser, autherizer.hasAny(['view_task', 'view_all_task']), backlogControllerInterface.taskHistory);
 userRouter.patch('/control-user', authenticateUser, autherizer.has(['assign_role']), validateBody(controlSchema), teamInterface.updateUserRole);
 

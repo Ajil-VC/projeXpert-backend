@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { ISubscriptionPlanRepository } from "../../../domain/repositories/adminRepo/subscriptionplan.repo";
 import { Subscription } from "../../database/models/subscription.interface";
 import subscriptionModel from "../../database/subscription.models";
+import companySubscriptionModel from "../../database/companySubscription.model";
 
 export class SubscriptionPlanImp implements ISubscriptionPlanRepository {
 
@@ -35,6 +36,10 @@ export class SubscriptionPlanImp implements ISubscriptionPlanRepository {
     async deletePlan(planId: string): Promise<boolean> {
 
         const planOb = new mongoose.Types.ObjectId(planId);
+        const isUsed = await companySubscriptionModel.findOne({ plan: planOb });
+        if (isUsed) {
+            throw new Error('Plan is already used by companies! Cant be deleted.');
+        }
         const result = await subscriptionModel.deleteOne({ _id: planOb });
 
         if (!result.acknowledged) {

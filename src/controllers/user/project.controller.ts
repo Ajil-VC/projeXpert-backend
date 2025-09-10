@@ -177,6 +177,7 @@ export class ProjectController implements IProjectController {
         try {
 
             const { email, projectId, workSpaceId, roleId } = req.body;
+
             const updatedProjectData = await this.addMemberUsecase.execute(email, projectId, workSpaceId, req.user.companyId, roleId);
             await this.addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'Added', email);
 

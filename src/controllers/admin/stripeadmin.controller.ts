@@ -38,7 +38,7 @@ export class StripeAdminController implements IStripeAdminController {
             const planId = req.query.plan_id;
             if (typeof planId !== 'string') throw new Error('Plan Id should be a string');
             await this.deletePlanCase.execute(planId);
-            res.status(HttpStatusCode.NO_CONTENT);
+            res.status(HttpStatusCode.OK).json({ status: true, message: 'Plan deleted successfully' });
             return;
         } catch (err) {
             next(err);

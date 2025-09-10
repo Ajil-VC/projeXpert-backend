@@ -11,7 +11,7 @@ export class AuthorizeMiddleware {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const userPermissions = req.user.role.permissions;
-                console.log(userPermissions)
+
                 const hasAccess = requiredPermissions.every(permission => userPermissions.includes(permission));
 
                 if (!hasAccess) {

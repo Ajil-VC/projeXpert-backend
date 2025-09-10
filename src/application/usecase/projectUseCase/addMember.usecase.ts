@@ -5,6 +5,7 @@ import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { Project } from "../../../infrastructure/database/models/project.interface";
 import { ISecurePassword } from "../../../domain/services/securepassword.interface";
 import { IAddMember } from "../../../config/Dependency/user/project.di";
+import { Company } from "../../../infrastructure/database/models/company.interface";
 
 export class AddMemberUseCase implements IAddMember {
 
@@ -18,8 +19,16 @@ export class AddMemberUseCase implements IAddMember {
     async execute(email: string, projectId: string, workSpaceId: string, companyId: string, roleId: string): Promise<Project | null> {
 
         const isUserExist = await this.userRepo.findByEmail(email);
+        if (isUserExist && ((isUserExist.companyId as Company)._id.toString() !== companyId)) {
+            throw new Error(`${isUserExist.email} is already linked to another company and can’t be added here.`);
+        }
+        if (!isUserExist && !roleId) {
+            throw new Error('Need a role while adding new user.');
+        }
         if (!isUserExist) {
-
+            if (roleId === 'existing-member') {
+                throw new Error('No user in that email. Add user by providing a role.');
+            }
             const otp = otpGenerator.generate(6, {
                 digits: true,
                 lowerCaseAlphabets: false,

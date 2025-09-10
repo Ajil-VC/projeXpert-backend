@@ -404,7 +404,13 @@ export class BacklogController implements IBacklogController {
             }
 
 
-            const taskAndPermission = await this.canChangeStatus.execute(taskId);
+            const taskAndPermission = await this.canChangeStatus.execute(taskId, req.user.id, req.user.role.permissions);
+
+            if (!taskAndPermission.canChange && taskAndPermission.notAssignee) {
+                res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: 'You are not the assignee of this task.' });
+                return;
+            }
+
             if (!taskAndPermission.canChange) {
                 res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'Task is not in active sprint! Status cannot be changed.' });
                 return;
@@ -431,7 +437,7 @@ export class BacklogController implements IBacklogController {
             if (result.epicId) {
                 const epicId = typeof result.epicId === 'string' ? result.epicId : result.epicId?.toString();
                 const updateEpicProgress = await this.epicProgress.execute(epicId);
-            }   
+            }
 
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
             return;

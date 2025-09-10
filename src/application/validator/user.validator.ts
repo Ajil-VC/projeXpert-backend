@@ -12,7 +12,7 @@ export const addMemberSchema = yup.object({
     email: yup.string().required('Email required.'),
     projectId: yup.string().required('Project Id required.'),
     workSpaceId: yup.string().required('Workspace Id required.'),
-    roleId: yup.string().required('Role Id required.')
+    roleId: yup.string().required('Role Id required.').nullable()
 })
 
 export const createEpicSchema = yup.object({
