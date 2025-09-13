@@ -16,9 +16,14 @@ export class BacklogRepositoryImp implements IBacklogRepository {
 
         const taskOb = new mongoose.Types.ObjectId(taskId);
         const result = await taskModel.findByIdAndDelete(taskOb);
+        if (!result) {
+            throw new Error("Task not found");
+        }
+        if (result.parentId) {
+            await taskModel.updateOne({ _id: result.parentId }, { $pull: { subtasks: result._id } });
+        }
         await taskHistoryModel.deleteMany({ taskId: taskOb });
-        if (result) return true;
-        return false;
+        return true;
 
     }
 
@@ -64,8 +69,9 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         });
 
         const createdTask = await newTask.save();
-
         if (!createdTask) throw new Error('Error occured while creating subtask');
+
+        await taskModel.updateOne({ _id: parentIdOb }, { $push: { subtasks: createdTask._id } });
 
         return createdTask;
 
@@ -334,7 +340,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         if (!isKanban) {
 
             let query: any = { projectId: projectIdOb, type: { $ne: 'subtask' } };
-            console.log("Here is the problem lies.",permissions)
+
             if (!permissions.includes('view_all_task')) {
                 query.assignedTo = userIdOb;
             }
@@ -342,7 +348,8 @@ export class BacklogRepositoryImp implements IBacklogRepository {
             const tasks = await taskModel.find(query)
                 .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
                 .populate({ path: 'sprintId' })
-                .populate({ path: 'epicId' });
+                .populate({ path: 'epicId' })
+                .populate({ path: 'subtasks' });
 
             return tasks;
 
@@ -363,7 +370,8 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                     })
                     .populate({
                         path: "epicId"
-                    });
+                    })
+                    .populate({ path: 'subtasks' });
 
                 const activeSprintTasks = tasks.filter(task => task.sprintId !== null);
                 return activeSprintTasks;
@@ -387,7 +395,8 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                         })
                         .populate({
                             path: "epicId"
-                        }),
+                        })
+                        .populate({ path: 'subtasks' }),
 
                     taskModel.find({
                         projectId: projectIdOb,
@@ -404,6 +413,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                         .populate({
                             path: "epicId"
                         })
+                        .populate({ path: 'subtasks' })
 
                 ]);
 

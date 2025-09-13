@@ -38,6 +38,7 @@ export interface Task extends Document {
     sprintId: ObjectId | Sprint;     // Logical grouping for sprints
     sprintNumber: Number; //Only for sprints
     parentId: ObjectId;     // for subtasks
+    subtasks: ObjectId[];
     projectId: ObjectId;
     createdAt: Date;
     updatedAt: Date;

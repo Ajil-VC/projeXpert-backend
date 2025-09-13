@@ -26,6 +26,7 @@ const TaskSchema = new Schema<Task>({
 
     sprintId: { type: Schema.Types.ObjectId, default: null, ref: 'Sprint' },
     parentId: { type: Schema.Types.ObjectId, ref: 'Task' },
+    subtasks: { type: [Schema.Types.ObjectId], ref: 'Task', default: [] },
     projectId: { type: Schema.Types.ObjectId, ref: 'Project' },
 
     attachments: {

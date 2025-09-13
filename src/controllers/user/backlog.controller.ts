@@ -130,7 +130,7 @@ export class BacklogController implements IBacklogController {
             const { title, parentId, projectId } = req.body;
             const type = 'subtask';
             const result = await this.createSubtaskUsecase.execute(title, type, parentId, projectId);
-            console.log(result)
+
             await this.addTaskHistory.execute(
                 {
                     taskId: result.parentId as unknown as string,
