@@ -1,12 +1,12 @@
-import { ISubscriptionPlan } from "../../../config/Dependency/admin/subscriptionplan.di";
+import { ISubscriptionPlanUsecase } from "../../../config/Dependency/admin/subscriptionplan.di";
 import { ISubscriptionPlanRepository } from "../../../domain/repositories/adminRepo/subscriptionplan.repo";
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
 
-export class CreatePlanUseCase implements ISubscriptionPlan {
+export class CreatePlanUseCase implements ISubscriptionPlanUsecase {
 
-    constructor(private subscriptionRepo: ISubscriptionPlanRepository) { }
+    constructor(private _subscriptionRepo: ISubscriptionPlanRepository) { }
 
     async execute(
         name: string,
@@ -21,7 +21,7 @@ export class CreatePlanUseCase implements ISubscriptionPlan {
         videoCall: boolean
     ): Promise<Subscription> {
 
-        const newPlan = await this.subscriptionRepo.saveNewPlan(
+        const newPlan = await this._subscriptionRepo.saveNewPlan(
             name,
             description,
             stripeProductId,

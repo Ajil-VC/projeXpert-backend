@@ -1,14 +1,14 @@
-import { IRemoveTask } from "../../../config/Dependency/user/backlog.di";
+import { IRemoveTaskUsecase } from "../../../config/Dependency/user/backlog.di";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 
 
-export class RemoveTaskUsecase implements IRemoveTask {
+export class RemoveTaskUsecase implements IRemoveTaskUsecase {
 
-    constructor(private backlogRepo: IBacklogRepository) { }
+    constructor(private _backlogRepo: IBacklogRepository) { }
 
     async execute(taskId: string): Promise<boolean> {
 
-        const result = await this.backlogRepo.removeTask(taskId);
+        const result = await this._backlogRepo.removeTask(taskId);
         return result;
     }
 

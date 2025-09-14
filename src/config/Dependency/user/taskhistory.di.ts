@@ -11,6 +11,6 @@ export interface ITaskHistoryUsecase {
 }
 
 
-export interface IGetTaskHistory {
+export interface IGetTaskHistoryUsecase {
     execute(taskId: string): Promise<TaskHistory[]>;
 }

@@ -4,7 +4,7 @@ import { Subscription } from "../../../infrastructure/database/models/subscripti
 
 
 
-export interface ISubscriptionPlan {
+export interface ISubscriptionPlanUsecase {
     execute(
         name: string,
         description: string,
@@ -20,14 +20,14 @@ export interface ISubscriptionPlan {
 }
 
 
-export interface IGetPlan {
+export interface IGetPlanUsecase {
     execute(limit: number, skip: number, searchTerm: string): Promise<any>;
 }
 
-export interface IDeletePlan {
+export interface IDeletePlanUsecase {
     execute(planId: string): Promise<any>;
 }
 
-export interface IChangePlanStatus {
+export interface IChangePlanStatusUsecase {
     execute(planId: string): Promise<Subscription>;
 }

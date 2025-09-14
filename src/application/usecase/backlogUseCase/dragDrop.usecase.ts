@@ -1,15 +1,15 @@
-import { IDragDrop } from "../../../config/Dependency/user/backlog.di";
+import { IDragDropUsecase } from "../../../config/Dependency/user/backlog.di";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
-export class DragDropUseCase implements IDragDrop {
+export class DragDropUseCase implements IDragDropUsecase {
 
-    constructor(private backlogRepo: IBacklogRepository) { }
+    constructor(private _backlogRepo: IBacklogRepository) { }
 
     async execute(prevContainerId: string, containerId: string, movedTaskId: string): Promise<Task> {
 
-        const result = await this.backlogRepo.dragDropUpdation(prevContainerId, containerId, movedTaskId);
+        const result = await this._backlogRepo.dragDropUpdation(prevContainerId, containerId, movedTaskId);
         if (!result) {
             throw new Error('Error occured while updating dragdrop');
         }

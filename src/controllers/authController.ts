@@ -1,6 +1,6 @@
 
 import { NextFunction, Request, Response } from "express";
-import { IChangePassword, IRefreshToken, IRegister, ISendOtpUsecase, ISignin, IVerifyOtp } from "../config/Dependency/auth/auth.di";
+import { IChangePasswordUsecase, IRefreshTokenUsecase, IRegisterUsecase, ISendOtpUsecase, ISigninUsecase, IVerifyOtpUsecase } from "../config/Dependency/auth/auth.di";
 
 import { HttpStatusCode } from "../config/http-status.enum";
 import { RESPONSE_MESSAGES } from "../config/response-messages.constant";
@@ -12,12 +12,12 @@ import { IAuthController } from "../interfaces/auth.controller.interface";
 export class AuthController implements IAuthController {
 
     constructor(
-        private sendOtpUsecase: ISendOtpUsecase,
-        private verifyOtpUsecase: IVerifyOtp,
-        private signinUsecase: ISignin,
-        private registerUsecase: IRegister,
-        private changePasswordUsecase: IChangePassword,
-        private refreshTokenUsecase: IRefreshToken
+        private _sendOtpUsecase: ISendOtpUsecase,
+        private _verifyOtpUsecase: IVerifyOtpUsecase,
+        private _signinUsecase: ISigninUsecase,
+        private _registerUsecase: IRegisterUsecase,
+        private _changePasswordUsecase: IChangePasswordUsecase,
+        private _refreshTokenUsecase: IRefreshTokenUsecase
     ) { }
 
     sendOtpToMail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -26,7 +26,7 @@ export class AuthController implements IAuthController {
 
             const email: string = req.body.email;
 
-            const result: useCaseResult = await this.sendOtpUsecase.execute(email);
+            const result: useCaseResult = await this._sendOtpUsecase.execute(email);
             if (!result.status) {
                 res.status(HttpStatusCode.CONFLICT).json({ result });
                 return;
@@ -48,7 +48,7 @@ export class AuthController implements IAuthController {
             const email = req.body.email;
             const otpFromUser = req.body.otp + '';
 
-            const isVerified = await this.verifyOtpUsecase.execute(email, otpFromUser);
+            const isVerified = await this._verifyOtpUsecase.execute(email, otpFromUser);
 
             if (isVerified) {
                 res.status(HttpStatusCode.OK).json({ message: RESPONSE_MESSAGES.AUTH.OTP_VALIDATED, status: true });
@@ -69,7 +69,7 @@ export class AuthController implements IAuthController {
 
             const { email, passWord } = req.body;
 
-            const result = await this.signinUsecase.execute(email, passWord);
+            const result = await this._signinUsecase.execute(email, passWord);
             if (!result.status) {
                 res.status(HttpStatusCode.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.AUTH.INVALID_CREDENTIALS });
                 return;
@@ -103,7 +103,7 @@ export class AuthController implements IAuthController {
 
             const { email, companyName, passWord } = req.body;
 
-            const registrationStatus = await this.registerUsecase.execute(email, companyName, passWord);
+            const registrationStatus = await this._registerUsecase.execute(email, companyName, passWord);
             if (!registrationStatus.status) {
 
                 switch (registrationStatus.message) {
@@ -143,7 +143,7 @@ export class AuthController implements IAuthController {
 
         try {
 
-            const result = await this.changePasswordUsecase.execute(req.user.email, req.body.oldPassword, req.body.passWord);
+            const result = await this._changePasswordUsecase.execute(req.user.email, req.body.oldPassword, req.body.passWord);
 
             if (!result) {
 
@@ -190,7 +190,7 @@ export class AuthController implements IAuthController {
                 return
             }
 
-            const result = await this.refreshTokenUsecase.execute(refreshToken);
+            const result = await this._refreshTokenUsecase.execute(refreshToken);
             if (!result || !result.statusCode) {
                 throw new Error('Couldnt create new token');
             } else if (!result.status) {

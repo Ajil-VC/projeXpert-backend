@@ -31,22 +31,22 @@ export interface ISendOtpUsecase {
     execute(email: string): Promise<useCaseResult>
 }
 
-export interface IVerifyOtp {
+export interface IVerifyOtpUsecase {
     execute(email: string, otp: string): Promise<boolean>
 }
 
-export interface ISignin {
+export interface ISigninUsecase {
     execute(email: string, passWord: string): Promise<useCaseResult>
 }
 
-export interface IRegister {
+export interface IRegisterUsecase {
     execute(email: string, companyName: string, passWord: string): Promise<useCaseResult>;
 }
 
-export interface IChangePassword {
+export interface IChangePasswordUsecase {
     execute(email: string, oldPassword: string, passWord: string): Promise<boolean>
 }
 
-export interface IRefreshToken {
+export interface IRefreshTokenUsecase {
     execute(refreshToken: string): Promise<useCaseResult>;
 }

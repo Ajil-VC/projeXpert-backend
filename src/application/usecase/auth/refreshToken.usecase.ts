@@ -3,12 +3,12 @@ import { config } from '../../../config/config';
 import { useCaseResult } from '../../shared/useCaseResult';
 import { IUserRepository } from '../../../domain/repositories/user.repo';
 import { Company } from '../../../infrastructure/database/models/company.interface';
-import { IRefreshToken } from '../../../config/Dependency/auth/auth.di';
+import { IRefreshTokenUsecase } from '../../../config/Dependency/auth/auth.di';
 
 
-export class RefreshTokenUseCase implements IRefreshToken {
+export class RefreshTokenUseCase implements IRefreshTokenUsecase {
 
-    constructor(private userRepo: IUserRepository) { }
+    constructor(private _userRepo: IUserRepository) { }
 
     async execute(refreshToken: string): Promise<useCaseResult> {
         const userPayload = jwt.verify(refreshToken, config.REFRESH_TOKEN_SECRET);
@@ -21,7 +21,7 @@ export class RefreshTokenUseCase implements IRefreshToken {
                 statusCode: 401
             }
         }
-        const userData = await this.userRepo.findUserById((userPayload as jwt.JwtPayload).userId);
+        const userData = await this._userRepo.findUserById((userPayload as jwt.JwtPayload).userId);
 
         if (!userData) {
             throw new Error('Userdata not available.');

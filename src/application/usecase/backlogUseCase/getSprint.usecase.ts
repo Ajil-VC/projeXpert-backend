@@ -1,4 +1,4 @@
-import { IGetSprint } from "../../../config/Dependency/user/backlog.di";
+import { IGetSprintUsecase } from "../../../config/Dependency/user/backlog.di";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import { Permissions } from "../../../infrastructure/database/models/role.interface";
 import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
@@ -6,13 +6,13 @@ import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
 
-export class GetSprintsUseCase implements IGetSprint {
+export class GetSprintsUseCase implements IGetSprintUsecase {
 
-    constructor(private backlogRepository: IBacklogRepository) { }
+    constructor(private _backlogRepository: IBacklogRepository) { }
 
     async execute(projectId: string, permissions: Array<Permissions>, userId: string, kanban: boolean = false): Promise<any> {
 
-        const result = await this.backlogRepository.getSprints(projectId);
+        const result = await this._backlogRepository.getSprints(projectId);
         if (!result) throw new Error('Error while getting sprints');
 
         const canViewAll: boolean = permissions.includes('view_all_task');

@@ -1,15 +1,15 @@
-import { ICompanySubscription } from "../../../config/Dependency/user/subscription.di";
+import { ICompanySubscriptionUsecase } from "../../../config/Dependency/user/subscription.di";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { Company } from "../../../infrastructure/database/models/company.interface";
 
 
-export class GetCompanySubscription implements ICompanySubscription {
+export class GetCompanySubscription implements ICompanySubscriptionUsecase {
 
-    constructor(private companyRepo: ICompanyRepository) { }
+    constructor(private _companyRepo: ICompanyRepository) { }
 
     async execute(companyId: string): Promise<{ company: Company, isExpired: boolean }> {
 
-        const company = await this.companyRepo.findCompanyById(companyId);
+        const company = await this._companyRepo.findCompanyById(companyId);
         const currentDate = new Date();
 
         if (!company?.currentPeriodEnd || !company.plan) {

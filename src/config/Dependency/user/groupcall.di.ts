@@ -2,11 +2,11 @@
 import { Meeting } from "../../../infrastructure/database/models/meeting.interface";
 
 
-export interface IGenerateRoomId {
+export interface IGenerateRoomIdUsecase {
     execute(): Promise<string>;
 }
 
-export interface ICreateMeeting {
+export interface ICreateMeetingUsecase {
     execute(
         companyId: string,
         userId: string,
@@ -22,10 +22,10 @@ export interface ICreateMeeting {
     ): Promise<Meeting>
 }
 
-export interface IUpcomingMeeting {
+export interface IUpcomingMeetingUsecase {
     execute(companyId: string, userId: string, limit: number, skip: number, searchTerm: string): Promise<{ upcomingMeetings: Array<Meeting>, totalPages: number }>
 }
 
-export interface IDeleteMeeting {
+export interface IDeleteMeetingUsecase {
     execute(meetId: string): Promise<boolean>;
 }

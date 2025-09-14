@@ -3,7 +3,7 @@ import { GetAdminUseCase } from "../../../application/usecase/admin/getAdmin.use
 import { AdminController } from "../../../controllers/admin/adminInit.controller";
 import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.repo";
 import { AdminRepositoryImp } from "../../../infrastructure/repositories/adminRepo/admin.repository";
-import { IAdminInit } from "../../../interfaces/admin/adminInit.controller.interface";
+import { IAdminInitController } from "../../../interfaces/admin/adminInit.controller.interface";
 import { getDashBoardData } from "./companymanage.inter";
 
 const adminRepository: IAdminRepository = new AdminRepositoryImp();
@@ -12,4 +12,4 @@ const adminRepository: IAdminRepository = new AdminRepositoryImp();
 export const adminInitUsecase = new AdminInitUseCase(adminRepository);
 export const adminDataUsecase = new GetAdminUseCase(adminRepository);
 
-export const adminInitInterface: IAdminInit = new AdminController(adminInitUsecase, adminDataUsecase, getDashBoardData);
+export const adminInitInterface: IAdminInitController = new AdminController(adminInitUsecase, adminDataUsecase, getDashBoardData);

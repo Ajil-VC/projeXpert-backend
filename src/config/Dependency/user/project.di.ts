@@ -4,31 +4,31 @@ import { DecodedData } from "../../../application/shared/decodedData";
 import { Project } from "../../../infrastructure/database/models/project.interface";
 
 
-export interface IGetWorkspace {
+export interface IGetWorkspaceUsecase {
     execute(user: DecodedData): Promise<Company | null>
 }
 
-export interface ICreateProject {
+export interface ICreateProjectUsecase {
     execute(projectName: String, workSpace: String, priority: String, user: DecodedData): Promise<Project | null>
 }
 
-export interface IGetProjectsinWorkspace {
+export interface IGetProjectsinWorkspaceUsecase {
     execute(workSpaceId: String, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }>;
 }
 
-export interface IGetCurrentProject {
+export interface IGetCurrentProjectUsecase {
     execute(workSpaceId: string, projectId: string): Promise<any>;
 }
 
-export interface IAddMember {
+export interface IAddMemberUsecase {
     execute(email: string, projectId: string, workSpaceId: string, companyId: string, roleId: string): Promise<Project | null>;
 }
 
-export interface IRemoveMember {
+export interface IRemoveMemberUsecase {
     execute(projectId: string, userId: string, currUserId: string): Promise<boolean>
 }
 
-export interface IUpdateProject {
+export interface IUpdateProjectUsecase {
     execute(
 
         projectId: string,
@@ -39,14 +39,14 @@ export interface IUpdateProject {
         adminEmail: string): Promise<any>
 }
 
-export interface IDeleteProject {
+export interface IDeleteProjectUsecase {
     execute(projectId: string, workSpaceId: string): Promise<boolean>;
 }
 
-export interface IProjectStatus {
+export interface IProjectStatusUsecase {
     execute(projectId: string, userId: string, userRole: 'admin' | 'user', companyId: string): Promise<any>;
 }
 
-export interface IRetrieveProject {
+export interface IRetrieveProjectUsecase {
     execute(projectId: string): Promise<Project>;
 }

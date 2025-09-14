@@ -5,11 +5,11 @@ import { ICompanySubscriptionRepository } from "../../../domain/repositories/adm
 import { IRevenueRepository } from "../../../domain/repositories/adminRepo/revenue.repo";
 import { CompanySubscriptionRepositoryImp } from "../../../infrastructure/repositories/adminRepo/companysubscription.repository";
 import { RevenueRepositoryImp } from "../../../infrastructure/repositories/adminRepo/revenue.repository";
-import { IRevenue } from "../../../interfaces/admin/revenue.controller.interface";
+import { IRevenueController } from "../../../interfaces/admin/revenue.controller.interface";
 
 
 const companysubscriptionRepo: ICompanySubscriptionRepository = new CompanySubscriptionRepositoryImp();
 const revenueRepo: IRevenueRepository = new RevenueRepositoryImp(companysubscriptionRepo);
 const revenueUsecase: IRevenueUsecase = new RevenueUseCase(revenueRepo);
 
-export const revenueInterface: IRevenue = new RevenueController(revenueUsecase);
+export const revenueInterface: IRevenueController = new RevenueController(revenueUsecase);

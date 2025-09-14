@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { IGroupcallController } from "../../interfaces/user/groupCall.controller.usecase";
-import { ICreateMeeting, IDeleteMeeting, IGenerateRoomId, IUpcomingMeeting } from "../../config/Dependency/user/groupcall.di";
+import { ICreateMeetingUsecase, IDeleteMeetingUsecase, IGenerateRoomIdUsecase, IUpcomingMeetingUsecase } from "../../config/Dependency/user/groupcall.di";
 import { config } from "../../config/config";
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { IGenerateKitToken } from "../../domain/services/generateKitToken.interface";
-import { ICreateNotification } from "../../config/Dependency/user/notification.di";
+import { ICreateNotificationUsecase } from "../../config/Dependency/user/notification.di";
 import { getUserSocket } from "../../infrastructure/services/socket.manager";
 import { getIO } from "../../config/socket";
 
@@ -13,12 +13,12 @@ export class GroupcallController implements IGroupcallController {
 
 
     constructor(
-        private genToken: IGenerateKitToken,
-        private generateRoomId: IGenerateRoomId,
-        private createMeeting: ICreateMeeting,
-        private notification: ICreateNotification,
-        private upcomingMeetings: IUpcomingMeeting,
-        private deletemeeting: IDeleteMeeting
+        private _genToken: IGenerateKitToken,
+        private _generateRoomId: IGenerateRoomIdUsecase,
+        private _createMeeting: ICreateMeetingUsecase,
+        private _notification: ICreateNotificationUsecase,
+        private _upcomingMeetings: IUpcomingMeetingUsecase,
+        private _deletemeeting: IDeleteMeetingUsecase
     ) { }
 
 
@@ -30,7 +30,7 @@ export class GroupcallController implements IGroupcallController {
             if (!meetId || typeof meetId !== 'string') {
                 throw new Error('Need meet Id ');
             }
-            const result = await this.deletemeeting.execute(meetId);
+            const result = await this._deletemeeting.execute(meetId);
             if (!result) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'Couldnt remove the meeting' });
                 return;
@@ -60,7 +60,7 @@ export class GroupcallController implements IGroupcallController {
             const limit = 3;
             const skip = (pageNum - 1) * limit;
 
-            const result = await this.upcomingMeetings.execute(req.user.companyId, req.user.id, limit, skip, searchTerm);
+            const result = await this._upcomingMeetings.execute(req.user.companyId, req.user.id, limit, skip, searchTerm);
             res.status(HttpStatusCode.OK).json({ status: true, meetings: result.upcomingMeetings, totalPages: result.totalPages });
             return;
 
@@ -77,7 +77,7 @@ export class GroupcallController implements IGroupcallController {
 
             const io = getIO();
 
-            const createdMeeting = await this.createMeeting.execute(
+            const createdMeeting = await this._createMeeting.execute(
                 req.user.companyId,
                 req.user.id,
                 req.body.roomName,
@@ -93,7 +93,7 @@ export class GroupcallController implements IGroupcallController {
 
             if (createdMeeting) {
                 const sendNotificationPromises = req.body.members.map((member: string) => {
-                    return this.notification.execute(req.user.id, member, 'message', 'New meeting scheduled', req.body.url);
+                    return this._notification.execute(req.user.id, member, 'message', 'New meeting scheduled', req.body.url);
                 });
 
                 const notificationResults = await Promise.allSettled(sendNotificationPromises);
@@ -125,14 +125,14 @@ export class GroupcallController implements IGroupcallController {
 
         try {
 
-            const roomId = await this.generateRoomId.execute();
+            const roomId = await this._generateRoomId.execute();
             const payload = JSON.stringify({ room_id: roomId });
 
             if (!config.ZEGO_APP_ID || !config.ZEGO_SERVER_SECRET) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'Couldnt create zego token' });
                 return;
             }
-            const token = this.genToken.generateKitTokenForRoom(Number(config.ZEGO_APP_ID), req.user.id, config.ZEGO_SERVER_SECRET, 3600, payload);
+            const token = this._genToken.generateKitTokenForRoom(Number(config.ZEGO_APP_ID), req.user.id, config.ZEGO_SERVER_SECRET, 3600, payload);
             res.status(HttpStatusCode.CREATED).json({ token, roomId });
 
         } catch (err) {

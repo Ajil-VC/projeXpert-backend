@@ -1,41 +1,41 @@
 import { NextFunction, Request, Response } from "express";
 
 import {
-    IAddMember,
-    ICreateProject,
-    IDeleteProject,
-    IGetCurrentProject,
-    IGetProjectsinWorkspace,
-    IGetWorkspace,
-    IProjectStatus,
-    IRemoveMember,
-    IRetrieveProject,
-    IUpdateProject
+    IAddMemberUsecase,
+    ICreateProjectUsecase,
+    IDeleteProjectUsecase,
+    IGetCurrentProjectUsecase,
+    IGetProjectsinWorkspaceUsecase,
+    IGetWorkspaceUsecase,
+    IProjectStatusUsecase,
+    IRemoveMemberUsecase,
+    IRetrieveProjectUsecase,
+    IUpdateProjectUsecase
 } from "../../config/Dependency/user/project.di";
 
 
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 import { IProjectController } from "../../interfaces/user/project.controller.interface";
-import { IAddActivity } from "../../config/Dependency/user/activity.di";
-import { IGetTasks } from "../../config/Dependency/user/backlog.di";
+import { IAddActivityUsecase } from "../../config/Dependency/user/activity.di";
+import { IGetTasksUsecase } from "../../config/Dependency/user/backlog.di";
 
 
 export class ProjectController implements IProjectController {
 
     constructor(
-        private getWorkspaceUsecase: IGetWorkspace,
-        private createProjectUsecase: ICreateProject,
-        private getProjectsInWorkspaceUsecase: IGetProjectsinWorkspace,
-        private getCurrentProjectUsecase: IGetCurrentProject,
-        private getTasksUsecase: IGetTasks,
-        private addMemberUsecase: IAddMember,
-        private removeMemberUsecase: IRemoveMember,
-        private updateProjectUsecase: IUpdateProject,
-        private deleteProjectUsecase: IDeleteProject,
-        private projectStatsUse: IProjectStatus,
-        private retrieveProjectUsecase: IRetrieveProject,
-        private addActivityUsecase: IAddActivity
+        private _getWorkspaceUsecase: IGetWorkspaceUsecase,
+        private _createProjectUsecase: ICreateProjectUsecase,
+        private _getProjectsInWorkspaceUsecase: IGetProjectsinWorkspaceUsecase,
+        private _getCurrentProjectUsecase: IGetCurrentProjectUsecase,
+        private _getTasksUsecase: IGetTasksUsecase,
+        private _addMemberUsecase: IAddMemberUsecase,
+        private _removeMemberUsecase: IRemoveMemberUsecase,
+        private _updateProjectUsecase: IUpdateProjectUsecase,
+        private _deleteProjectUsecase: IDeleteProjectUsecase,
+        private _projectStatsUse: IProjectStatusUsecase,
+        private _retrieveProjectUsecase: IRetrieveProjectUsecase,
+        private _addActivityUsecase: IAddActivityUsecase
     ) { }
 
 
@@ -44,7 +44,7 @@ export class ProjectController implements IProjectController {
         try {
 
             const projectId = req.params.projectId;
-            const groupedData = await this.projectStatsUse.execute(projectId, req.user.id, req.user.role, req.user.companyId);
+            const groupedData = await this._projectStatsUse.execute(projectId, req.user.id, req.user.role, req.user.companyId);
 
             if (!groupedData) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'No tasks found' });
@@ -64,7 +64,7 @@ export class ProjectController implements IProjectController {
 
         try {
 
-            const workSpaces = await this.getWorkspaceUsecase.execute(req.user);
+            const workSpaces = await this._getWorkspaceUsecase.execute(req.user);
             if (!workSpaces) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'No data available' });
                 return;
@@ -83,7 +83,7 @@ export class ProjectController implements IProjectController {
 
         try {
             const { projectName, workSpace, priority } = req.body;
-            const createdProject = await this.createProjectUsecase.execute(projectName, workSpace, priority, req.user);
+            const createdProject = await this._createProjectUsecase.execute(projectName, workSpace, priority, req.user);
 
             res.status(HttpStatusCode.CREATED).json({ status: true, createdProject });
             return;
@@ -121,7 +121,7 @@ export class ProjectController implements IProjectController {
             const limit = 6;
             const skip = (pageNum - 1) * limit;
 
-            const data = await this.getProjectsInWorkspaceUsecase.execute(req.query.workspace_id, limit, skip, filter);
+            const data = await this._getProjectsInWorkspaceUsecase.execute(req.query.workspace_id, limit, skip, filter);
             res.status(HttpStatusCode.OK).json({ status: true, projects: data.projects, totalPages: data.totalPage });
 
         } catch (err) {
@@ -141,9 +141,9 @@ export class ProjectController implements IProjectController {
                 throw new Error('project id or workspace id is not valid string');
             }
 
-            const result = await this.getCurrentProjectUsecase.execute(workspaceId, projectId);
+            const result = await this._getCurrentProjectUsecase.execute(workspaceId, projectId);
 
-            const tasks = await this.getTasksUsecase.execute(projectId, req.user.role.permissions, req.user.id);
+            const tasks = await this._getTasksUsecase.execute(projectId, req.user.role.permissions, req.user.id);
 
             res.status(HttpStatusCode.OK).json({ status: true, result, tasks });
             return;
@@ -162,7 +162,7 @@ export class ProjectController implements IProjectController {
                 throw new Error('project id is not valid string');
             }
 
-            const result = await this.retrieveProjectUsecase.execute(projectId);
+            const result = await this._retrieveProjectUsecase.execute(projectId);
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
 
@@ -178,8 +178,8 @@ export class ProjectController implements IProjectController {
 
             const { email, projectId, workSpaceId, roleId } = req.body;
 
-            const updatedProjectData = await this.addMemberUsecase.execute(email, projectId, workSpaceId, req.user.companyId, roleId);
-            await this.addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'Added', email);
+            const updatedProjectData = await this._addMemberUsecase.execute(email, projectId, workSpaceId, req.user.companyId, roleId);
+            await this._addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'Added', email);
 
             res.status(HttpStatusCode.OK).json({
                 status: true, message: 'Member added to the project successfully', updatedProjectData
@@ -197,7 +197,7 @@ export class ProjectController implements IProjectController {
 
             const { userId, projectId } = req.body;
 
-            await this.removeMemberUsecase.execute(projectId, userId, req.user.id);
+            await this._removeMemberUsecase.execute(projectId, userId, req.user.id);
 
             res.status(HttpStatusCode.OK).json({ status: true, message: 'Member removed from project' });
             return;
@@ -216,8 +216,8 @@ export class ProjectController implements IProjectController {
             const { _id, name, status, priority, members } = req.body.projectData;
             const workSpaceId = req.body.workSpaceId;
 
-            const updatedProject = await this.updateProjectUsecase.execute(_id, name, status, priority, members, req.user.email);
-            await this.addActivityUsecase.execute(_id, req.user.companyId, req.user.id, 'updated', 'project');
+            const updatedProject = await this._updateProjectUsecase.execute(_id, name, status, priority, members, req.user.email);
+            await this._addActivityUsecase.execute(_id, req.user.companyId, req.user.id, 'updated', 'project');
 
             res.status(HttpStatusCode.OK).json({ status: true, data: updatedProject });
             return;
@@ -235,7 +235,7 @@ export class ProjectController implements IProjectController {
             const projectId = req.params.projectId;
             const workSpaceId = req.params.workSpaceId;
 
-            const result = await this.deleteProjectUsecase.execute(projectId, workSpaceId);
+            const result = await this._deleteProjectUsecase.execute(projectId, workSpaceId);
             if (result) {
                 res.status(HttpStatusCode.NO_CONTENT).json({ status: true, message: RESPONSE_MESSAGES.PROJECT.DELETED });
                 return;

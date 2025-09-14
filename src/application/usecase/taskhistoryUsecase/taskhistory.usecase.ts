@@ -7,11 +7,11 @@ import { ITaskHistoryRepository } from "../../../domain/repositories/taskhistory
 
 export class TaskHistoryUsecase implements ITaskHistoryUsecase {
 
-    constructor(private taskHistoryRepo: ITaskHistoryRepository) { }
+    constructor(private _taskHistoryRepo: ITaskHistoryRepository) { }
 
     async execute(params: TaskHistoryParams): Promise<void> {
 
-        const result = await this.taskHistoryRepo.addHistory(params);
+        const result = await this._taskHistoryRepo.addHistory(params);
     }
 
 

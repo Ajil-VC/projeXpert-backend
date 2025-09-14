@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { IGetCompanyUsers, IGetTeamMembers, IUpdateUserRoleAndStatus } from "../../config/Dependency/user/team.di";
+import { IGetCompanyUsersUsecase, IGetTeamMembersUsecase, IUpdateUserRoleAndStatusUsecase } from "../../config/Dependency/user/team.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { ITeamController } from "../../interfaces/user/team.controller.interface";
@@ -9,9 +9,9 @@ export class TeamController implements ITeamController {
 
 
     constructor(
-        private getTeammembersUsecase: IGetTeamMembers,
-        private getCompanyUsersUsecase: IGetCompanyUsers,
-        private updateUserRoleUsecase: IUpdateUserRoleAndStatus
+        private _getTeammembersUsecase: IGetTeamMembersUsecase,
+        private _getCompanyUsersUsecase: IGetCompanyUsersUsecase,
+        private _updateUserRoleUsecase: IUpdateUserRoleAndStatusUsecase
     ) { }
 
 
@@ -28,7 +28,7 @@ export class TeamController implements ITeamController {
                 return;
             }
 
-            const result = await this.updateUserRoleUsecase.execute(userId, userRole, status);
+            const result = await this._updateUserRoleUsecase.execute(userId, userRole, status);
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
 
@@ -52,7 +52,7 @@ export class TeamController implements ITeamController {
                 status = req.query.status === 'active' ? false : true;
             }
 
-            const result = await this.getCompanyUsersUsecase.execute(
+            const result = await this._getCompanyUsersUsecase.execute(
                 req.user.companyId,
                 pageNum,
                 limit,
@@ -77,7 +77,7 @@ export class TeamController implements ITeamController {
             const rawProjectId = (req.query.projectId as string)?.trim();
             const projectId = rawProjectId === 'null' || rawProjectId === undefined ? null : rawProjectId;
 
-            const result = await this.getTeammembersUsecase.execute(projectId, req.user.id);
+            const result = await this._getTeammembersUsecase.execute(projectId, req.user.id);
             if (!result) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'No team members found' });
                 return;

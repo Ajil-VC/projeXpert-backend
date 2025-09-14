@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 
-export interface IUserInit {
+export interface IUserInitController {
 
     getInitData(req: Request, res: Response, next: NextFunction): Promise<void>;
 

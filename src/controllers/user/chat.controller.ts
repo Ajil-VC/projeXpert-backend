@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { IChat, IGetChat, IGetMessages, ISendMessages } from "../../config/Dependency/user/chat.di";
+import { IChatUsecase, IGetChatUsecase, IGetMessagesUsecase, ISendMessagesUsecase } from "../../config/Dependency/user/chat.di";
 
 
 import { getUserSocket } from "../../infrastructure/services/socket.manager";
@@ -9,17 +9,17 @@ import { getIO } from "../../config/socket";
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { IChatController } from "../../interfaces/user/chat.controller.interface";
 
-import { ICreateNotification } from "../../config/Dependency/user/notification.di";
+import { ICreateNotificationUsecase } from "../../config/Dependency/user/notification.di";
 
 
 export class ChatController implements IChatController {
 
     constructor(
-        private notification: ICreateNotification,
-        private chatUsecase: IChat,
-        private getChatsUsecase: IGetChat,
-        private getMessagesUsecase: IGetMessages,
-        private sendMessagesUsecase: ISendMessages
+        private _notification: ICreateNotificationUsecase,
+        private _chatUsecase: IChatUsecase,
+        private _getChatsUsecase: IGetChatUsecase,
+        private _getMessagesUsecase: IGetMessagesUsecase,
+        private _sendMessagesUsecase: ISendMessagesUsecase
     ) { }
 
     startConversation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -37,7 +37,7 @@ export class ChatController implements IChatController {
                 return;
             }
 
-            const result = await this.chatUsecase.execute(userId, req.user.id, req.user.companyId);
+            const result = await this._chatUsecase.execute(userId, req.user.id, req.user.companyId);
 
             res.status(HttpStatusCode.CREATED).json({ status: true, message: 'Conversation started', result });
             return;
@@ -53,7 +53,7 @@ export class ChatController implements IChatController {
     getChats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
 
-            const result = await this.getChatsUsecase.execute(req.user.id, req.user.companyId);
+            const result = await this._getChatsUsecase.execute(req.user.id, req.user.companyId);
 
             res.status(HttpStatusCode.OK).json({ status: true, message: 'Chats fetched', result });
             return;
@@ -68,7 +68,7 @@ export class ChatController implements IChatController {
 
         try {
 
-            const result = await this.getMessagesUsecase.execute(req.params.convoId);
+            const result = await this._getMessagesUsecase.execute(req.params.convoId);
 
             res.status(HttpStatusCode.OK).json({ status: true, message: 'Data retrieved', result });
             return;
@@ -86,8 +86,8 @@ export class ChatController implements IChatController {
             const io = getIO();
 
             const { convoId, recieverId, message } = req.body;
-            const result = await this.sendMessagesUsecase.execute(convoId, req.user.id, recieverId, message);
-            const createdNotification = await this.notification.execute(req.user.id, recieverId, 'message', `You got a message from ${req.user.email}`, 'user/chat');
+            const result = await this._sendMessagesUsecase.execute(convoId, req.user.id, recieverId, message);
+            const createdNotification = await this._notification.execute(req.user.id, recieverId, 'message', `You got a message from ${req.user.email}`, 'user/chat');
 
             const recieverSocketId = getUserSocket(recieverId);
             const senderSocketId = getUserSocket(req.user.id);

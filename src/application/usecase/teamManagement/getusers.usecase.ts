@@ -1,4 +1,4 @@
-import { IGetCompanyUsers } from "../../../config/Dependency/user/team.di";
+import { IGetCompanyUsersUsecase } from "../../../config/Dependency/user/team.di";
 import { ITeamRepository } from "../../../domain/repositories/team.repo";
 import { UserResponseDTO } from "../../../dtos/user/userResponseDTO";
 import { User } from "../../../infrastructure/database/models/user.interface";
@@ -6,9 +6,9 @@ import { UserMapper } from "../../../mappers/user/user.mapper";
 
 
 
-export class GetUsersInCompany implements IGetCompanyUsers {
+export class GetUsersInCompany implements IGetCompanyUsersUsecase {
 
-    constructor(private teamRepo: ITeamRepository) { }
+    constructor(private _teamRepo: ITeamRepository) { }
 
     async execute(
         companyId: string,
@@ -21,7 +21,7 @@ export class GetUsersInCompany implements IGetCompanyUsers {
         status: boolean | null
     ): Promise<{ users: UserResponseDTO[], totalPages: number }> {
 
-        const result = await this.teamRepo.getCompanyUsers(companyId, pageNum, limit, skip, userId, searchTerm, role, status);
+        const result = await this._teamRepo.getCompanyUsers(companyId, pageNum, limit, skip, userId, searchTerm, role, status);
 
         return { users: result.users.map(UserMapper.toResponseDTO), totalPages: result.totalPages };
     }

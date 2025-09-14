@@ -1,7 +1,7 @@
 import otpGenerator from 'otp-generator';
-import { IGenerateRoomId } from '../../../config/Dependency/user/groupcall.di';
+import { IGenerateRoomIdUsecase } from '../../../config/Dependency/user/groupcall.di';
 
-export class GenerateRoomIdUsecase implements IGenerateRoomId {
+export class GenerateRoomIdUsecase implements IGenerateRoomIdUsecase {
     constructor() { }
 
     async execute(): Promise<string> {

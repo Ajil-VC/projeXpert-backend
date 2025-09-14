@@ -4,25 +4,25 @@ import { useCaseResult } from "../../shared/useCaseResult";
 import { config } from "../../../config/config";
 import jwt from 'jsonwebtoken';
 import { Company } from "../../../infrastructure/database/models/company.interface";
-import { ISignin } from "../../../config/Dependency/auth/auth.di";
+import { ISigninUsecase } from "../../../config/Dependency/auth/auth.di";
 import { Roles } from "../../../infrastructure/database/models/role.interface";
 
 
-export class SigninUseCase implements ISignin {
+export class SigninUseCase implements ISigninUsecase {
 
     constructor(
-        private userRepo: IUserRepository,
-        private vPassword: ISecurePassword
+        private _userRepo: IUserRepository,
+        private _vPassword: ISecurePassword
     ) { }
 
     async execute(email: string, passWord: string): Promise<useCaseResult> {
 
-        const userData = await this.userRepo.findByEmail(email);
+        const userData = await this._userRepo.findByEmail(email);
         if (!userData) {
             return { status: false, message: 'Invalid credentials.', statusCode: 400 };
         }
 
-        const isPassWordValid = await this.vPassword.validatePassword(passWord, userData?.password as string);
+        const isPassWordValid = await this._vPassword.validatePassword(passWord, userData?.password as string);
 
         if (!isPassWordValid) {
             return { status: false, message: 'Invalid Credentials', statusCode: 400 }

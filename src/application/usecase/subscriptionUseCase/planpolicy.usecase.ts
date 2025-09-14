@@ -9,12 +9,12 @@ import { useCaseResult } from "../../shared/useCaseResult";
 
 export class PlanPolicy {
 
-    constructor(private teamRepo: ITeamRepository, private company: ICompanyRepository, private workspaceRepo: IWorkspaceRepository, private projectRepo: IProjectRepository) { }
+    constructor(private _teamRepo: ITeamRepository, private _company: ICompanyRepository, private _workspaceRepo: IWorkspaceRepository, private _projectRepo: IProjectRepository) { }
 
     async execute(companyId: string, operationType: 'createWorkspace' | 'createProject' | 'maxMembers' | 'canVideoCall'): Promise<useCaseResult> {
 
-        const companyData = await this.company.findCompanyById(companyId);
-        const membersCount = (await this.teamRepo.getCompanyUsers(companyId)).users.length;
+        const companyData = await this._company.findCompanyById(companyId);
+        const membersCount = (await this._teamRepo.getCompanyUsers(companyId)).users.length;
         const subscriptionPlan = companyData.plan as unknown as Subscription;
 
 
@@ -26,7 +26,7 @@ export class PlanPolicy {
                 return { status: false, message: 'Please subscribe to a plan to add more members' };
             } else if (operationType === 'createProject') {
 
-                const projectCount = await this.projectRepo.countProjects(companyId);
+                const projectCount = await this._projectRepo.countProjects(companyId);
                 if (projectCount < 1) {
                     return { status: true, message: 'ok' };
                 }
@@ -42,14 +42,14 @@ export class PlanPolicy {
 
         } else if (operationType === 'createWorkspace') {
 
-            const workspaceCount = await this.workspaceRepo.countWorkspace(companyId);
+            const workspaceCount = await this._workspaceRepo.countWorkspace(companyId);
             if (workspaceCount >= subscriptionPlan.maxWorkspace) {
                 return { status: false, message: `Current plan does not allow to create more than ${subscriptionPlan.maxWorkspace} workspace`, additional: 'Maximum workspace exceed' };
             }
 
         } else if (operationType === 'createProject') {
 
-            const projectCount = await this.projectRepo.countProjects(companyId);
+            const projectCount = await this._projectRepo.countProjects(companyId);
             if (projectCount >= subscriptionPlan.maxProjects) {
                 return { status: false, message: `Current plan does not allow to create more than ${subscriptionPlan.maxProjects} projects`, additional: 'Maximum projects exceed' };
             }

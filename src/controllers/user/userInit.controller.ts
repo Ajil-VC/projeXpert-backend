@@ -1,25 +1,25 @@
 import { NextFunction, Request, Response } from "express";
 
-import { IInitDashboard } from "../../config/Dependency/user/userInit.di";
+import { IInitDashboardUsecase } from "../../config/Dependency/user/userInit.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
-import { IUserInit } from "../../interfaces/user/userInit.controller.interface";
-import { IGetNotification, IReadNotification } from "../../config/Dependency/user/notification.di";
+import { IUserInitController } from "../../interfaces/user/userInit.controller.interface";
+import { IGetNotificationUsecase, IReadNotificationUsecase } from "../../config/Dependency/user/notification.di";
 
 
-export class UserInitController implements IUserInit {
+export class UserInitController implements IUserInitController {
 
     constructor(
-        private initDashboardUsecase: IInitDashboard,
-        private getNotificationsUse: IGetNotification,
-        private readNotifications: IReadNotification
+        private _initDashboardUsecase: IInitDashboardUsecase,
+        private _getNotificationsUse: IGetNotificationUsecase,
+        private _readNotifications: IReadNotificationUsecase
     ) { }
 
     getInitData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         try {
 
-            const userData = await this.initDashboardUsecase.execute(req.user.email, req.user.id, req.user.role);
+            const userData = await this._initDashboardUsecase.execute(req.user.email, req.user.id, req.user.role);
 
             if (userData) {
 
@@ -49,7 +49,7 @@ export class UserInitController implements IUserInit {
 
         try {
 
-            const notifications = await this.getNotificationsUse.execute(req.user.id);
+            const notifications = await this._getNotificationsUse.execute(req.user.id);
             res.status(HttpStatusCode.OK).json({ status: true, result: notifications });
             return;
 
@@ -64,7 +64,7 @@ export class UserInitController implements IUserInit {
         try {
 
             const { notificaionId, removeAll } = req.body;
-            const result = await this.readNotifications.execute(req.user.id, notificaionId, removeAll);
+            const result = await this._readNotifications.execute(req.user.id, notificaionId, removeAll);
             res.status(HttpStatusCode.OK).json({ status: true });
             return;
 

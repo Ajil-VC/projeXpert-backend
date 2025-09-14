@@ -1,11 +1,11 @@
-import { IUpdateProject } from "../../../config/Dependency/user/project.di";
+import { IUpdateProjectUsecase } from "../../../config/Dependency/user/project.di";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 
 
-export class UpdateProjectUseCase implements IUpdateProject {
+export class UpdateProjectUseCase implements IUpdateProjectUsecase {
 
-    constructor(private projectRepo: IProjectRepository, private userRepo: IUserRepository) { }
+    constructor(private _projectRepo: IProjectRepository, private _userRepo: IUserRepository) { }
 
     async execute(
 
@@ -16,8 +16,8 @@ export class UpdateProjectUseCase implements IUpdateProject {
         members: Array<{ email: string, role: string }>,
         adminEmail: string): Promise<any> {
 
-        const isRoleChanged = this.userRepo.updateRole(members, adminEmail);
-        const isUpdated = this.projectRepo.updateProject(projectId, projectName, status, priority);
+        const isRoleChanged = this._userRepo.updateRole(members, adminEmail);
+        const isUpdated = this._projectRepo.updateProject(projectId, projectName, status, priority);
 
         const result = await Promise.all([isRoleChanged, isUpdated])
 

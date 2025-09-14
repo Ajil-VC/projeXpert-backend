@@ -1,17 +1,17 @@
 import { Task } from "../../../infrastructure/database/models/task.interface";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
-import { ICompleteSprint } from "../../../config/Dependency/user/task.di";
+import { ICompleteSprintUsecase } from "../../../config/Dependency/user/task.di";
 
 
 
-export class CompleteSprintUsecase implements ICompleteSprint {
+export class CompleteSprintUsecase implements ICompleteSprintUsecase {
 
-    constructor(private taskRepo: ITaskRepository) { }
+    constructor(private _taskRepo: ITaskRepository) { }
 
     async execute(completingSprintId: string, movingSprintId: string | null, projectId: string): Promise<Array<Task>> {
 
 
-        const result = await this.taskRepo.completeSprint(completingSprintId, movingSprintId, projectId);
+        const result = await this._taskRepo.completeSprint(completingSprintId, movingSprintId, projectId);
         if (!result) {
             throw new Error('Sprint couldnt complete.');
         }

@@ -1,13 +1,13 @@
-import { ICompanyStatusChange } from "../../../config/Dependency/admin/comapanymanage.di";
+import { ICompanyStatusChangeUsecase } from "../../../config/Dependency/admin/comapanymanage.di";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 
-export class ChangeCompanyStatusUsecase implements ICompanyStatusChange{
+export class ChangeCompanyStatusUsecase implements ICompanyStatusChangeUsecase{
 
-    constructor(private companyRepo: ICompanyRepository) { }
+    constructor(private _companyRepo: ICompanyRepository) { }
 
     async execute(companyId: string, status: boolean): Promise<any> {
 
-        const result = await this.companyRepo.changeCompanyStatus(companyId, status);
+        const result = await this._companyRepo.changeCompanyStatus(companyId, status);
         return result;
     }
 }

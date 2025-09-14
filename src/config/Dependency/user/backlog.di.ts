@@ -5,54 +5,54 @@ import { TaskResponseDetailedDTO } from "../../../dtos/task/taskResponseDTO";
 import { Permissions } from "../../../infrastructure/database/models/role.interface";
 
 
-export interface ICreateEpic {
+export interface ICreateEpicUsecase {
     execute(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task>
 }
 
-export interface IRemoveTask {
+export interface IRemoveTaskUsecase {
     execute(taskId: string): Promise<boolean>;
 }
 
-export interface IUpdateEpic {
+export interface IUpdateEpicUsecase {
     execute(title: string, description: string, startDate: string, endDate: string, status: string, epicId: string): Promise<Task>
 }
 
-export interface ICreateIssue {
+export interface ICreateIssueUsecase {
     execute(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<any>;
 }
 
-export interface ICreateSubTasks {
+export interface ICreateSubTasksUsecase {
     execute(title: string, type: string, parentId: string, projectId: string): Promise<Task>;
 }
 
-export interface ICreateSprint {
+export interface ICreateSprintUsecase {
     execute(projectId: string, sprintIds: Array<string>, userId: string): Promise<Sprint>;
 }
 
-export interface IGetSprint {
+export interface IGetSprintUsecase {
     execute(projectId: string, permissions: Array<Permissions>, userId: string, kanban: boolean): Promise<any>
 }
 
-export interface IGetTasks {
+export interface IGetTasksUsecase {
     execute(projectId: string, permissions: Array<Permissions>, userId: string, isKanban?: boolean): Promise<any>;
 }
 
-export interface IAssignIssue {
+export interface IAssignIssueUsecase {
     execute(issueId: string, userId: string): Promise<TaskResponseDetailedDTO | null>;
 }
 
-export interface IDragDrop {
+export interface IDragDropUsecase {
     execute(prevContainerId: string, containerId: string, movedTaskId: string): Promise<Task>;
 }
 
-export interface IChangeTaskStatus {
+export interface IChangeTaskStatusUsecase {
     execute(taskId: string, status: string): Promise<Task | null>;
 }
 
-export interface IStartSprint {
+export interface IStartSprintUsecase {
     execute(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<any>;
 }
 
-export interface IIsActiveSprint {
+export interface IIsActiveSprintUsecase {
     execute(projectId: string): Promise<boolean>;
 }

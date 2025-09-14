@@ -1,4 +1,4 @@
-import { ICanChangeStatus } from "../../../config/Dependency/user/task.di";
+import { ICanChangeStatusUsecase } from "../../../config/Dependency/user/task.di";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
 import { Permissions } from "../../../infrastructure/database/models/role.interface";
 import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
@@ -6,12 +6,12 @@ import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
 
-export class CanChangeTaskStatus implements ICanChangeStatus {
+export class CanChangeTaskStatus implements ICanChangeStatusUsecase {
 
-    constructor(private taskRepo: ITaskRepository) { }
+    constructor(private _taskRepo: ITaskRepository) { }
     async execute(taskId: string, userId: string, permissions: Array<Permissions>): Promise<{ task: Task, canChange: boolean, notAssignee?: boolean }> {
 
-        const task = await this.taskRepo.getTask(taskId);
+        const task = await this._taskRepo.getTask(taskId);
         if (!task.parentId) {
 
             if (!task.sprintId) {
@@ -29,7 +29,7 @@ export class CanChangeTaskStatus implements ICanChangeStatus {
 
         } else {
 
-            const parentTask = await this.taskRepo.getTask(task.parentId as unknown as string);
+            const parentTask = await this._taskRepo.getTask(task.parentId as unknown as string);
             if (!parentTask.sprintId) {
                 return { task, canChange: false };
             }

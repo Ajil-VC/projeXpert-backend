@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import { IGetActivity } from "../../config/Dependency/user/activity.di";
+import { IGetActivityUsecase } from "../../config/Dependency/user/activity.di";
 import { IActivityController } from "../../interfaces/user/activity.controller.interface";
 import { HttpStatusCode } from "../../config/http-status.enum";
 
@@ -11,7 +11,7 @@ import { HttpStatusCode } from "../../config/http-status.enum";
 
 export class ActivityController implements IActivityController {
 
-    constructor(private getActivities: IGetActivity) { }
+    constructor(private _getActivities: IGetActivityUsecase) { }
 
     getActivity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -23,7 +23,7 @@ export class ActivityController implements IActivityController {
                 return;
             }
 
-            const activities = await this.getActivities.execute(req.user.companyId, projectId);
+            const activities = await this._getActivities.execute(req.user.companyId, projectId);
             res.status(HttpStatusCode.OK).json({ status: true, activities });
             return;
 

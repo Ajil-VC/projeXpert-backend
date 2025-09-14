@@ -4,16 +4,16 @@ import { stripe } from "../../config/stripe.config";
 import Stripe from 'stripe';
 import { HttpStatusCode } from "../../config/http-status.enum";
 import { config } from "../../config/config";
-import { ICompanySubscription, IGetSubscription, IIsPlanAvailable, ISubscribe } from "../../config/Dependency/user/subscription.di";
+import { ICompanySubscriptionUsecase, IGetSubscriptionUsecase, IIsPlanAvailableUsecase, ISubscribeUsecase } from "../../config/Dependency/user/subscription.di";
 
 
 export class StripeController implements IStripeController {
 
     constructor(
-        private subscribe: ISubscribe,
-        private getSubscriptionplans: IGetSubscription,
-        private isPlanAvailable: IIsPlanAvailable,
-        private companySubscription: ICompanySubscription
+        private _subscribe: ISubscribeUsecase,
+        private _getSubscriptionplans: IGetSubscriptionUsecase,
+        private _isPlanAvailable: IIsPlanAvailableUsecase,
+        private _companySubscription: ICompanySubscriptionUsecase
     ) { }
 
 
@@ -29,14 +29,14 @@ export class StripeController implements IStripeController {
             const limit = 6;
             const skip = (pageNum - 1) * limit;
 
-            const result = await this.companySubscription.execute(req.user.companyId);
+            const result = await this._companySubscription.execute(req.user.companyId);
 
             if (!result.isExpired) {
                 res.status(HttpStatusCode.OK).json({ status: true, result: result.company });
                 return;
             }
 
-            const plans = await this.getSubscriptionplans.execute(limit, skip);
+            const plans = await this._getSubscriptionplans.execute(limit, skip);
             res.status(HttpStatusCode.OK).json({ status: false, plans });
             return;
 
@@ -123,7 +123,7 @@ export class StripeController implements IStripeController {
 
             const currentPeriodEnd = new Date(item.current_period_end * 1000);
 
-            const result = await this.subscribe.execute(
+            const result = await this._subscribe.execute(
                 session.customer_email,
                 customerId,
                 subscriptionId,
@@ -147,7 +147,7 @@ export class StripeController implements IStripeController {
 
         try {
 
-            const isPlanAvailable = await this.isPlanAvailable.execute(priceId);
+            const isPlanAvailable = await this._isPlanAvailable.execute(priceId);
             if (!isPlanAvailable) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'Plan is not avaialalbe currently.' });
                 return;

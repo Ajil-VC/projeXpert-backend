@@ -1,17 +1,17 @@
-import { IProjectStatus } from "../../../config/Dependency/user/project.di";
+import { IProjectStatusUsecase } from "../../../config/Dependency/user/project.di";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
 
-export class ProjectStatsUseCase implements IProjectStatus {
+export class ProjectStatsUseCase implements IProjectStatusUsecase {
 
-    constructor(private projectRepo: IProjectRepository) { }
+    constructor(private _projectRepo: IProjectRepository) { }
 
     async execute(projectId: string, userId: string, userRole: 'admin' | 'user', companyId: string) {
 
-        const result = await this.projectRepo.projectStats(projectId, userId, userRole, companyId);
+        const result = await this._projectRepo.projectStats(projectId, userId, userRole, companyId);
 
         const today = new Date();
         const DUE_SOON_DAYS = 3;

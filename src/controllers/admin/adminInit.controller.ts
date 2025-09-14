@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from "express";
-import { IAdminData, IAdminInitUse } from "../../config/Dependency/admin/adminInit.di";
+import { IAdminDataUsecase, IAdminInitUsecase } from "../../config/Dependency/admin/adminInit.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
-import { IAdminInit } from "../../interfaces/admin/adminInit.controller.interface";
-import { IGetDashBoard } from "../../config/Dependency/admin/comapanymanage.di";
+import { IAdminInitController } from "../../interfaces/admin/adminInit.controller.interface";
+import { IGetDashBoardUsecase } from "../../config/Dependency/admin/comapanymanage.di";
 
 
-export class AdminController implements IAdminInit {
+export class AdminController implements IAdminInitController {
 
     constructor(
-        private adminInitUsecase: IAdminInitUse,
-        private adminDataUsecase: IAdminData,
-        private getDashBoardData: IGetDashBoard
+        private _adminInitUsecase: IAdminInitUsecase,
+        private _adminDataUsecase: IAdminDataUsecase,
+        private _getDashBoardData: IGetDashBoardUsecase
     ) { }
 
 
@@ -19,7 +19,7 @@ export class AdminController implements IAdminInit {
 
         try {
 
-            const result = await this.getDashBoardData.execute();
+            const result = await this._getDashBoardData.execute();
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
 
@@ -33,7 +33,7 @@ export class AdminController implements IAdminInit {
 
         try {
 
-            const result = await this.adminDataUsecase.execute(req.user.id);
+            const result = await this._adminDataUsecase.execute(req.user.id);
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
         } catch (err) {
@@ -56,7 +56,7 @@ export class AdminController implements IAdminInit {
             const limit = 4;
             const skip = (pageNum - 1) * limit;
 
-            const result = await this.adminInitUsecase.execute(limit, skip, searchTerm);
+            const result = await this._adminInitUsecase.execute(limit, skip, searchTerm);
             if (!result) {
                 res.status(HttpStatusCode.NOT_FOUND).json({ status: false, message: 'Couldnt retirieve company details.' });
                 return;

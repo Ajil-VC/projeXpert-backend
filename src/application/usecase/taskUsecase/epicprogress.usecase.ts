@@ -1,15 +1,15 @@
-import { IEpicProgress } from "../../../config/Dependency/user/task.di";
+import { IEpicProgressUsecase } from "../../../config/Dependency/user/task.di";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
-export class EpicProgressUsecase implements IEpicProgress {
+export class EpicProgressUsecase implements IEpicProgressUsecase {
 
-    constructor(private taskRepo: ITaskRepository) { }
+    constructor(private _taskRepo: ITaskRepository) { }
 
     async execute(epicId: string): Promise<Task> {
 
-        const tasks = await this.taskRepo.getAllTasksUnderEpic(epicId);
+        const tasks = await this._taskRepo.getAllTasksUnderEpic(epicId);
 
         const totalTasks = tasks.length;
         const completedTaskCount = tasks.reduce((acc, curr) => {
@@ -24,7 +24,7 @@ export class EpicProgressUsecase implements IEpicProgress {
 
 
 
-        const updatedTask = await this.taskRepo.updateEpicProgress(epicId, Math.floor(completionPercentage));
+        const updatedTask = await this._taskRepo.updateEpicProgress(epicId, Math.floor(completionPercentage));
 
         return updatedTask;
     }

@@ -1,12 +1,12 @@
-import { ISubscribe } from "../../../config/Dependency/user/subscription.di";
+import { ISubscribeUsecase } from "../../../config/Dependency/user/subscription.di";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { ISubscription } from "../../../domain/repositories/subscription.repo";
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
-export class SubscriptionUsecase implements ISubscribe {
+export class SubscriptionUsecase implements ISubscribeUsecase {
 
-    constructor(private company: ICompanyRepository, private subcribe: ISubscription) { }
+    constructor(private _company: ICompanyRepository, private _subcribe: ISubscription) { }
 
     async execute(
         ownerEmail: string,
@@ -17,13 +17,13 @@ export class SubscriptionUsecase implements ISubscribe {
         productId: string
     ): Promise<Subscription> {
 
-        const company = await this.company.findCompanyByEmail(ownerEmail);
+        const company = await this._company.findCompanyByEmail(ownerEmail);
 
         if (!company) {
             throw new Error('Couldnt find the company details');
         }
 
-        const subscription = await this.subcribe.addSubscriptionToCompany(
+        const subscription = await this._subcribe.addSubscriptionToCompany(
             company._id as unknown as string,
             stripeCustomerId,
             stripeSubscriptionId,
@@ -31,7 +31,7 @@ export class SubscriptionUsecase implements ISubscribe {
             currentPeriodEnd,
             productId);
 
-        const companySubscription = await this.subcribe.createSubscriptionForCompany(
+        const companySubscription = await this._subcribe.createSubscriptionForCompany(
             company._id as unknown as string,
             subscription._id as unknown as string,
             currentPeriodEnd,

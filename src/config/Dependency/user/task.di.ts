@@ -3,34 +3,34 @@ import { Permissions } from "../../../infrastructure/database/models/role.interf
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
-export interface IUpdateTaskDetails {
+export interface IUpdateTaskDetailsUsecase {
     execute(task: Task, assigneeId: string, files: Express.Multer.File[]): Promise<Task>
 }
 
-export interface IRemoveAttachment {
+export interface IRemoveAttachmentUsecase {
     execute(publicId: string, taskId: string): Promise<Task>;
 }
 
-export interface ICompleteSprint {
+export interface ICompleteSprintUsecase {
     execute(completingSprintId: string, movingSprintId: string | null, projectId: string): Promise<Array<Task>>;
 }
 
-export interface IGetComments {
+export interface IGetCommentsUsecase {
     execute(taskId: string): Promise<Comment[]>;
 }
 
-export interface IAddComment {
+export interface IAddCommentUsecase {
     execute(userId: string, taskId: string, content: string): Promise<Comment>;
 }
 
-export interface IEpicProgress {
+export interface IEpicProgressUsecase {
     execute(epicId: string): Promise<Task>;
 }
 
-export interface IGetTask {
+export interface IGetTaskUsecase {
     execute(taskId: string): Promise<Task>;
 }
 
-export interface ICanChangeStatus {
+export interface ICanChangeStatusUsecase {
     execute(taskId: string, userId: string, permissions: Array<Permissions>): Promise<{ task: Task, canChange: boolean, notAssignee?: boolean }>;
 }

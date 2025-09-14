@@ -10,14 +10,14 @@ import { ISendOtpUsecase } from "../../../config/Dependency/auth/auth.di";
 export class SendOtpUseCase implements ISendOtpUsecase {
 
     constructor(
-        private userRepo: IUserRepository,
-        private otpRepo: IOtpRepository,
-        private sendEmail: IEmailService
+        private _userRepo: IUserRepository,
+        private _otpRepo: IOtpRepository,
+        private _sendEmail: IEmailService
     ) { }
 
     async execute(email: string): Promise<useCaseResult> {
 
-        const existingUser = await this.userRepo.findByEmail(email);
+        const existingUser = await this._userRepo.findByEmail(email);
         if (existingUser) return { status: false, message: 'Email already exists', statusCode: 409 };
 
         //OTP Generating
@@ -29,11 +29,11 @@ export class SendOtpUseCase implements ISendOtpUsecase {
         })
         console.log(`Otp for email ${email} is : ${otp}`);
 
-        await this.otpRepo.saveOTP(email, otp);
+        await this._otpRepo.saveOTP(email, otp);
 
         const subject = "Your OTP Code";
         const text = `OTP For ProjeXpert is : ${otp}`
-        const isEmailSent = await this.sendEmail.send(email, subject, text);
+        const isEmailSent = await this._sendEmail.send(email, subject, text);
 
         if (isEmailSent) return { status: true, message: "OTP sent to your email", statusCode: 201 }
 

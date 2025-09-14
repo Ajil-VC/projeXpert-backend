@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 
 
-export interface IWorkSpace {
+export interface IWorkSpaceController {
 
     createWorkspace(req: Request, res: Response, next: NextFunction): Promise<void>;
 

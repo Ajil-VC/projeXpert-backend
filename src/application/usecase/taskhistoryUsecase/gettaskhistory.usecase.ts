@@ -1,15 +1,15 @@
-import { IGetTaskHistory } from "../../../config/Dependency/user/taskhistory.di";
+import { IGetTaskHistoryUsecase } from "../../../config/Dependency/user/taskhistory.di";
 import { ITaskHistoryRepository } from "../../../domain/repositories/taskhistory.repo";
 import { TaskHistory } from "../../../infrastructure/database/models/taskhistory.interface";
 
 
-export class GetTaskHistory implements IGetTaskHistory {
+export class GetTaskHistory implements IGetTaskHistoryUsecase {
 
-    constructor(private taskHistoryRepo: ITaskHistoryRepository) { }
+    constructor(private _taskHistoryRepo: ITaskHistoryRepository) { }
 
     async execute(taskId: string): Promise<TaskHistory[]> {
 
-        const history = await this.taskHistoryRepo.getTaskHistory(taskId);
+        const history = await this._taskHistoryRepo.getTaskHistory(taskId);
         return history;
 
     }

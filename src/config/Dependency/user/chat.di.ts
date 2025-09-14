@@ -3,18 +3,18 @@ import { SaveVideoCallUsecase } from "../../../application/usecase/chatUseCase/s
 import { Message } from "../../../infrastructure/database/models/message.interface";
 
 
-export interface IChat {
+export interface IChatUsecase {
     execute(userId: string, currentUserId: string, companyId: string): Promise<any>;
 }
 
-export interface IGetChat {
+export interface IGetChatUsecase {
     execute(userId: string, companyId: string): Promise<any>;
 }
 
-export interface IGetMessages {
+export interface IGetMessagesUsecase {
     execute(convoId: string): Promise<Array<Message>>;
 }
 
-export interface ISendMessages {
+export interface ISendMessagesUsecase {
     execute(convoId: string, senderId: string, recieverId: string, message: string): Promise<any>;
 }

@@ -3,7 +3,7 @@ import { GetSubscriptionPlans } from "../../../application/usecase/subscriptionU
 import { IsPlanAvailableUseCase } from "../../../application/usecase/subscriptionUseCase/isPlanAvailable.usecase";
 import { PlanPolicy } from "../../../application/usecase/subscriptionUseCase/planpolicy.usecase";
 import { SubscriptionUsecase } from "../../../application/usecase/subscriptionUseCase/subscription.usecase";
-import { ICompanySubscription, IGetSubscription, IIsPlanAvailable, ISubscribe } from "../../../config/Dependency/user/subscription.di";
+import { ICompanySubscriptionUsecase, IGetSubscriptionUsecase, IIsPlanAvailableUsecase, ISubscribeUsecase } from "../../../config/Dependency/user/subscription.di";
 import { StripeController } from "../../../controllers/user/stripe.controller";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
@@ -28,9 +28,9 @@ const workspaceRepo: IWorkspaceRepository = new WorkspaceRepoImp();
 const projectRepo: IProjectRepository = new projectRepositoryImp(userRepo);
 
 export const planPolicyUsecase = new PlanPolicy(teamRepo, companyRepository, workspaceRepo, projectRepo);
-export const subscribe: ISubscribe = new SubscriptionUsecase(companyRepository, subscriptionRepository);
-export const getSubscription: IGetSubscription = new GetSubscriptionPlans(subscriptionRepository);
-export const isPlanAvailable: IIsPlanAvailable = new IsPlanAvailableUseCase(subscriptionRepository);
-export const companySubscription: ICompanySubscription = new GetCompanySubscription(companyRepository);
+export const subscribe: ISubscribeUsecase = new SubscriptionUsecase(companyRepository, subscriptionRepository);
+export const getSubscription: IGetSubscriptionUsecase = new GetSubscriptionPlans(subscriptionRepository);
+export const isPlanAvailable: IIsPlanAvailableUsecase = new IsPlanAvailableUseCase(subscriptionRepository);
+export const companySubscription: ICompanySubscriptionUsecase = new GetCompanySubscription(companyRepository);
 
 export const subscriptionInterface: IStripeController = new StripeController(subscribe, getSubscription, isPlanAvailable, companySubscription);

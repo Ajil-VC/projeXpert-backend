@@ -321,15 +321,10 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     async getTasks(projectId: string, permissions: Array<Permissions>, userId: string, isKanban = false): Promise<any> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
-        const userIdOb = new mongoose.Types.ObjectId(userId);
 
         if (!isKanban) {
 
             let query: any = { projectId: projectIdOb, type: { $ne: 'subtask' } };
-
-            if (!permissions.includes('view_all_task')) {
-                query.assignedTo = userIdOb;
-            }
 
             const tasks = await taskModel.find(query)
                 .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
@@ -344,95 +339,28 @@ export class BacklogRepositoryImp implements IBacklogRepository {
 
         } else if (isKanban) {
 
-            if (permissions.includes('view_all_task')) {
-                const tasks = await taskModel.find({
-                    projectId: projectIdOb,
-                    sprintId: { $ne: null }
+            const tasks = await taskModel.find({
+                projectId: projectIdOb,
+                sprintId: { $ne: null }
+            })
+                .populate({
+                    path: "sprintId",
+                    match: { status: "active" },
                 })
-                    .populate({
-                        path: "sprintId",
-                        match: { status: "active" },
-                    })
-                    .populate({
-                        path: "assignedTo",
-                        select: "_id name email profilePicUrl role createdAt updatedAt",
-                    })
-                    .populate({
-                        path: "epicId"
-                    })
-                    .populate({
-                        path: 'subtasks',
-                        populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
-                    });
+                .populate({
+                    path: "assignedTo",
+                    select: "_id name email profilePicUrl role createdAt updatedAt",
+                })
+                .populate({
+                    path: "epicId"
+                })
+                .populate({
+                    path: 'subtasks',
+                    populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
+                });
 
-                const activeSprintTasks = tasks.filter(task => task.sprintId !== null);
-                return activeSprintTasks;
-
-            } else {
-
-                const [assignedActiveTasks, allActiveTasks] = await Promise.all([
-
-                    taskModel.find({
-                        projectId: projectIdOb,
-                        sprintId: { $ne: null },
-                        assignedTo: userIdOb
-                    })
-                        .populate({
-                            path: "sprintId",
-                            match: { status: "active" },
-                        })
-                        .populate({
-                            path: "assignedTo",
-                            select: "_id name email profilePicUrl role createdAt updatedAt",
-                        })
-                        .populate({
-                            path: "epicId"
-                        })
-                        .populate({
-                            path: 'subtasks',
-                            populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
-                        }),
-
-                    taskModel.find({
-                        projectId: projectIdOb,
-                        sprintId: { $ne: null }
-                    })
-                        .populate({
-                            path: "sprintId",
-                            match: { status: "active" },
-                        })
-                        .populate({
-                            path: "assignedTo",
-                            select: "_id name email profilePicUrl role createdAt updatedAt",
-                        })
-                        .populate({
-                            path: "epicId"
-                        })
-                        .populate({
-                            path: 'subtasks',
-                            populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
-
-
-                        })
-
-                ]);
-
-
-                const activeTaskIds = allActiveTasks.filter(task => task.sprintId !== null)
-                    .map((t: Task) => t._id);
-
-                const subtasks = await taskModel.find({ parentId: { $in: activeTaskIds }, assignedTo: userIdOb })
-                    .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
-                    .populate({
-                        path: "parentId",
-                        populate: { path: 'sprintId' }
-                    });
-
-                const activeSprintTasks = assignedActiveTasks.filter(task => task.sprintId !== null);
-                return [...activeSprintTasks, ...subtasks];
-
-            }
-
+            const activeSprintTasks = tasks.filter(task => task.sprintId !== null);
+            return activeSprintTasks;
 
         }
 

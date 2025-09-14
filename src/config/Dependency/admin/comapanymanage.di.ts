@@ -2,19 +2,19 @@
 import { companySubscription } from "../../../infrastructure/database/models/companySubscription.interface";
 
 
-export interface IGetDashBoard {
+export interface IGetDashBoardUsecase {
     execute(): Promise<any>;
 }
 
 
-export interface ICompanyManagementUse {
+export interface ICompanyManagementUsecase {
     execute(userId: string, status: boolean): Promise<any>;
 }
 
-export interface ICompanyStatusChange {
+export interface ICompanyStatusChangeUsecase {
     execute(companyId: string, status: boolean): Promise<any>;
 }
 
-export interface IGetSubscriptionAdmin {
+export interface IGetSubscriptionAdminUsecase {
     execute(searchTerm: string, sort: 1 | -1, limit: number, skip: number): Promise<{ subscriptions: Array<companySubscription>, totalPage: number }>;
 }

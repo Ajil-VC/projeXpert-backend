@@ -1,23 +1,23 @@
 import { Task } from "../../../infrastructure/database/models/task.interface";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
 import { ICloudinary } from "../../../domain/services/cloudinary.interface";
-import { IUpdateTaskDetails } from "../../../config/Dependency/user/task.di";
+import { IUpdateTaskDetailsUsecase } from "../../../config/Dependency/user/task.di";
 
 
-export class UpdateTaskDetailsUsecase implements IUpdateTaskDetails {
+export class UpdateTaskDetailsUsecase implements IUpdateTaskDetailsUsecase {
 
-    constructor(private taskRepo: ITaskRepository, private cloudinary: ICloudinary) { }
+    constructor(private _taskRepo: ITaskRepository, private _cloudinary: ICloudinary) { }
 
     async execute(task: Task, assigneeId: string, files: Express.Multer.File[]): Promise<Task> {
 
 
         const uploadedFiles = await Promise.all(
-            files.map(file => this.cloudinary.uploadImage(file, 'tasks'))
+            files.map(file => this._cloudinary.uploadImage(file, 'tasks'))
         );
 
         task.attachments = uploadedFiles;
 
-        const updatedTask = await this.taskRepo.updateTaskDetails(task, assigneeId);
+        const updatedTask = await this._taskRepo.updateTaskDetails(task, assigneeId);
         if (!updatedTask) {
             throw new Error('Couldnt update task');
         }

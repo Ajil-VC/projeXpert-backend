@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from "express";
-import { ICompanyManagementUse, ICompanyStatusChange, IGetSubscriptionAdmin } from "../../config/Dependency/admin/comapanymanage.di";
+import { ICompanyManagementUsecase, ICompanyStatusChangeUsecase, IGetSubscriptionAdminUsecase } from "../../config/Dependency/admin/comapanymanage.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
-import { ICompanyManagement } from "../../interfaces/admin/company.controller.interface";
+import { ICompanyManagementController } from "../../interfaces/admin/company.controller.interface";
 
-export class CompanyManagementController implements ICompanyManagement {
+export class CompanyManagementController implements ICompanyManagementController {
 
 
     constructor(
-        private companyManagementUsecase: ICompanyManagementUse,
-        private companyStatusChangeUsecase: ICompanyStatusChange,
-        private getSubscriptionsusecase: IGetSubscriptionAdmin
+        private _companyManagementUsecase: ICompanyManagementUsecase,
+        private _companyStatusChangeUsecase: ICompanyStatusChangeUsecase,
+        private _getSubscriptionsusecase: IGetSubscriptionAdminUsecase
     ) { }
 
 
@@ -29,7 +29,7 @@ export class CompanyManagementController implements ICompanyManagement {
             const limit = 2;
             const skip = (pageNum - 1) * limit;
 
-            const result = await this.getSubscriptionsusecase.execute(searchTerm, sort, limit, skip);
+            const result = await this._getSubscriptionsusecase.execute(searchTerm, sort, limit, skip);
             res.status(HttpStatusCode.OK).json({ status: true, result });
             return;
 
@@ -45,7 +45,7 @@ export class CompanyManagementController implements ICompanyManagement {
 
             const { userId, status } = req.body;
 
-            await this.companyManagementUsecase.execute(userId, status);
+            await this._companyManagementUsecase.execute(userId, status);
 
             res.status(HttpStatusCode.OK).json({ status: true, message: 'User status updated.' });
             return;
@@ -65,7 +65,7 @@ export class CompanyManagementController implements ICompanyManagement {
 
             const companyStatus = status === 'true' ? true : false;
 
-            const result = await this.companyStatusChangeUsecase.execute(companyId, companyStatus);
+            const result = await this._companyStatusChangeUsecase.execute(companyId, companyStatus);
             if (result) {
                 res.status(HttpStatusCode.OK).json({ status: true, message: `Status changed.` });
                 return;

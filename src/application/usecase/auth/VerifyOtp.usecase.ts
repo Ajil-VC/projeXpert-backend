@@ -1,13 +1,13 @@
-import { IVerifyOtp } from "../../../config/Dependency/auth/auth.di";
+import { IVerifyOtpUsecase } from "../../../config/Dependency/auth/auth.di";
 import { IOtpRepository } from "../../../domain/repositories/otp.repo";
 
 
-export class VerifyOtpUseCase implements IVerifyOtp {
+export class VerifyOtpUseCase implements IVerifyOtpUsecase {
 
-    constructor(private otpRepo: IOtpRepository) { }
+    constructor(private _otpRepo: IOtpRepository) { }
     async execute(email: string, otp: string): Promise<boolean> {
 
-        const isOTP = await this.otpRepo.findOTP(email, otp);
+        const isOTP = await this._otpRepo.findOTP(email, otp);
         if (isOTP) return true;
 
         return false;

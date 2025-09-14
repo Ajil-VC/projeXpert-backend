@@ -1,21 +1,21 @@
-import { IRemoveAttachment } from "../../../config/Dependency/user/task.di";
+import { IRemoveAttachmentUsecase } from "../../../config/Dependency/user/task.di";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
 import { ICloudinary } from "../../../domain/services/cloudinary.interface";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
-export class DeleteAttachmentUsecase implements IRemoveAttachment {
+export class DeleteAttachmentUsecase implements IRemoveAttachmentUsecase {
 
-    constructor(private taskRepo: ITaskRepository, private cloudinary: ICloudinary) { }
+    constructor(private _taskRepo: ITaskRepository, private _cloudinary: ICloudinary) { }
 
     async execute(publicId: string, taskId: string): Promise<Task> {
 
-        const cloudResult = await this.cloudinary.deleteImage(publicId);
+        const cloudResult = await this._cloudinary.deleteImage(publicId);
         if (cloudResult.result !== 'ok') {
             throw new Error('Couldnt remove image from cloudinary.');
         }
 
-        const updatedTask = await this.taskRepo.removeAttachment(publicId, taskId);
+        const updatedTask = await this._taskRepo.removeAttachment(publicId, taskId);
         return updatedTask;
     }
 }

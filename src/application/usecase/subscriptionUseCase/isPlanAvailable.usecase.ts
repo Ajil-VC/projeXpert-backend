@@ -1,15 +1,15 @@
-import { IIsPlanAvailable } from "../../../config/Dependency/user/subscription.di";
+import { IIsPlanAvailableUsecase } from "../../../config/Dependency/user/subscription.di";
 import { ISubscription } from "../../../domain/repositories/subscription.repo";
 
 
 
-export class IsPlanAvailableUseCase implements IIsPlanAvailable {
+export class IsPlanAvailableUseCase implements IIsPlanAvailableUsecase {
 
-    constructor(private subscriptionRepo: ISubscription) { }
+    constructor(private _subscriptionRepo: ISubscription) { }
 
     async execute(priceId: string): Promise<boolean> {
 
-        const plan = await this.subscriptionRepo.getPlan(priceId);
+        const plan = await this._subscriptionRepo.getPlan(priceId);
         if (!plan.isActive) {
             return false;
         }

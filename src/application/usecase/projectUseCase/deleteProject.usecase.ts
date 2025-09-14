@@ -1,13 +1,13 @@
-import { IDeleteProject } from "../../../config/Dependency/user/project.di";
+import { IDeleteProjectUsecase } from "../../../config/Dependency/user/project.di";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 
 
-export class DeleteProjectUsecase implements IDeleteProject {
+export class DeleteProjectUsecase implements IDeleteProjectUsecase {
 
-    constructor(private projectRepo: IProjectRepository) { }
+    constructor(private _projectRepo: IProjectRepository) { }
     async execute(projectId: string, workSpaceId: string): Promise<boolean> {
 
-        const result = await this.projectRepo.deleteProject(projectId, workSpaceId);
+        const result = await this._projectRepo.deleteProject(projectId, workSpaceId);
 
         if (result) {
             return true;

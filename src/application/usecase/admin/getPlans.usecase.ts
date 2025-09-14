@@ -1,17 +1,17 @@
-import { IGetPlan } from "../../../config/Dependency/admin/subscriptionplan.di";
+import { IGetPlanUsecase } from "../../../config/Dependency/admin/subscriptionplan.di";
 import { ISubscriptionPlanRepository } from "../../../domain/repositories/adminRepo/subscriptionplan.repo";
 
 
 
 
-export class GetPlansUsecase implements IGetPlan {
+export class GetPlansUsecase implements IGetPlanUsecase {
 
-    constructor(private subscriptionRepo: ISubscriptionPlanRepository) { }
+    constructor(private _subscriptionRepo: ISubscriptionPlanRepository) { }
 
     async execute(limit: number, skip: number, searchTerm: string) {
 
 
-        const plansWithTotalPage = await this.subscriptionRepo.getAllPlans(limit, skip, searchTerm);
+        const plansWithTotalPage = await this._subscriptionRepo.getAllPlans(limit, skip, searchTerm);
         return plansWithTotalPage;
     }
 }

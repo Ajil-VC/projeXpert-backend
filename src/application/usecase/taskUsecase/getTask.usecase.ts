@@ -1,15 +1,15 @@
-import { IGetTask } from "../../../config/Dependency/user/task.di";
+import { IGetTaskUsecase } from "../../../config/Dependency/user/task.di";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
 import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
-export class GetTask implements IGetTask {
+export class GetTask implements IGetTaskUsecase {
 
-    constructor(private taskRepo: ITaskRepository) { }
+    constructor(private _taskRepo: ITaskRepository) { }
 
     async execute(taskId: string): Promise<Task> {
 
-        const task = await this.taskRepo.getTask(taskId);
+        const task = await this._taskRepo.getTask(taskId);
         return task;
 
     }

@@ -1,16 +1,16 @@
-import { IDeleteMeeting } from "../../../config/Dependency/user/groupcall.di";
+import { IDeleteMeetingUsecase } from "../../../config/Dependency/user/groupcall.di";
 import { IMeetingRepository } from "../../../domain/repositories/meeting.repo";
 
 
 
 
-export class RemoveMeetingUsecase implements IDeleteMeeting {
+export class RemoveMeetingUsecase implements IDeleteMeetingUsecase {
 
-    constructor(private meetRepo: IMeetingRepository) { }
+    constructor(private _meetRepo: IMeetingRepository) { }
 
     async execute(meetId: string): Promise<boolean> {
 
-        const result = await this.meetRepo.removeMeeting(meetId);
+        const result = await this._meetRepo.removeMeeting(meetId);
         return result;
     }
 }

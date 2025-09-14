@@ -1,16 +1,16 @@
 import { Project } from "../../../infrastructure/database/models/project.interface";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { DecodedData } from "../../shared/decodedData";
-import { ICreateProject } from "../../../config/Dependency/user/project.di";
+import { ICreateProjectUsecase } from "../../../config/Dependency/user/project.di";
 
 
-export class createProjectUseCase implements ICreateProject {
+export class createProjectUseCase implements ICreateProjectUsecase {
 
-    constructor(private projectRepo: IProjectRepository) { }
+    constructor(private _projectRepo: IProjectRepository) { }
 
     async execute(projectName: String, workSpace: String, priority: String, user: DecodedData): Promise<Project | null> {
 
-        const createdProject = await this.projectRepo
+        const createdProject = await this._projectRepo
             .createProject(projectName, workSpace, priority, user.companyId, user.id);
 
         if (!createdProject) {

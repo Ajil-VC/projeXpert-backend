@@ -1,15 +1,15 @@
 import { Task } from "../../../infrastructure/database/models/task.interface";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
-import { IChangeTaskStatus } from "../../../config/Dependency/user/backlog.di";
+import { IChangeTaskStatusUsecase } from "../../../config/Dependency/user/backlog.di";
 
 
-export class ChangeTaskStatus implements IChangeTaskStatus {
+export class ChangeTaskStatus implements IChangeTaskStatusUsecase {
 
-    constructor(private backlogRepo: IBacklogRepository) { }
+    constructor(private _backlogRepo: IBacklogRepository) { }
 
     async execute(taskId: string, status: string): Promise<Task | null> {
 
-        const result = await this.backlogRepo.changeTaskStatus(taskId, status);
+        const result = await this._backlogRepo.changeTaskStatus(taskId, status);
         return result;
     }
 }

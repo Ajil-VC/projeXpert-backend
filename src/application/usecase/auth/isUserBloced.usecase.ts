@@ -3,10 +3,10 @@ import { IUserRepository } from "../../../domain/repositories/user.repo";
 
 export class IsUserBlockedUsecase {
 
-    constructor(private userRepo: IUserRepository) { }
+    constructor(private _userRepo: IUserRepository) { }
 
     async execute(userId: string) {
-        const result = await this.userRepo.findUserById(userId);
+        const result = await this._userRepo.findUserById(userId);
         if (!result) {
             throw new Error('Error occured while geting user data');
         }

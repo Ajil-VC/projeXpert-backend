@@ -7,7 +7,7 @@ import { DeleteRoleUsecase } from "../../application/usecase/user/deleterole.use
 import { GetRoles } from "../../application/usecase/user/getRoles.usecase";
 import { UpdateRoleUsecase } from "../../application/usecase/user/updaterole.usecase";
 import { UpdateProfileUsecase } from "../../application/usecase/user/user.usecase";
-import { IGetRoleWithId, ICreateRole, IDeleteRole, IGetRoles, IUpdateRole } from "../../config/Dependency/user/user.di";
+import { IGetRoleWithIdUsecase, ICreateRoleUsecase, IDeleteRoleUsecase, IGetRolesUsecase, IUpdateRoleUsecase } from "../../config/Dependency/user/user.di";
 import { ActivityController } from "../../controllers/user/activity.controller";
 import { userController } from "../../controllers/user/user.controller";
 import { IActivityRepository } from "../../domain/repositories/activity.repo";
@@ -33,10 +33,10 @@ export const getActivitiesInterface: IActivityController = new ActivityControlle
 const userRepository: IUserRepository = new userRepositoryImp();
 const roleRepository: IRoleRepository = new RoleRepositoryImp();
 const cloudinarySer: ICloudinary = new CloudUploadService()
-export const createRoleUsecase: ICreateRole = new CreateRoleUsecase(roleRepository);
-export const getRolesUsecase: IGetRoles = new GetRoles(roleRepository);
+export const createRoleUsecase: ICreateRoleUsecase = new CreateRoleUsecase(roleRepository);
+export const getRolesUsecase: IGetRolesUsecase = new GetRoles(roleRepository);
 export const updateProfile = new UpdateProfileUsecase(cloudinarySer, userRepository);
-export const getRole: IGetRoleWithId = new CanMutateRoleUsecase(roleRepository);
-export const deleteRole: IDeleteRole = new DeleteRoleUsecase(roleRepository);
-export const updateRole: IUpdateRole = new UpdateRoleUsecase(roleRepository);
+export const getRole: IGetRoleWithIdUsecase = new CanMutateRoleUsecase(roleRepository);
+export const deleteRole: IDeleteRoleUsecase = new DeleteRoleUsecase(roleRepository);
+export const updateRole: IUpdateRoleUsecase = new UpdateRoleUsecase(roleRepository);
 export const userControllerInterface: IUserController = new userController(updateProfile, createRoleUsecase, getRolesUsecase, getRole, deleteRole, updateRole);

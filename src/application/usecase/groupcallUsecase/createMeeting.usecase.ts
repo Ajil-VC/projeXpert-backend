@@ -1,12 +1,12 @@
-import { ICreateMeeting } from "../../../config/Dependency/user/groupcall.di";
+import { ICreateMeetingUsecase } from "../../../config/Dependency/user/groupcall.di";
 import { IMeetingRepository } from "../../../domain/repositories/meeting.repo";
 import { Meeting } from "../../../infrastructure/database/models/meeting.interface";
 
 
 
-export class CreateMeetingUsecase implements ICreateMeeting {
+export class CreateMeetingUsecase implements ICreateMeetingUsecase {
 
-    constructor(private meetRepo: IMeetingRepository) { }
+    constructor(private _meetRepo: IMeetingRepository) { }
 
     async execute(
         companyId: string,
@@ -22,7 +22,7 @@ export class CreateMeetingUsecase implements ICreateMeeting {
         days: Array<string>
     ): Promise<Meeting> {
 
-        const newMeeting = await this.meetRepo.createMeeting(companyId, userId, roomName, meetingDate, meetingTime, description, members, roomId, url, recurring, days);
+        const newMeeting = await this._meetRepo.createMeeting(companyId, userId, roomName, meetingDate, meetingTime, description, members, roomId, url, recurring, days);
         return newMeeting;
 
     }

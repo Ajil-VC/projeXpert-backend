@@ -1,17 +1,17 @@
 import { NextFunction, Request, Response } from "express";
-import { ICreateWorkspace, ISelectWorkspace } from "../../config/Dependency/user/workspace.di";
+import { ICreateWorkspaceUsecase, ISelectWorkspaceUsecase } from "../../config/Dependency/user/workspace.di";
 
 import { HttpStatusCode } from "../../config/http-status.enum";
-import { IWorkSpace } from "../../interfaces/user/workspace.controller.interface";
+import { IWorkSpaceController } from "../../interfaces/user/workspace.controller.interface";
 import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 
 
-export class WorkSpaceController implements IWorkSpace {
+export class WorkSpaceController implements IWorkSpaceController {
 
 
     constructor(
-        private createWorkspaceUsecase: ICreateWorkspace,
-        private selectWorkSpace: ISelectWorkspace
+        private _createWorkspaceUsecase: ICreateWorkspaceUsecase,
+        private _selectWorkSpace: ISelectWorkspaceUsecase
     ) { }
 
 
@@ -23,7 +23,7 @@ export class WorkSpaceController implements IWorkSpace {
             if (typeof workSpaceId !== 'string') {
                 throw new Error('Workspace id must be string type');
             }
-            const result = await this.selectWorkSpace.execute(workSpaceId, req.user.id);
+            const result = await this._selectWorkSpace.execute(workSpaceId, req.user.id);
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.COMMON.SUCCESS, result });
 
             return;
@@ -38,7 +38,7 @@ export class WorkSpaceController implements IWorkSpace {
 
             const { workspaceName } = req.body;
 
-            const result = await this.createWorkspaceUsecase.execute(workspaceName, req.user.companyId, req.user.id);
+            const result = await this._createWorkspaceUsecase.execute(workspaceName, req.user.companyId, req.user.id);
 
             if (!result.status) {
                 res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: result.message });

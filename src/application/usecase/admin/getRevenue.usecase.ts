@@ -6,11 +6,11 @@ import { IRevenueRepository } from "../../../domain/repositories/adminRepo/reven
 
 export class RevenueUseCase implements IRevenueUsecase {
 
-    constructor(private revenueRepo: IRevenueRepository) { }
+    constructor(private _revenueRepo: IRevenueRepository) { }
 
     async execute(filter: 'year' | 'month' | 'date' | null, plans: string[], startDate?: Date | null, endDate?: Date | null): Promise<any> {
 
-        const data = await this.revenueRepo.getRevenueReport(filter, plans, startDate, endDate);
+        const data = await this._revenueRepo.getRevenueReport(filter, plans, startDate, endDate);
         const totalData: { totalCount: number, totalRevenue: number } = { totalCount: 0, totalRevenue: 0 };
         data.forEach((ele: { count: number, totalAmount: number, month?: number, date?: number }) => {
             totalData.totalCount = totalData.totalCount + ele.count;

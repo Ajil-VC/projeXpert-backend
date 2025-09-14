@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { IRevenue } from "../../interfaces/admin/revenue.controller.interface";
+import { IRevenueController } from "../../interfaces/admin/revenue.controller.interface";
 import { IRevenueUsecase } from "../../config/Dependency/admin/revenue.di";
 import { HttpStatusCode } from "../../config/http-status.enum";
 
 
-export class RevenueController implements IRevenue {
+export class RevenueController implements IRevenueController {
 
-    constructor(private revenueUse: IRevenueUsecase) { }
+    constructor(private _revenueUse: IRevenueUsecase) { }
 
     getRevenueReport = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -41,7 +41,7 @@ export class RevenueController implements IRevenue {
             const startDate = typeof req.query.startDate === 'string' && req.query.startDate !== 'undefined' ? new Date(req.query.startDate) : null;
             const endDate = req.query.endDate && typeof req.query.endDate === 'string' && req.query.endDate !== 'undefined' ? new Date(req.query.endDate) : null;
 
-            const graphData = await this.revenueUse.execute(filter, plans, startDate, endDate);
+            const graphData = await this._revenueUse.execute(filter, plans, startDate, endDate);
 
             res.status(HttpStatusCode.OK).json({ status: true, result: graphData });
             return;

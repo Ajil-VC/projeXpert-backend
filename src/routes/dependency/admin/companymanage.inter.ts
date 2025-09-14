@@ -2,7 +2,7 @@ import { GetDashboardDataUsecase } from "../../../application/usecase/admin/dash
 import { GetSubscriptions } from "../../../application/usecase/admin/getSubscriptionDetails.usecase";
 import { ChangeCompanyStatusUsecase } from "../../../application/usecase/admin/updateCompanyStatus.usecase";
 import { changeUserStatusUseCase } from "../../../application/usecase/admin/updateUserStatus.usecase";
-import { ICompanyManagementUse, ICompanyStatusChange, IGetDashBoard, IGetSubscriptionAdmin } from "../../../config/Dependency/admin/comapanymanage.di";
+import { ICompanyManagementUsecase, ICompanyStatusChangeUsecase, IGetDashBoardUsecase, IGetSubscriptionAdminUsecase } from "../../../config/Dependency/admin/comapanymanage.di";
 import { CompanyManagementController } from "../../../controllers/admin/companymanage.controller";
 import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.repo";
 import { ICompanySubscriptionRepository } from "../../../domain/repositories/adminRepo/companysubscription.repo";
@@ -16,7 +16,7 @@ import { DashboardRepositoryImp } from "../../../infrastructure/repositories/adm
 import { CompanyRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/company.repositoryImp";
 import { projectRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/project.repositoryImp";
 import { userRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/user.repositoryImp";
-import { ICompanyManagement } from "../../../interfaces/admin/company.controller.interface";
+import { ICompanyManagementController } from "../../../interfaces/admin/company.controller.interface";
 
 const userRepository: IUserRepository = new userRepositoryImp();
 const companyRepository: ICompanyRepository = new CompanyRepositoryImp();
@@ -27,12 +27,12 @@ const companyRepo: ICompanyRepository = new CompanyRepositoryImp();
 const dashboardRepository: IAdminDashboardRepository = new DashboardRepositoryImp(companySubscriptionRepo, companyRepo);
 const projectRepository: IProjectRepository = new projectRepositoryImp(userRepository);
 
-export const getDashBoardData: IGetDashBoard = new GetDashboardDataUsecase(dashboardRepository, userRepository, projectRepository);
-export const companyManagementUsecase: ICompanyManagementUse = new changeUserStatusUseCase(userRepository);
-export const companyStatusChangeUsecase: ICompanyStatusChange = new ChangeCompanyStatusUsecase(companyRepository);
-export const getSubscriptionsusecase: IGetSubscriptionAdmin = new GetSubscriptions(companySubscriptionRepo);
+export const getDashBoardData: IGetDashBoardUsecase = new GetDashboardDataUsecase(dashboardRepository, userRepository, projectRepository);
+export const companyManagementUsecase: ICompanyManagementUsecase = new changeUserStatusUseCase(userRepository);
+export const companyStatusChangeUsecase: ICompanyStatusChangeUsecase = new ChangeCompanyStatusUsecase(companyRepository);
+export const getSubscriptionsusecase: IGetSubscriptionAdminUsecase = new GetSubscriptions(companySubscriptionRepo);
 
-export const companyMangementInterface: ICompanyManagement = new CompanyManagementController(
+export const companyMangementInterface: ICompanyManagementController = new CompanyManagementController(
     companyManagementUsecase,
     companyStatusChangeUsecase,
     getSubscriptionsusecase);

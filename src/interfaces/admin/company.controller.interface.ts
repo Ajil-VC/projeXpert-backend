@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-export interface ICompanyManagement {
+export interface ICompanyManagementController {
 
     changeUserStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
 

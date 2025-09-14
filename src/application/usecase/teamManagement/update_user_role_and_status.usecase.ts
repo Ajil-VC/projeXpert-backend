@@ -1,4 +1,4 @@
-import { IUpdateUserRoleAndStatus } from "../../../config/Dependency/user/team.di";
+import { IUpdateUserRoleAndStatusUsecase } from "../../../config/Dependency/user/team.di";
 import { ITeamRepository } from "../../../domain/repositories/team.repo";
 import { UserResponseDTO } from "../../../dtos/user/userResponseDTO";
 import { UserMapper } from "../../../mappers/user/user.mapper";
@@ -6,13 +6,13 @@ import { UserMapper } from "../../../mappers/user/user.mapper";
 
 
 
-export class UpdateUserRoleUseCase implements IUpdateUserRoleAndStatus {
+export class UpdateUserRoleUseCase implements IUpdateUserRoleAndStatusUsecase {
 
-    constructor(private teamRepo: ITeamRepository) { }
+    constructor(private _teamRepo: ITeamRepository) { }
 
     async execute(userId: string, userRole: string, status: boolean | null): Promise<UserResponseDTO> {
 
-        const result = await this.teamRepo.updateUserRoleAndStatus(userId, userRole, status);
+        const result = await this._teamRepo.updateUserRoleAndStatus(userId, userRole, status);
         return UserMapper.toResponseDTO(result);
     }
 }

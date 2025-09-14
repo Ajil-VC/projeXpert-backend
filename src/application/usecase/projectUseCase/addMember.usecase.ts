@@ -4,21 +4,21 @@ import { IEmailService } from "../../../domain/services/email.interface";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { Project } from "../../../infrastructure/database/models/project.interface";
 import { ISecurePassword } from "../../../domain/services/securepassword.interface";
-import { IAddMember } from "../../../config/Dependency/user/project.di";
+import { IAddMemberUsecase } from "../../../config/Dependency/user/project.di";
 import { Company } from "../../../infrastructure/database/models/company.interface";
 
-export class AddMemberUseCase implements IAddMember {
+export class AddMemberUseCase implements IAddMemberUsecase {
 
     constructor(
-        private userRepo: IUserRepository,
-        private sendEmail: IEmailService,
-        private projectRepo: IProjectRepository,
-        private securePassword: ISecurePassword
+        private _userRepo: IUserRepository,
+        private _sendEmail: IEmailService,
+        private _projectRepo: IProjectRepository,
+        private _securePassword: ISecurePassword
     ) { }
 
     async execute(email: string, projectId: string, workSpaceId: string, companyId: string, roleId: string): Promise<Project | null> {
 
-        const isUserExist = await this.userRepo.findByEmail(email);
+        const isUserExist = await this._userRepo.findByEmail(email);
         if (isUserExist && ((isUserExist.companyId as Company)._id.toString() !== companyId)) {
             throw new Error(`${isUserExist.email} is already linked to another company and can’t be added here.`);
         }
@@ -35,9 +35,9 @@ export class AddMemberUseCase implements IAddMember {
                 upperCaseAlphabets: true,
                 specialChars: false
             })
-            const hashedPassword = await this.securePassword.secure(otp);
+            const hashedPassword = await this._securePassword.secure(otp);
             console.log(`Current password of new User : ${otp}`);
-            const createdUser = await this.userRepo.createUser(
+            const createdUser = await this._userRepo.createUser(
                 email,
                 'New User',
                 hashedPassword,
@@ -46,12 +46,12 @@ export class AddMemberUseCase implements IAddMember {
                 workSpaceId, true, 'company-user');
             if (!createdUser) throw new Error('User couldnt create.');
 
-            const isMailSent = await this.sendEmail.send(email, 'Projexpert Password', `Your password is: ${otp}`);
+            const isMailSent = await this._sendEmail.send(email, 'Projexpert Password', `Your password is: ${otp}`);
             if (!isMailSent) throw new Error(`Password couldnt send to the email ${email}`);
 
         }
 
-        const updatedProject = await this.projectRepo.addMemberToProject(projectId, email, workSpaceId);
+        const updatedProject = await this._projectRepo.addMemberToProject(projectId, email, workSpaceId);
         if (!updatedProject) {
             throw new Error('Member not added');
         }

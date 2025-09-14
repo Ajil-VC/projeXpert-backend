@@ -5,55 +5,55 @@ import { config } from "../../../config/config";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
 import { useCaseResult } from "../../shared/useCaseResult";
 import { Company } from "../../../infrastructure/database/models/company.interface";
-import { IRegister } from "../../../config/Dependency/auth/auth.di";
+import { IRegisterUsecase } from "../../../config/Dependency/auth/auth.di";
 import { ORG_PERMISSIONS, Permissions, PERMISSIONS } from "../../../infrastructure/database/models/role.interface";
 import { IRoleRepository } from "../../../domain/repositories/role.repo";
 
 
-export class RegisterUseCase implements IRegister {
+export class RegisterUseCase implements IRegisterUsecase {
 
     constructor(
-        private securePassword: ISecurePassword,
-        private userRepo: IUserRepository,
-        private companyRepo: ICompanyRepository,
-        private roleRepo: IRoleRepository
+        private _securePassword: ISecurePassword,
+        private _userRepo: IUserRepository,
+        private _companyRepo: ICompanyRepository,
+        private _roleRepo: IRoleRepository
     ) { }
 
     async execute(email: string, companyName: string, passWord: string): Promise<useCaseResult> {
 
         try {
 
-            const isUserExists = await this.userRepo.findByEmail(email);
+            const isUserExists = await this._userRepo.findByEmail(email);
             if (isUserExists) return { status: false, message: 'Email already in use' };
 
-            const isCompanyExist = await this.companyRepo.findCompanyByEmail(email);
+            const isCompanyExist = await this._companyRepo.findCompanyByEmail(email);
             if (isCompanyExist) return { status: false, message: 'Email already registered' };
 
-            const companyIdStatus = await this.companyRepo.createCompany(companyName, email);
+            const companyIdStatus = await this._companyRepo.createCompany(companyName, email);
 
             if (typeof companyIdStatus == 'string') return { status: false, message: 'Company couldnt create' };
-            let workSpaceId = await this.companyRepo.createWorkspace('Default', companyIdStatus.additional);
+            let workSpaceId = await this._companyRepo.createWorkspace('Default', companyIdStatus.additional);
             if (!workSpaceId || typeof workSpaceId !== 'string') return { status: false, message: 'Workspace probably have not created' };
 
 
             const [ownerRole, adminRole, developerRole] = await Promise.all([
-                this.roleRepo.createRole('Owner',
+                this._roleRepo.createRole('Owner',
                     PERMISSIONS as unknown as Permissions[], '', companyIdStatus.additional, false),
 
-                this.roleRepo.createRole('Admin',
+                this._roleRepo.createRole('Admin',
                     (PERMISSIONS as unknown as Permissions[]).filter(p => !ORG_PERMISSIONS.includes(p)), '', companyIdStatus.additional),
 
-                this.roleRepo.createRole('Developer',
+                this._roleRepo.createRole('Developer',
                     [
                         "view_task", "edit_task", "assign_task", "comment_task",
                     ], '', companyIdStatus.additional)
             ]);
 
 
-            const hashedPassword = await this.securePassword.secure(passWord);
+            const hashedPassword = await this._securePassword.secure(passWord);
             if (!hashedPassword) return { status: false, message: 'Password couldnt secured' };
 
-            const userData = await this.userRepo.createUser(
+            const userData = await this._userRepo.createUser(
                 email,
                 companyName,
                 hashedPassword,
