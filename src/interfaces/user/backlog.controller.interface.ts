@@ -15,8 +15,6 @@ export interface IBacklogController {
 
     createSubtask(req: Request, res: Response, next: NextFunction): Promise<void>;
 
-    getSubtasks(req: Request, res: Response, next: NextFunction): Promise<void>;
-
     createSprint(req: Request, res: Response, next: NextFunction): Promise<void>;
 
     getSprints(req: Request, res: Response, next: NextFunction): Promise<void>;

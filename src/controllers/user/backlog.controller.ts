@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import {
     IAssignIssue, IChangeTaskStatus,
-    ICreateEpic, ICreateIssue, ICreateSprint, ICreateSubTasks, IDragDrop, IGetSprint, IGetSubtasks, IGetTasks, IIsActiveSprint, IRemoveTask, IStartSprint, IUpdateEpic
+    ICreateEpic, ICreateIssue, ICreateSprint, ICreateSubTasks, IDragDrop, IGetSprint, IGetTasks, IIsActiveSprint, IRemoveTask, IStartSprint, IUpdateEpic
 } from "../../config/Dependency/user/backlog.di";
 
 import { IAddComment, ICanChangeStatus, ICompleteSprint, IEpicProgress, IGetComments, IGetTask, IRemoveAttachment, IUpdateTaskDetails } from "../../config/Dependency/user/task.di";
@@ -43,7 +43,6 @@ export class BacklogController implements IBacklogController {
         private isActiveSprint: IIsActiveSprint,
         private addActivityUsecase: IAddActivity,
         private createSubtaskUsecase: ICreateSubTasks,
-        private getSubtasksUsecase: IGetSubtasks,
         private removeTaskUsecase: IRemoveTask,
         private addTaskHistory: ITaskHistoryUsecase,
         private getTask: IGetTask,
@@ -107,21 +106,6 @@ export class BacklogController implements IBacklogController {
         }
     }
 
-
-    getSubtasks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-
-        try {
-
-            const parentId = req.params.parentId;
-            const result = await this.getSubtasksUsecase.execute(parentId);
-
-            res.status(HttpStatusCode.OK).json({ status: true, result });
-            return;
-
-        } catch (err) {
-            next(err);
-        }
-    }
 
 
     createSubtask = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -281,13 +265,17 @@ export class BacklogController implements IBacklogController {
             const result = await this.assignIssueUsecase.execute(issueId, assigneeId);
             if (result?.projectId) {
 
+                const taskIdToAddHistory = result.parentId ? result.parentId : issueId;
+                const subtaskName = result.parentId ? result.title : undefined;
+
                 await Promise.all([
                     this.addActivityUsecase.execute(result.projectId, req.user.companyId, req.user.id, 'changed assignee to', result?.assignedTo?.email || null),
                     this.addTaskHistory.execute({
-                        taskId: issueId,
+                        taskId: taskIdToAddHistory,
                         updatedBy: req.user.id,
                         actionType: 'ASSIGN',
-                        assignedTo: assigneeId
+                        assignedTo: assigneeId,
+                        subtaskTitle: subtaskName
                     })
                 ]);
             }
@@ -411,10 +399,16 @@ export class BacklogController implements IBacklogController {
                 return;
             }
 
+            if (!taskAndPermission.canChange && !taskAndPermission.task.parentId && taskAndPermission.task.subtasks.length > 0) {
+                res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: 'This task status will be updated according to the subtasks.' });
+                return;
+            }
+
             if (!taskAndPermission.canChange) {
                 res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'Task is not in active sprint! Status cannot be changed.' });
                 return;
             }
+
 
             const result = await this.changeTaskStatusUsecase.execute(taskId, status);
             if (!result) {
@@ -422,15 +416,18 @@ export class BacklogController implements IBacklogController {
                 return;
             }
 
+            const subtaskName = taskAndPermission.task.parentId ? taskAndPermission.task.title : undefined;
+            const taskIdToAddHistory = taskAndPermission.task.parentId ? taskAndPermission.task.parentId : taskId;
             if (taskAndPermission.task.status !== status) {
                 await Promise.all([
                     this.addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `updated ${result.title} status to`, status),
                     this.addTaskHistory.execute({
-                        taskId: taskId,
+                        taskId: taskIdToAddHistory,
                         updatedBy: req.user.id,
                         actionType: "STATUS_CHANGE",
                         oldStatus: taskAndPermission.task.status,
-                        newStatus: status
+                        newStatus: status,
+                        subtaskTitle: subtaskName
                     })
                 ])
             }

@@ -70,6 +70,7 @@ export class TaskHistoryRepositoryImp implements ITaskHistoryRepository {
             let assignedToOb;
             assignedToOb = new mongoose.Types.ObjectId(assignedTo);
             modelObject.details.assignedTo = assignedToOb;
+            modelObject.details.subtaskTitle = subtaskTitle || undefined
 
         } else if (subtaskId && actionType === 'DELETE_SUBTASK') {
 
@@ -87,6 +88,7 @@ export class TaskHistoryRepositoryImp implements ITaskHistoryRepository {
 
             modelObject.details.newStatus = newStatus;
             modelObject.details.oldStatus = oldStatus;
+            modelObject.details.subtaskTitle = subtaskTitle || undefined
         } else if (actionType === "CREATE_SUBTASK") {
 
 

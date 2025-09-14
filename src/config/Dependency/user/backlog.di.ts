@@ -25,10 +25,6 @@ export interface ICreateSubTasks {
     execute(title: string, type: string, parentId: string, projectId: string): Promise<Task>;
 }
 
-export interface IGetSubtasks {
-    execute(parentId: string): Promise<Task[]>;
-}
-
 export interface ICreateSprint {
     execute(projectId: string, sprintIds: Array<string>, userId: string): Promise<Sprint>;
 }

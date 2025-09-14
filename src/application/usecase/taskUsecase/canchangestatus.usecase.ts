@@ -23,6 +23,10 @@ export class CanChangeTaskStatus implements ICanChangeStatus {
                 return { task, canChange: false };
             }
 
+            if (task.subtasks.length > 0) {
+                return { task, canChange: false };
+            }
+
         } else {
 
             const parentTask = await this.taskRepo.getTask(task.parentId as unknown as string);

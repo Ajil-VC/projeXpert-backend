@@ -23,16 +23,7 @@ export class GetTasksUseCase implements IGetTasks {
         } else if (isKanban) {
 
             const activeTasks = await this.backlogRepo.getTasks(projectId, permissions, userId, isKanban);
-
-            const activeTaskIds = activeTasks.map((t: Task) => t._id);
-
-            let availableSubtasks: Task[] = [];
-            if (permissions.includes('view_all_task')) {
-                availableSubtasks = await this.backlogRepo.getSubtasks('', isKanban, activeTaskIds);
-            }
-
-            const allTasks = [...activeTasks, ...availableSubtasks];
-            return allTasks;
+            return activeTasks;
 
         }
     }

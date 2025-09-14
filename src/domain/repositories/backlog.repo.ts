@@ -17,8 +17,6 @@ export interface IBacklogRepository {
 
     createSubtask(title: string, type: string, parentId: string, projectId: string): Promise<Task>;
 
-    getSubtasks(parentId: string, isKanban?: boolean, parentIdArray?: string[]): Promise<Task[]>;
-
     assignIssue(issueId: string, userId: string): Promise<any>;
 
     createSprint(projectId: string, issueIds: Array<string>, userId: string): Promise<any>;

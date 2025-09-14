@@ -102,8 +102,6 @@ userRouter.route('/issue')
     .patch(authenticateUser, autherizer.has(['assign_task']), validateBody(assignIssueSchema), backlogControllerInterface.assignIssue)
 
 userRouter.post('/subtask', authenticateUser, autherizer.has(['create_task']), validateBody(createSubtaskSchema), backlogControllerInterface.createSubtask);
-userRouter.get('/subtask/:parentId', authenticateUser,
-    autherizer.hasAny(['view_task', 'edit_task', 'assign_task', 'create_task', 'delete_task', 'comment_task', 'view_all_task']), backlogControllerInterface.getSubtasks);
 userRouter.delete('/task/:taskId', authenticateUser, autherizer.has(['delete_task']), backlogControllerInterface.removeTask);
 
 userRouter.route('/sprints')

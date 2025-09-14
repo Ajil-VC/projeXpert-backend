@@ -28,34 +28,6 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async getSubtasks(parentId: string, isKanban = false, parentIdArray = []): Promise<Task[]> {
-
-        if (!isKanban) {
-
-            const parentIdOb = new mongoose.Types.ObjectId(parentId);
-            const subtasks = await taskModel.find({ parentId: parentIdOb })
-                .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' });
-
-            if (!subtasks) {
-                throw new Error("Couldnt retrieve subtasks.");
-            }
-
-            return subtasks;
-        } else {
-
-            const subtasks = await taskModel.find({ parentId: { $in: parentIdArray } })
-                .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
-                .populate({
-                    path: "parentId",
-                    populate: { path: 'sprintId' }
-                });
-            return subtasks;
-
-        }
-
-    }
-
-
     async createSubtask(title: string, type: string, parentId: string, projectId: string): Promise<Task> {
 
         const parentIdOb = new mongoose.Types.ObjectId(parentId);
@@ -190,6 +162,11 @@ export class BacklogRepositoryImp implements IBacklogRepository {
             containerId = containerId.split('-')[1];
             containerIdOb = new mongoose.Types.ObjectId(containerId);
 
+            const sprintData = await SprintModel.findOne({ _id: containerIdOb });
+            if (sprintData.status === 'active') {
+                throw new Error('Cannot move tasks to active sprint.');
+            }
+
             //Adding moved task to the array of sprint document
             updatedSprint = await SprintModel.updateOne({ _id: containerIdOb }, { $addToSet: { tasks: movedTaskIdOb } });
             if (!updatedSprint) {
@@ -232,7 +209,16 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                     {
                         path: 'sprintId',
                         model: 'Sprint'
-                    }
+                    },
+                    {
+                        path: 'subtasks',
+                        model: 'Task',
+                        populate: {
+                            path: 'assignedTo',
+                            model: 'User',
+                            select: '_id name email profilePicUrl role createdAt updatedAt'
+                        }
+                    },
                 ]
             }).exec();
         if (!availableSprints) throw new Error('Error occured while fetching sprints');
@@ -349,7 +335,10 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                 .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
                 .populate({ path: 'sprintId' })
                 .populate({ path: 'epicId' })
-                .populate({ path: 'subtasks' });
+                .populate({
+                    path: 'subtasks',
+                    populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
+                });
 
             return tasks;
 
@@ -371,7 +360,10 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                     .populate({
                         path: "epicId"
                     })
-                    .populate({ path: 'subtasks' });
+                    .populate({
+                        path: 'subtasks',
+                        populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
+                    });
 
                 const activeSprintTasks = tasks.filter(task => task.sprintId !== null);
                 return activeSprintTasks;
@@ -396,7 +388,10 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                         .populate({
                             path: "epicId"
                         })
-                        .populate({ path: 'subtasks' }),
+                        .populate({
+                            path: 'subtasks',
+                            populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
+                        }),
 
                     taskModel.find({
                         projectId: projectIdOb,
@@ -413,7 +408,12 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                         .populate({
                             path: "epicId"
                         })
-                        .populate({ path: 'subtasks' })
+                        .populate({
+                            path: 'subtasks',
+                            populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
+
+
+                        })
 
                 ]);
 
