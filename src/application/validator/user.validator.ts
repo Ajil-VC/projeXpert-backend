@@ -102,6 +102,14 @@ export const controlSchema = yup.object({
     blockedStatus: yup.boolean().nullable()
 });
 
+export const storyPointSchema = yup.object({
+    storyPoints: yup
+        .number()
+        .oneOf([0, 1, 2, 3, 5, 8, 13, 21], 'Point must be a valid Fibonacci number')
+        .required('Story point required'),
+    taskId: yup.string().required('Task Id required.')
+});
+
 export const meetingSchema = yup.object({
     roomName: yup
         .string()

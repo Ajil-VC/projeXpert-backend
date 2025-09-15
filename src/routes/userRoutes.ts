@@ -18,6 +18,7 @@ import {
     sendMessageSchema,
     startConversationSchema,
     startSprintSchema,
+    storyPointSchema,
     taskStatusUpdateSchema,
     updateEpicSchema
 } from '../application/validator/user.validator';
@@ -120,6 +121,8 @@ userRouter.get('/tasks', authenticateUser, autherizer.hasAny(['view_task', 'view
 userRouter.get('/tasks/kanban', authenticateUser, autherizer.hasAny(['view_task', 'view_all_task', 'view_sprint']), backlogControllerInterface.getTasks);
 userRouter.get('/task-history', authenticateUser, autherizer.hasAny(['view_task', 'view_all_task']), backlogControllerInterface.taskHistory);
 userRouter.patch('/control-user', authenticateUser, autherizer.has(['assign_role']), validateBody(controlSchema), teamInterface.updateUserRole);
+
+userRouter.put('/story-points', authenticateUser, autherizer.has(['set_storyPoint']), validateBody(storyPointSchema), backlogControllerInterface.setStoryPoint)
 
 userRouter.get('/get-users', authenticateUser, autherizer.has(['assign_role']), teamInterface.getCompanyUsers);
 userRouter.get('/team', authenticateUser, teamInterface.getTeam);

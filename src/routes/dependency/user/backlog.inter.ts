@@ -29,12 +29,13 @@ import { IGetTaskHistoryUsecase, ITaskHistoryUsecase } from "../../../config/Dep
 import { ITaskHistoryRepository } from "../../../domain/repositories/taskhistory.repo";
 import { TaskHistoryRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/taskhistory.repositoryImp";
 import { TaskHistoryUsecase } from "../../../application/usecase/taskhistoryUsecase/taskhistory.usecase";
-import { ICanChangeStatusUsecase, IGetTaskUsecase } from "../../../config/Dependency/user/task.di";
+import { ICanChangeStatusUsecase, IGetTaskUsecase, ISetStoryPointUsecase } from "../../../config/Dependency/user/task.di";
 import { TaskRepositoryImp } from "../../../infrastructure/repositories/repoImplementations/task.repositoryImp";
 import { GetTask } from "../../../application/usecase/taskUsecase/getTask.usecase";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
 import { GetTaskHistory } from "../../../application/usecase/taskhistoryUsecase/gettaskhistory.usecase";
 import { CanChangeTaskStatus } from "../../../application/usecase/taskUsecase/canchangestatus.usecase";
+import { SetStoryPointUsecase } from "../../../application/usecase/taskUsecase/setStorypoint.usecase";
 
 const backlogRepository: IBacklogRepository = new BacklogRepositoryImp();
 
@@ -58,6 +59,7 @@ export const taskHistoryUsecase: IGetTaskHistoryUsecase = new GetTaskHistory(tas
 const taskRepository: ITaskRepository = new TaskRepositoryImp();
 export const getTaskUse: IGetTaskUsecase = new GetTask(taskRepository);
 export const canChangeTaskStatus: ICanChangeStatusUsecase = new CanChangeTaskStatus(taskRepository);
+export const setStoryPoints: ISetStoryPointUsecase = new SetStoryPointUsecase(taskRepository);
 
 export const backlogControllerInterface: IBacklogController = new BacklogController(
     createEpicUsecase,
@@ -84,5 +86,6 @@ export const backlogControllerInterface: IBacklogController = new BacklogControl
     addTaskHistoryUse,
     getTaskUse,
     taskHistoryUsecase,
-    canChangeTaskStatus
+    canChangeTaskStatus,
+    setStoryPoints
 )

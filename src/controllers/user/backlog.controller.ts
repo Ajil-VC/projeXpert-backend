@@ -2,12 +2,14 @@ import { NextFunction, Request, Response } from "express";
 
 import {
     IAssignIssueUsecase, IChangeTaskStatusUsecase,
-    ICreateEpicUsecase, ICreateIssueUsecase, ICreateSprintUsecase, ICreateSubTasksUsecase, 
+    ICreateEpicUsecase, ICreateIssueUsecase, ICreateSprintUsecase, ICreateSubTasksUsecase,
     IDragDropUsecase, IGetSprintUsecase, IGetTasksUsecase, IIsActiveSprintUsecase, IRemoveTaskUsecase, IStartSprintUsecase, IUpdateEpicUsecase
 } from "../../config/Dependency/user/backlog.di";
 
-import { IAddCommentUsecase, ICanChangeStatusUsecase, ICompleteSprintUsecase, IEpicProgressUsecase, 
-    IGetCommentsUsecase, IGetTaskUsecase, IRemoveAttachmentUsecase, IUpdateTaskDetailsUsecase } from "../../config/Dependency/user/task.di";
+import {
+    IAddCommentUsecase, ICanChangeStatusUsecase, ICompleteSprintUsecase, IEpicProgressUsecase,
+    IGetCommentsUsecase, IGetTaskUsecase, IRemoveAttachmentUsecase, ISetStoryPointUsecase, IUpdateTaskDetailsUsecase
+} from "../../config/Dependency/user/task.di";
 
 import { getIO } from "../../config/socket";
 import { getUserSocket } from "../../infrastructure/services/socket.manager";
@@ -49,9 +51,28 @@ export class BacklogController implements IBacklogController {
         private _addTaskHistory: ITaskHistoryUsecase,
         private _getTask: IGetTaskUsecase,
         private _getTaskHistory: IGetTaskHistoryUsecase,
-        private _canChangeStatus: ICanChangeStatusUsecase
+        private _canChangeStatus: ICanChangeStatusUsecase,
+        private _setStoryPoint: ISetStoryPointUsecase
 
     ) { }
+
+
+    setStoryPoint = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+        try {
+
+            const { storyPoints, taskId } = req.body;
+
+            const updatedTask = await this._setStoryPoint.execute(storyPoints, taskId);
+
+            res.status(HttpStatusCode.OK).json({ status: true, message: 'Story point set successfully.', result: updatedTask });
+            return;
+
+        } catch (err) {
+
+            next(err);
+        }
+    }
 
     taskHistory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
@@ -70,7 +91,7 @@ export class BacklogController implements IBacklogController {
         } catch (err) {
             next(err);
         }
-        throw new Error("Method not implemented.");
+
     }
 
 

@@ -1,8 +1,10 @@
-import { Comment, Task } from "../../infrastructure/database/models/task.interface";
+import { Comment, StoryPoint, Task } from "../../infrastructure/database/models/task.interface";
 
 
 
 export interface ITaskRepository {
+
+    setStoryPoint(storyPoints: StoryPoint, taskId: string): Promise<Task>;
 
     updateTaskDetails(task: Task, assigneeId: string): Promise<Task>;
 

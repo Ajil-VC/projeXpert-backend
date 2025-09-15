@@ -32,6 +32,8 @@ export const PERMISSIONS = [
     "remove_user",
     "assign_role",
 
+    "set_storyPoint",
+
     "manage_billing"
 ] as const;
 export type Permissions = typeof PERMISSIONS[number];

@@ -21,6 +21,8 @@ const TaskSchema = new Schema<Task>({
     startDate: { type: Date, default: null },
     endDate: { type: Date, default: null },
 
+    storyPoints: { type: Number, enum: [0, 1, 2, 3, 5, 8, 13, 21], default: 0 },
+
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     progress: { type: Number, default: 0 },
 

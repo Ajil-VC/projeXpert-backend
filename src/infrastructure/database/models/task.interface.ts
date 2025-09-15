@@ -18,6 +18,8 @@ export interface Comment {
     updatedAt: Date;
 }
 
+export type StoryPoint = 0 | 1 | 2 | 3 | 5 | 8 | 13 | 21;
+
 export interface Task extends Document {
 
     _id: ObjectId;
@@ -34,6 +36,8 @@ export interface Task extends Document {
 
     createdBy?: ObjectId;
     progress?: number;
+
+    storyPoints: StoryPoint;
 
     sprintId: ObjectId | Sprint;     // Logical grouping for sprints
     sprintNumber: Number; //Only for sprints

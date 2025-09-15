@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express";
 
 export interface IBacklogController {
 
+    setStoryPoint(req: Request, res: Response, next: NextFunction): Promise<void>;
+
     taskHistory(req: Request, res: Response, next: NextFunction): Promise<void>;
 
     createEpic(req: Request, res: Response, next: NextFunction): Promise<void>;

@@ -1,6 +1,6 @@
 
 import { Permissions } from "../../../infrastructure/database/models/role.interface";
-import { Task } from "../../../infrastructure/database/models/task.interface";
+import { StoryPoint, Task } from "../../../infrastructure/database/models/task.interface";
 
 
 export interface IUpdateTaskDetailsUsecase {
@@ -33,4 +33,8 @@ export interface IGetTaskUsecase {
 
 export interface ICanChangeStatusUsecase {
     execute(taskId: string, userId: string, permissions: Array<Permissions>): Promise<{ task: Task, canChange: boolean, notAssignee?: boolean }>;
+}
+
+export interface ISetStoryPointUsecase {
+    execute(storyPoints: StoryPoint, taskId: string): Promise<Task>;
 }

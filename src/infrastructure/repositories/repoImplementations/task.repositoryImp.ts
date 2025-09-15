@@ -1,6 +1,6 @@
 import mongoose, { ObjectId, Types } from "mongoose";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
-import { Comment, Task } from "../../database/models/task.interface";
+import { Comment, StoryPoint, Task } from "../../database/models/task.interface";
 import taskModel from "../../database/task.models";
 import SprintModel from "../../database/sprint.models";
 import commentModel from "../../database/comment.models";
@@ -8,6 +8,18 @@ import commentModel from "../../database/comment.models";
 
 
 export class TaskRepositoryImp implements ITaskRepository {
+
+
+    async setStoryPoint(storyPoints: StoryPoint, taskId: string): Promise<Task> {
+
+        const taskOb = new mongoose.Types.ObjectId(taskId);
+        const updatedTask = await taskModel.findOneAndUpdate({ _id: taskOb }, { $set: { storyPoints } }, { new: true });
+        if (!updatedTask) {
+            throw new Error("Couldnt update the story point.");
+        }
+
+        return updatedTask;
+    }
 
 
     async getTask(taskId: string): Promise<Task> {
