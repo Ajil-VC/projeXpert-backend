@@ -230,6 +230,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         }
         const updatedData = await taskModel.findOneAndUpdate(
             { _id: movedTaskIdOb }, { sprintId: containerIdOb }, { new: true })
+            .populate('sprintId')
 
         if (!updatedData) throw new Error('Error occured while updating task');
         return updatedData;

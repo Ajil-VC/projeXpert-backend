@@ -21,6 +21,7 @@ import { IBacklogController } from "../../interfaces/user/backlog.controller.int
 import { IAddActivityUsecase } from "../../config/Dependency/user/activity.di";
 import { IGetTaskHistoryUsecase, ITaskHistoryUsecase } from "../../config/Dependency/user/taskhistory.di";
 import { Permissions } from "../../infrastructure/database/models/role.interface";
+import { Sprint } from "../../infrastructure/database/models/sprint.interface";
 
 export class BacklogController implements IBacklogController {
 
@@ -53,7 +54,7 @@ export class BacklogController implements IBacklogController {
         private _canChangeStatus: ICanChangeStatusUsecase,
         private _setStoryPoint: ISetStoryPointUsecase,
         private _getCompletedSprintDetails: IGetCompletedSprintsUsecase,
-        private _getTasksInSprint: IGetTasksInSprintUsecase
+        private _getTasksInSprint: IGetTasksInSprintUsecase,
 
     ) { }
 
@@ -373,8 +374,11 @@ export class BacklogController implements IBacklogController {
             }
 
             const result = await this._dragDropUsecase.execute(prevContainerId, containerId, movedTaskId);
-
-            await this._addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `moved ${result.title} to`, containerId);
+            let container = 'backlog';
+            if (result.sprintId && typeof result.sprintId !== 'string') {
+                container = (result.sprintId as Sprint).name;
+            }
+            await this._addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, `moved ${result.title} to`, container);
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
 
         } catch (err) {
