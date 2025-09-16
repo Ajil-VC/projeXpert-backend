@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import {
     IAssignIssueUsecase, IChangeTaskStatusUsecase,
     ICreateEpicUsecase, ICreateIssueUsecase, ICreateSprintUsecase, ICreateSubTasksUsecase,
-    IDragDropUsecase, IGetSprintUsecase, IGetTasksUsecase, IIsActiveSprintUsecase, IRemoveTaskUsecase, IStartSprintUsecase, IUpdateEpicUsecase
+    IDragDropUsecase, IGetCompletedSprintsUsecase, IGetSprintUsecase, IGetTasksInSprintUsecase, IGetTasksUsecase, IIsActiveSprintUsecase, IRemoveTaskUsecase, IStartSprintUsecase, IUpdateEpicUsecase
 } from "../../config/Dependency/user/backlog.di";
 
 import {
@@ -20,7 +20,6 @@ import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 import { IBacklogController } from "../../interfaces/user/backlog.controller.interface";
 import { IAddActivityUsecase } from "../../config/Dependency/user/activity.di";
 import { IGetTaskHistoryUsecase, ITaskHistoryUsecase } from "../../config/Dependency/user/taskhistory.di";
-import { Team } from "../../infrastructure/database/models/team.interface";
 import { Permissions } from "../../infrastructure/database/models/role.interface";
 
 export class BacklogController implements IBacklogController {
@@ -52,9 +51,49 @@ export class BacklogController implements IBacklogController {
         private _getTask: IGetTaskUsecase,
         private _getTaskHistory: IGetTaskHistoryUsecase,
         private _canChangeStatus: ICanChangeStatusUsecase,
-        private _setStoryPoint: ISetStoryPointUsecase
+        private _setStoryPoint: ISetStoryPointUsecase,
+        private _getCompletedSprintDetails: IGetCompletedSprintsUsecase,
+        private _getTasksInSprint: IGetTasksInSprintUsecase
 
     ) { }
+
+    getTasksInSprint = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+        try {
+
+            const sprintId = req.params.sprintId;
+            if (!sprintId || typeof sprintId !== 'string') {
+                res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'Need valid sprint Id.' });
+                return;
+            }
+
+            const tasks = await this._getTasksInSprint.execute(sprintId);
+            res.status(HttpStatusCode.OK).json({ status: true, message: 'Tasks in sprint retrieved successfully.', result: tasks });
+            return;
+        } catch (err) {
+            next(err);
+        }
+    }
+
+
+    getCompletedSprintDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+        try {
+
+            const projectId = req.query.projectId;
+            if (!projectId || typeof projectId !== 'string') {
+                res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'Need valid project Id.' });
+                return;
+            }
+
+            const sprints = await this._getCompletedSprintDetails.execute(projectId);
+            res.status(HttpStatusCode.OK).json({ status: true, message: 'Sprint data successfully retrieved.', result: sprints });
+            return;
+
+        } catch (err) {
+            next(err);
+        }
+    }
 
 
     setStoryPoint = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -354,6 +393,11 @@ export class BacklogController implements IBacklogController {
             const taskData = JSON.parse(req.body.task);
             const files = req.files as Express.Multer.File[] || [];
 
+            if (taskData?.sprintId && taskData.sprintId.status && taskData.sprintId.status === 'completed') {
+                res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: 'Tasks under completed sprint cannot be updated!' });
+                return;
+            }
+
             const skipStatus: boolean = req.query.skipStatus === 'true' ? true : false;
             if (skipStatus) {
                 const oldData = await this._getTask.execute(taskData._id);
@@ -423,7 +467,7 @@ export class BacklogController implements IBacklogController {
             }
 
             if (!taskAndPermission.canChange && !taskAndPermission.task.parentId && taskAndPermission.task.subtasks.length > 0) {
-                res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: 'This task status will be updated according to the subtasks.' });
+                res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'This task status will be updated according to the subtasks.' });
                 return;
             }
 

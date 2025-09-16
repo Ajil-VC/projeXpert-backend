@@ -11,6 +11,56 @@ import { Permissions } from "../../database/models/role.interface";
 
 export class BacklogRepositoryImp implements IBacklogRepository {
 
+    async getTasksInSprint(sprintId: string): Promise<Array<Task>> {
+
+        const sprintOb = new mongoose.Types.ObjectId(sprintId);
+        const sprint = await SprintModel.findOne({ _id: sprintOb })
+            .populate({
+                path: 'tasks', model: 'Task',
+                populate: [
+                    {
+                        path: 'assignedTo',
+                        model: 'User',
+                        select: '_id name email profilePicUrl role createdAt updatedAt'
+                    },
+                    {
+                        path: 'epicId',
+                        model: 'Task'
+                    },
+                    {
+                        path: 'sprintId',
+                        model: 'Sprint'
+                    },
+                    {
+                        path: 'subtasks',
+                        model: 'Task',
+                        populate: {
+                            path: 'assignedTo',
+                            model: 'User',
+                            select: '_id name email profilePicUrl role createdAt updatedAt'
+                        }
+                    },
+                ]
+            }).exec();
+
+        if (!sprint) {
+            throw new Error("Tasks couldnt retrieve.");
+        }
+
+        return sprint.tasks;
+    }
+
+
+    async getCompletedSprintsDetails(projectId: string): Promise<Array<Sprint>> {
+
+        const projectIdOb = new mongoose.Types.ObjectId(projectId);
+        const completedSprints: Sprint[] = await SprintModel.find({ projectId: projectIdOb, status: 'completed' });
+
+        if (!completedSprints) throw new Error('Error occured while fetching sprints');
+        return completedSprints;
+
+    }
+
 
     async removeTask(taskId: string): Promise<boolean> {
 

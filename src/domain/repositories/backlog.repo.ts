@@ -5,6 +5,10 @@ import { Task } from "../../infrastructure/database/models/task.interface";
 
 export interface IBacklogRepository {
 
+    getCompletedSprintsDetails(projectId: string): Promise<Array<Sprint>>;
+
+    getTasksInSprint(sprintId: string): Promise<Array<Task>>;
+
     updateEpic(title: string, description: string, startDate: string, endDate: string, status: string, epicId: string): Promise<Task | null>;
 
     createEpic(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task | null>;

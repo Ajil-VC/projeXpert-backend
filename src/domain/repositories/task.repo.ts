@@ -1,8 +1,11 @@
+import { Sprint } from "../../infrastructure/database/models/sprint.interface";
 import { Comment, StoryPoint, Task } from "../../infrastructure/database/models/task.interface";
 
 
 
 export interface ITaskRepository {
+
+    getSprintWithID(sprintId: string): Promise<Sprint>;
 
     setStoryPoint(storyPoints: StoryPoint, taskId: string): Promise<Task>;
 

@@ -25,7 +25,9 @@ import {
 
 
 import { upload } from '../infrastructure/middleware/multer.middleware';
-import { PlanPolicyMiddleware } from '../infrastructure/middleware/planpolicy.middleware';
+import { planPolicyMiddleware } from './dependency/middleware.inter';
+import { autherizer } from './dependency/middleware.inter';
+import { issue } from './dependency/middleware.inter';
 
 import { getActivitiesInterface } from './dependency/user.di';
 import { backlogControllerInterface } from './dependency/user/backlog.inter';
@@ -38,14 +40,10 @@ import { teamInterface } from './dependency/user/team.inter';
 import { userControllerInterface } from './dependency/user.di';
 import { workspaceInterface } from './dependency/user/workspace.inter';
 import { authInterface } from './dependency/auth.inter';
-import { AuthorizeMiddleware } from '../infrastructure/middleware/authorize.middleware';
 
 
 const userRouter = express.Router();
 userRouter.use(express.urlencoded({ extended: true }));
-
-const planPolicyMiddleware = new PlanPolicyMiddleware();
-const autherizer = new AuthorizeMiddleware();
 
 userRouter.get('/authenticate-user', authenticateUser, authInterface.isVerified);
 userRouter.post('/login', validateBody(signinSchema), authInterface.signIn);
@@ -100,15 +98,17 @@ userRouter.route('/epic')
 
 userRouter.route('/issue')
     .post(authenticateUser, autherizer.has(['create_task']), validateBody(createIssueSchema), backlogControllerInterface.createIssue)
-    .patch(authenticateUser, autherizer.has(['assign_task']), validateBody(assignIssueSchema), backlogControllerInterface.assignIssue)
+    .patch(authenticateUser, autherizer.has(['assign_task']), issue.canMutate('task'), validateBody(assignIssueSchema), backlogControllerInterface.assignIssue)
 
-userRouter.post('/subtask', authenticateUser, autherizer.has(['create_task']), validateBody(createSubtaskSchema), backlogControllerInterface.createSubtask);
-userRouter.delete('/task/:taskId', authenticateUser, autherizer.has(['delete_task']), backlogControllerInterface.removeTask);
+userRouter.post('/subtask', authenticateUser, autherizer.has(['create_task']), issue.canMutate('task'), validateBody(createSubtaskSchema), backlogControllerInterface.createSubtask);
+userRouter.delete('/task/:taskId', authenticateUser, autherizer.has(['delete_task']), issue.canMutate('task'), backlogControllerInterface.removeTask);
 
 userRouter.route('/sprints')
     .post(authenticateUser, autherizer.has(['create_sprint']), validateBody(createSprintSchema), backlogControllerInterface.createSprint)
     .put(authenticateUser, autherizer.has(['start_sprint']), validateBody(startSprintSchema), backlogControllerInterface.startSprint);
-userRouter.put('/complete-sprint', authenticateUser, autherizer.has(['close_sprint']), validateBody(completeSprintSchema), backlogControllerInterface.completeSprint);
+userRouter.put('/complete-sprint', authenticateUser, autherizer.has(['close_sprint']), issue.canMutate('sprint'), validateBody(completeSprintSchema), backlogControllerInterface.completeSprint);
+userRouter.get('/completed-sprints', authenticateUser, autherizer.has(['view_all_task']), backlogControllerInterface.getCompletedSprintDetails);
+userRouter.get('/tasks/sprint/:sprintId', authenticateUser, autherizer.has(['view_all_task']), backlogControllerInterface.getTasksInSprint);
 
 userRouter.get('/sprints/:projectId', authenticateUser, autherizer.has(['view_sprint']), backlogControllerInterface.getSprints);
 userRouter.get('/sprints/kanban/:projectId', authenticateUser,
@@ -122,7 +122,7 @@ userRouter.get('/tasks/kanban', authenticateUser, autherizer.hasAny(['view_task'
 userRouter.get('/task-history', authenticateUser, autherizer.hasAny(['view_task', 'view_all_task']), backlogControllerInterface.taskHistory);
 userRouter.patch('/control-user', authenticateUser, autherizer.has(['assign_role']), validateBody(controlSchema), teamInterface.updateUserRole);
 
-userRouter.put('/story-points', authenticateUser, autherizer.has(['set_storyPoint']), validateBody(storyPointSchema), backlogControllerInterface.setStoryPoint)
+userRouter.put('/story-points', authenticateUser, autherizer.has(['set_storyPoint']), issue.canMutate('task'), validateBody(storyPointSchema), backlogControllerInterface.setStoryPoint)
 
 userRouter.get('/get-users', authenticateUser, autherizer.has(['assign_role']), teamInterface.getCompanyUsers);
 userRouter.get('/team', authenticateUser, teamInterface.getTeam);

@@ -4,10 +4,24 @@ import { Comment, StoryPoint, Task } from "../../database/models/task.interface"
 import taskModel from "../../database/task.models";
 import SprintModel from "../../database/sprint.models";
 import commentModel from "../../database/comment.models";
+import { Sprint } from "../../database/models/sprint.interface";
 
 
 
 export class TaskRepositoryImp implements ITaskRepository {
+
+
+    async getSprintWithID(sprintId: string): Promise<Sprint> {
+
+        const sprintOb = new mongoose.Types.ObjectId(sprintId);
+        const sprint = await SprintModel.findOne({ _id: sprintOb });
+
+        if (!sprint) {
+            throw new Error('No Sprint exists with that ID.');
+        }
+
+        return sprint;
+    }
 
 
     async setStoryPoint(storyPoints: StoryPoint, taskId: string): Promise<Task> {
@@ -122,6 +136,7 @@ export class TaskRepositoryImp implements ITaskRepository {
     async completeSprint(completingSprintId: string, movingSprintId: string | null, projectId: string): Promise<Array<Task> | null> {
 
         const finishingSprintIdOb = new mongoose.Types.ObjectId(completingSprintId);
+
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
         let movingSprintIdOb;
         if (movingSprintId !== 'backlog' && movingSprintId !== null) {

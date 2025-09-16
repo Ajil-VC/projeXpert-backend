@@ -33,6 +33,18 @@ export interface IGetSprintUsecase {
     execute(projectId: string, permissions: Array<Permissions>, userId: string, kanban: boolean): Promise<any>
 }
 
+export interface IGetSprintWithIDUsecase {
+    execute(sprintId: string): Promise<Sprint>;
+}
+
+export interface IGetCompletedSprintsUsecase {
+    execute(projectId: string): Promise<Array<Sprint>>;
+}
+
+export interface IGetTasksInSprintUsecase {
+    execute(sprintId: string): Promise<Array<Task>>;
+}
+
 export interface IGetTasksUsecase {
     execute(projectId: string, permissions: Array<Permissions>, userId: string, isKanban?: boolean): Promise<any>;
 }
