@@ -107,7 +107,7 @@ userRouter.route('/sprints')
     .post(authenticateUser, autherizer.has(['create_sprint']), validateBody(createSprintSchema), backlogControllerInterface.createSprint)
     .put(authenticateUser, autherizer.has(['start_sprint']), validateBody(startSprintSchema), backlogControllerInterface.startSprint);
 userRouter.put('/complete-sprint', authenticateUser, autherizer.has(['close_sprint']), issue.canMutate('sprint'), validateBody(completeSprintSchema), backlogControllerInterface.completeSprint);
-userRouter.get('/completed-sprints', authenticateUser, autherizer.has(['view_all_task']), backlogControllerInterface.getCompletedSprintDetails);
+userRouter.get('/completed-sprints', authenticateUser, autherizer.hasAny(['view_all_task', 'view_task', 'view_sprint']), backlogControllerInterface.getCompletedSprintDetails);
 userRouter.get('/tasks/sprint/:sprintId', authenticateUser, autherizer.has(['view_all_task']), backlogControllerInterface.getTasksInSprint);
 
 userRouter.get('/sprints/:projectId', authenticateUser, autherizer.has(['view_sprint']), backlogControllerInterface.getSprints);
