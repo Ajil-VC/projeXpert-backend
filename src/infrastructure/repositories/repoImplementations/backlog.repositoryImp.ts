@@ -329,7 +329,13 @@ export class BacklogRepositoryImp implements IBacklogRepository {
 
         const issueData = await taskModel
             .findByIdAndUpdate(issueIdOb, { assignedTo: userIdOb }, { new: true })
-            .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' });
+            .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
+            .populate({ path: 'sprintId' })
+            .populate({ path: 'epicId' })
+            .populate({
+                path: 'subtasks',
+                populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
+            });
         if (!issueData) {
             return null;
         }
