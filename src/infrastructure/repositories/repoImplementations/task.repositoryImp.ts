@@ -267,7 +267,12 @@ export class TaskRepositoryImp implements ITaskRepository {
             },
             { new: true }
         ).populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
-            .populate({ path: 'sprintId' });
+            .populate({ path: 'sprintId' })
+            .populate({ path: 'epicId' })
+            .populate({
+                path: 'subtasks',
+                populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
+            });
 
         if (!updatedTask) {
             throw new Error('Couldnt update task');
