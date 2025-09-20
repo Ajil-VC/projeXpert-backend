@@ -53,7 +53,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
         ]);
 
         if (userData.isBlocked) {
-            res.status(403).json({ status: false, message: 'User account is blocked.' })
+            res.status(403).json({ status: false, message: 'User account is blocked.', code: "USER_BLOCKED" })
             return;
         }
 
@@ -63,17 +63,11 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
         }
 
         if (companyData.isBlocked) {
-            res.status(403).json({ status: false, message: 'Company blocked' });
-            return;
-        }
-
-        if (req.user.isBlocked) {
-            res.status(403).json({ status: false, message: 'User account is blocked.' });
+            res.status(403).json({ status: false, message: 'Company blocked', code: "COMPANY_BLOCKED" });
             return;
         }
 
         req.user.role.permissions = (userData.role as unknown as Roles).permissions;
-        console.log('Authentication: ', req.user)
         next();
 
 
