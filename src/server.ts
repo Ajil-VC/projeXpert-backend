@@ -50,13 +50,14 @@ app.use(morgan('dev'));
 
 connectDB();
 
+app.get("/api/v1/test", (req: Request, res: Response) => {
+    res.json({ message: "test message form the blog server" })
+})
+
 app.use('/api/v1/company', companyRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/admin', adminRouter);
 
-app.get("/", (req: Request, res: Response) => {
-    res.json({ message: "test message form the blog server" })
-})
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     logger.error(`${req.method} ${req.originalUrl} - ${err.message}`, {
