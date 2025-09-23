@@ -39,7 +39,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUsecase {
                 name: userData.name,
                 role: userData.role,
                 isBlocked: userData.isBlocked,
-                companyId: userData.companyId._id,
+                companyId: userData?.companyId?._id || null,
                 systemRole: userData.systemRole
             },
             config.JWT_SECRETKEY as string,
