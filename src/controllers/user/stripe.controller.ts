@@ -161,8 +161,8 @@ export class StripeController implements IStripeController {
                     quantity: 1
                 }],
                 customer_email: req.user.email,
-                success_url: `http://localhost:4200/user/success?session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: 'http://localhost:4200/user/cancel',
+                success_url: config.STRIPE_SUCCESS_URL,
+                cancel_url: config.STRIPE_CANCEL_URL,
             });
 
             res.status(HttpStatusCode.OK).json({ url: session.url });
