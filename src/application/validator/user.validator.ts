@@ -71,7 +71,9 @@ export const startSprintSchema = yup.object({
     sprintName: yup.string().required('Sprint name required'),
     duration: yup.number().required('duration required'),
     startDate: yup.date().required('Date required'),
-    projectId: yup.string().required('projectId required')
+    projectId: yup.string().required('projectId required'),
+    goal: yup.string().required('Sprint goal is required'),
+    description: yup.string()
 });
 
 export const completeSprintSchema = yup.object({

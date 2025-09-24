@@ -62,7 +62,7 @@ export interface IChangeTaskStatusUsecase {
 }
 
 export interface IStartSprintUsecase {
-    execute(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<any>;
+    execute(sprintId: string, sprintName: string, duration: number, startDate: Date, goal: string, description: string): Promise<any>;
 }
 
 export interface IIsActiveSprintUsecase {

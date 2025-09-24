@@ -9,6 +9,7 @@ export interface Sprint extends Document {
     sprintCount: number;
     name: string;
     description: string;
+    goal: string;
     startDate: Date;
     endDate: Date;
     status: 'not-started' | 'active' | 'completed';

@@ -519,9 +519,9 @@ export class BacklogController implements IBacklogController {
 
         try {
 
-            const { sprintId, sprintName, duration, startDate, projectId } = req.body;
-            if (!sprintId || !sprintName || !duration || !startDate) {
-                res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'sprint id, sprintname, duration and startdate are required' });
+            const { sprintId, sprintName, goal, description, duration, startDate, projectId } = req.body;
+            if (!sprintId || !sprintName || !duration || !startDate || !goal) {
+                res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'sprint id, sprintname,sprint goal, duration and startdate are required' });
                 return;
             }
 
@@ -531,7 +531,7 @@ export class BacklogController implements IBacklogController {
                 return;
             }
 
-            const result = await this._startSprintUsecase.execute(sprintId, sprintName, duration, startDate);
+            const result = await this._startSprintUsecase.execute(sprintId, sprintName, duration, startDate, goal, description);
             await this._addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'started sprint', sprintName)
 
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.SPRINT.STARTED, result });

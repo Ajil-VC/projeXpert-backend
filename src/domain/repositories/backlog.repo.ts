@@ -31,7 +31,7 @@ export interface IBacklogRepository {
 
     changeTaskStatus(taskId: string, status: string): Promise<Task | null>;
 
-    startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date): Promise<Sprint>;
+    startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date, goal: string, description: string): Promise<Sprint>;
 
     isActiveSprint(projectId: string): Promise<boolean>;
 }

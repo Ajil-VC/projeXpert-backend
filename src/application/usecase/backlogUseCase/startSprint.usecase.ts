@@ -6,11 +6,11 @@ export class StartSprintUsecase implements IStartSprintUsecase {
 
     constructor(private _backlogRepo: IBacklogRepository) { }
 
-    async execute(sprintId: string, sprintName: string, duration: number, startDate: Date) {
+    async execute(sprintId: string, sprintName: string, duration: number, startDate: Date, goal: string, description: string) {
 
-        const result = await this._backlogRepo.startSprint(sprintId, sprintName, duration, startDate);
+        const result = await this._backlogRepo.startSprint(sprintId, sprintName, duration, startDate, goal, description);
 
-        if(!result){
+        if (!result) {
             throw new Error('Something went wrong while updating sprint.');
         }
 
