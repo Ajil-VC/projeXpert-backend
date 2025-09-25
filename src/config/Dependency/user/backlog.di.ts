@@ -5,6 +5,14 @@ import { TaskResponseDetailedDTO } from "../../../dtos/task/taskResponseDTO";
 import { Permissions } from "../../../infrastructure/database/models/role.interface";
 
 
+export interface ISetSprintVelocityUsecase {
+    execute(sprintId: string, projectId: string): Promise<boolean>;
+}
+
+export interface ISprintPointsCalculationUsecase {
+    execute(sprintId: string): Promise<boolean>
+}
+
 export interface ICreateEpicUsecase {
     execute(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task>
 }
@@ -41,8 +49,8 @@ export interface IGetCompletedSprintsUsecase {
     execute(projectId: string): Promise<Array<Sprint>>;
 }
 
-export interface IGetTasksInSprintUsecase {
-    execute(sprintId: string): Promise<Array<Task>>;
+export interface IGetSprintWithTasksUsecase {
+    execute(sprintId: string): Promise<Sprint>;
 }
 
 export interface IGetTasksUsecase {
@@ -66,5 +74,5 @@ export interface IStartSprintUsecase {
 }
 
 export interface IIsActiveSprintUsecase {
-    execute(projectId: string): Promise<boolean>;
+    execute(projectId: string): Promise<Sprint | null>;
 }

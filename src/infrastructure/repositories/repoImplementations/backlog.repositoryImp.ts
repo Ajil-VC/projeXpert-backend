@@ -11,10 +11,53 @@ import { Permissions } from "../../database/models/role.interface";
 
 export class BacklogRepositoryImp implements IBacklogRepository {
 
-    async getTasksInSprint(sprintId: string): Promise<Array<Task>> {
+    async setSprintVelocity(sprintId: string, projectId: string): Promise<boolean> {
+
+        const sprintOb = new mongoose.Types.ObjectId(sprintId);
+        const projectOb = new mongoose.Types.ObjectId(projectId);
+
+        const sprintsInProject = await SprintModel.find({ projectId: projectOb, status: 'completed' });
+
+        if (sprintsInProject.length > 0) {
+            const totalCompletedPoints = sprintsInProject.reduce((sum, sprint) => {
+                return sum + (sprint.completedPoints || 0);
+            }, 0);
+
+            const avgVelocity = Number((totalCompletedPoints / sprintsInProject.length).toFixed(2));
+
+            await SprintModel.updateOne(
+                { _id: sprintOb },
+                { $set: { velocitySnapshot: avgVelocity, velocity: avgVelocity } }
+            );
+
+            await SprintModel.updateMany(
+                { projectId: projectOb, status: 'completed' },
+                { $set: { velocity: avgVelocity } }
+            );
+        }
+
+        return true;
+    }
+
+    async calculatePointsInSprint(sprintId: string): Promise<boolean> {
+
+        const sprintOb = new mongoose.Types.ObjectId(sprintId);
+        const sprint = await SprintModel.findById(sprintOb).populate('tasks');
+        const points = sprint.tasks.reduce((sum: number, task: Task) => sum + (task.storyPoints || 0), 0);
+        if (sprint.status === 'completed') {
+            sprint.completedPoints = points;
+        } else {
+            sprint.plannedPoints = points;
+        }
+        await sprint.save();
+        return true;
+    }
+
+    async getSprintWithTasks(sprintId: string): Promise<Sprint> {
 
         const sprintOb = new mongoose.Types.ObjectId(sprintId);
         const sprint = await SprintModel.findOne({ _id: sprintOb })
+            .populate({ path: 'createdBy', model: 'User', select: '_id name email profilePicUrl role createdAt updatedAt' })
             .populate({
                 path: 'tasks', model: 'Task',
                 populate: [
@@ -47,7 +90,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
             throw new Error("Tasks couldnt retrieve.");
         }
 
-        return sprint.tasks;
+        return sprint;
     }
 
 
@@ -100,14 +143,14 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async isActiveSprint(projectId: string): Promise<boolean> {
+    async isActiveSprint(projectId: string): Promise<Sprint | null> {
 
         const projectOb = new mongoose.Types.ObjectId(projectId);
         const sprint = await SprintModel.findOne({ projectId: projectOb, status: 'active' });
         if (!sprint) {
-            return false;
+            return null;
         }
-        return true;
+        return sprint;
     }
 
 

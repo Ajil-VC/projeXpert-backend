@@ -5,9 +5,13 @@ import { Task } from "../../infrastructure/database/models/task.interface";
 
 export interface IBacklogRepository {
 
+    setSprintVelocity(sprintId: string, projectId: string): Promise<boolean>;
+
+    calculatePointsInSprint(sprintId: string): Promise<boolean>;
+
     getCompletedSprintsDetails(projectId: string): Promise<Array<Sprint>>;
 
-    getTasksInSprint(sprintId: string): Promise<Array<Task>>;
+    getSprintWithTasks(sprintId: string): Promise<Sprint>;
 
     updateEpic(title: string, description: string, startDate: string, endDate: string, status: string, epicId: string): Promise<Task | null>;
 
@@ -33,5 +37,5 @@ export interface IBacklogRepository {
 
     startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date, goal: string, description: string): Promise<Sprint>;
 
-    isActiveSprint(projectId: string): Promise<boolean>;
+    isActiveSprint(projectId: string): Promise<Sprint | null>;
 }

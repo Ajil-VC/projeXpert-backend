@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 
 export interface IBacklogController {
 
-    getTasksInSprint(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getSprintWithTasks(req: Request, res: Response, next: NextFunction): Promise<void>;
     getCompletedSprintDetails(req: Request, res: Response, next: NextFunction): Promise<void>;
 
     setStoryPoint(req: Request, res: Response, next: NextFunction): Promise<void>;

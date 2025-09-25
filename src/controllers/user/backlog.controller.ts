@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import {
     IAssignIssueUsecase, IChangeTaskStatusUsecase,
     ICreateEpicUsecase, ICreateIssueUsecase, ICreateSprintUsecase, ICreateSubTasksUsecase,
-    IDragDropUsecase, IGetCompletedSprintsUsecase, IGetSprintUsecase, IGetTasksInSprintUsecase, IGetTasksUsecase, IIsActiveSprintUsecase, IRemoveTaskUsecase, IStartSprintUsecase, IUpdateEpicUsecase
+    IDragDropUsecase, IGetCompletedSprintsUsecase, IGetSprintUsecase, IGetSprintWithTasksUsecase, IGetTasksUsecase, IIsActiveSprintUsecase, IRemoveTaskUsecase, ISetSprintVelocityUsecase, ISprintPointsCalculationUsecase, IStartSprintUsecase, IUpdateEpicUsecase
 } from "../../config/Dependency/user/backlog.di";
 
 import {
@@ -54,22 +54,37 @@ export class BacklogController implements IBacklogController {
         private _canChangeStatus: ICanChangeStatusUsecase,
         private _setStoryPoint: ISetStoryPointUsecase,
         private _getCompletedSprintDetails: IGetCompletedSprintsUsecase,
-        private _getTasksInSprint: IGetTasksInSprintUsecase,
+        private _getSprintWIthTasks: IGetSprintWithTasksUsecase,
+        private _setSprintPoints: ISprintPointsCalculationUsecase,
+        private _setSprintVelocity: ISetSprintVelocityUsecase
 
     ) { }
 
-    getTasksInSprint = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getSprintWithTasks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         try {
 
-            const sprintId = req.params.sprintId;
+            let projectId = null;
+            let sprintId = null;
+            if (typeof req.query.projectId === 'string' && req.query.projectId !== 'null') {
+                projectId = req.query.projectId;
+                const activeSprint = await this._isActiveSprint.execute(projectId);
+                if (!activeSprint) {
+                    res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'No active sprints', code: 'NOT_ACTIVE_SPRINT' });
+                    return;
+                }
+                sprintId = activeSprint._id.toString();
+
+            } else {
+                sprintId = req.params.sprintId;
+            }
             if (!sprintId || typeof sprintId !== 'string') {
                 res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'Need valid sprint Id.' });
                 return;
             }
 
-            const tasks = await this._getTasksInSprint.execute(sprintId);
-            res.status(HttpStatusCode.OK).json({ status: true, message: 'Tasks in sprint retrieved successfully.', result: tasks });
+            const sprint = await this._getSprintWIthTasks.execute(sprintId);
+            res.status(HttpStatusCode.OK).json({ status: true, message: 'Tasks in sprint retrieved successfully.', result: sprint });
             return;
         } catch (err) {
             next(err);
@@ -104,6 +119,9 @@ export class BacklogController implements IBacklogController {
             const { storyPoints, taskId } = req.body;
 
             const updatedTask = await this._setStoryPoint.execute(storyPoints, taskId);
+            if (updatedTask && updatedTask.sprintId) {
+                await this._setSprintPoints.execute((updatedTask.sprintId as Sprint)._id as unknown as string);
+            }
 
             res.status(HttpStatusCode.OK).json({ status: true, message: 'Story point set successfully.', result: updatedTask });
             return;
@@ -261,7 +279,10 @@ export class BacklogController implements IBacklogController {
             const { projectId, issueIds } = req.body;
             const result = await this._createSprintUsecase.execute(projectId, issueIds, req.user.id);
 
-            await this._addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'created new', 'sprint');
+            if (result) {
+                await this._setSprintPoints.execute(result._id as unknown as string);
+                await this._addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'created new', 'sprint');
+            }
 
             res.status(HttpStatusCode.CREATED).json({ status: true, result, message: RESPONSE_MESSAGES.SPRINT.CREATED });
             return;
@@ -549,6 +570,10 @@ export class BacklogController implements IBacklogController {
             const { completingSprintId, movingSprintId, projectId } = req.body
 
             const result = await this._completeSprintUse.execute(completingSprintId, movingSprintId, projectId);
+            if (result) {
+                await this._setSprintPoints.execute(completingSprintId);
+                await this._setSprintVelocity.execute(completingSprintId, projectId);
+            }
             await this._addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'completed last active', 'sprint')
 
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.SPRINT.UPDATED, result });

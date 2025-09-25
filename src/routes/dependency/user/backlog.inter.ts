@@ -18,8 +18,8 @@ import { addActivityUsecase } from "../user.di";
 import { addCommentUse, completeSprintUse, epicProgress, getCommentsUse, removeAttachment, updateTaskDetailsUse } from "./task.inter";
 import {
     IAssignIssueUsecase, IChangeTaskStatusUsecase, ICreateEpicUsecase, ICreateIssueUsecase,
-    ICreateSprintUsecase, ICreateSubTasksUsecase, IDragDropUsecase, IGetCompletedSprintsUsecase, IGetSprintUsecase, IGetTasksInSprintUsecase, IGetTasksUsecase,
-    IIsActiveSprintUsecase, IRemoveTaskUsecase, IStartSprintUsecase, IUpdateEpicUsecase
+    ICreateSprintUsecase, ICreateSubTasksUsecase, IDragDropUsecase, IGetCompletedSprintsUsecase, IGetSprintUsecase, IGetSprintWithTasksUsecase, IGetTasksUsecase,
+    IIsActiveSprintUsecase, IRemoveTaskUsecase, ISetSprintVelocityUsecase, ISprintPointsCalculationUsecase, IStartSprintUsecase, IUpdateEpicUsecase
 } from "../../../config/Dependency/user/backlog.di";
 
 import { notification } from "./notification.inter";
@@ -37,7 +37,9 @@ import { GetTaskHistory } from "../../../application/usecase/taskhistoryUsecase/
 import { CanChangeTaskStatus } from "../../../application/usecase/taskUsecase/canchangestatus.usecase";
 import { SetStoryPointUsecase } from "../../../application/usecase/taskUsecase/setStorypoint.usecase";
 import { CompletedSprintsUsecase } from "../../../application/usecase/backlogUseCase/getCompletedSprints.usecase";
-import { GetTasksInSprintUsecase } from "../../../application/usecase/backlogUseCase/getTasksInSprint.usecase";
+import { GetSprintWithTasksUsecase } from "../../../application/usecase/backlogUseCase/getTasksInSprint.usecase";
+import { SprintPointsCalculationUsecase } from "../../../application/usecase/backlogUseCase/setplannedPoints.usecase";
+import { SetSprintVelocityUsecase } from "../../../application/usecase/backlogUseCase/setSprintVelocity.usecase";
 
 const backlogRepository: IBacklogRepository = new BacklogRepositoryImp();
 
@@ -64,7 +66,9 @@ export const canChangeTaskStatus: ICanChangeStatusUsecase = new CanChangeTaskSta
 export const setStoryPoints: ISetStoryPointUsecase = new SetStoryPointUsecase(taskRepository);
 
 export const getCompletedSprintdetails: IGetCompletedSprintsUsecase = new CompletedSprintsUsecase(backlogRepository);
-export const getTasksInSprint: IGetTasksInSprintUsecase = new GetTasksInSprintUsecase(backlogRepository);
+export const getTasksInSprint: IGetSprintWithTasksUsecase = new GetSprintWithTasksUsecase(backlogRepository);
+export const setPlannedPoints: ISprintPointsCalculationUsecase = new SprintPointsCalculationUsecase(backlogRepository);
+export const setSprintVelocity: ISetSprintVelocityUsecase = new SetSprintVelocityUsecase(backlogRepository);
 
 export const backlogControllerInterface: IBacklogController = new BacklogController(
     createEpicUsecase,
@@ -94,5 +98,7 @@ export const backlogControllerInterface: IBacklogController = new BacklogControl
     canChangeTaskStatus,
     setStoryPoints,
     getCompletedSprintdetails,
-    getTasksInSprint
+    getTasksInSprint,
+    setPlannedPoints,
+    setSprintVelocity
 )
