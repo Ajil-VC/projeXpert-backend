@@ -35,7 +35,15 @@ export interface IBacklogRepository {
 
     changeTaskStatus(taskId: string, status: string): Promise<Task | null>;
 
-    startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date, goal: string, description: string): Promise<Sprint>;
+    startSprint(
+        sprintId: string,
+        sprintName: string,
+        duration: number,
+        startDate: Date,
+        goal: string,
+        description: string,
+        burnDownData: { date: Date; remainingPoints: number }[]
+    ): Promise<Sprint>;
 
     isActiveSprint(projectId: string): Promise<Sprint | null>;
 }

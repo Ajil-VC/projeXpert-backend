@@ -70,7 +70,15 @@ export interface IChangeTaskStatusUsecase {
 }
 
 export interface IStartSprintUsecase {
-    execute(sprintId: string, sprintName: string, duration: number, startDate: Date, goal: string, description: string): Promise<any>;
+    execute(
+        sprintId: string,
+        sprintName: string,
+        duration: number,
+        startDate: Date,
+        goal: string,
+        description: string,
+        burnDownData: { date: Date; remainingPoints: number }[]
+    ): Promise<any>;
 }
 
 export interface IIsActiveSprintUsecase {

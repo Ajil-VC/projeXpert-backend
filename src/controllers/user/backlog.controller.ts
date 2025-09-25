@@ -70,7 +70,7 @@ export class BacklogController implements IBacklogController {
                 projectId = req.query.projectId;
                 const activeSprint = await this._isActiveSprint.execute(projectId);
                 if (!activeSprint) {
-                    res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'No active sprints', code: 'NOT_ACTIVE_SPRINT' });
+                    res.status(HttpStatusCode.OK).json({ status: false, message: 'No active sprints', code: 'NOT_ACTIVE_SPRINT' });
                     return;
                 }
                 sprintId = activeSprint._id.toString();
@@ -536,6 +536,26 @@ export class BacklogController implements IBacklogController {
         }
     }
 
+
+    private generateSprintDays(
+        startDate: string,
+        duration: number
+    ) {
+        const days: { date: Date; remainingPoints: number }[] = [];
+
+        let current = new Date(startDate);
+
+        for (let i = 0; i < duration; i++) {
+            days.push({
+                date: current,
+                remainingPoints: 0
+            });
+
+            current.setDate(current.getDate() + 1);
+        }
+
+        return days;
+    }
     startSprint = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         try {
@@ -552,7 +572,9 @@ export class BacklogController implements IBacklogController {
                 return;
             }
 
-            const result = await this._startSprintUsecase.execute(sprintId, sprintName, duration, startDate, goal, description);
+            const burnDownData = this.generateSprintDays(startDate, duration);
+            const result = await this._startSprintUsecase.execute(sprintId, sprintName, duration, startDate, goal, description, burnDownData);
+            await this._setSprintPoints.execute(result._id as unknown as string);
             await this._addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'started sprint', sprintName)
 
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.SPRINT.STARTED, result });

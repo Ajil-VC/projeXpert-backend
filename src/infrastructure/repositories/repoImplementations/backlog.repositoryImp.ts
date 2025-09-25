@@ -176,7 +176,15 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async startSprint(sprintId: string, sprintName: string, duration: number, startDate: Date, goal: string, description: string): Promise<Sprint> {
+    async startSprint(
+        sprintId: string,
+        sprintName: string,
+        duration: number,
+        startDate: Date,
+        goal: string,
+        description: string,
+        burnDownData: { date: Date; remainingPoints: number }[]
+    ): Promise<Sprint> {
 
         const sprintIdOb = new mongoose.Types.ObjectId(sprintId);
         const endDate = new Date(startDate);
@@ -188,7 +196,8 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                 endDate: endDate,
                 status: 'active',
                 goal,
-                description
+                description,
+                burnDownData
             }
         }, { new: true }).populate({ path: 'tasks' });
 
