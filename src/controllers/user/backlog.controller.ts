@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import {
     IAssignIssueUsecase, IChangeTaskStatusUsecase,
     ICreateEpicUsecase, ICreateIssueUsecase, ICreateSprintUsecase, ICreateSubTasksUsecase,
-    IDragDropUsecase, IGetCompletedSprintsUsecase, IGetSprintUsecase, IGetSprintWithTasksUsecase, IGetTasksUsecase, IIsActiveSprintUsecase, IRemoveTaskUsecase, ISetSprintVelocityUsecase, ISprintPointsCalculationUsecase, IStartSprintUsecase, IUpdateEpicUsecase
+    IDragDropUsecase, IGetAllSprintsDetailsInProject, IGetSprintUsecase, IGetSprintWithTasksUsecase, IGetTasksUsecase, IIsActiveSprintUsecase, IRemoveTaskUsecase, ISetSprintVelocityUsecase, ISprintPointsCalculationUsecase, IStartSprintUsecase, IUpdateEpicUsecase
 } from "../../config/Dependency/user/backlog.di";
 
 import {
@@ -53,7 +53,7 @@ export class BacklogController implements IBacklogController {
         private _getTaskHistory: IGetTaskHistoryUsecase,
         private _canChangeStatus: ICanChangeStatusUsecase,
         private _setStoryPoint: ISetStoryPointUsecase,
-        private _getCompletedSprintDetails: IGetCompletedSprintsUsecase,
+        private _getAllSprintDetailsInProject: IGetAllSprintsDetailsInProject,
         private _getSprintWIthTasks: IGetSprintWithTasksUsecase,
         private _setSprintPoints: ISprintPointsCalculationUsecase,
         private _setSprintVelocity: ISetSprintVelocityUsecase
@@ -92,7 +92,7 @@ export class BacklogController implements IBacklogController {
     }
 
 
-    getCompletedSprintDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getAllSprintsInProject = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         try {
 
@@ -102,7 +102,7 @@ export class BacklogController implements IBacklogController {
                 return;
             }
 
-            const sprints = await this._getCompletedSprintDetails.execute(projectId);
+            const sprints = await this._getAllSprintDetailsInProject.execute(projectId);
             res.status(HttpStatusCode.OK).json({ status: true, message: 'Sprint data successfully retrieved.', result: sprints });
             return;
 

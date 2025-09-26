@@ -9,7 +9,7 @@ export interface IBacklogRepository {
 
     calculatePointsInSprint(sprintId: string): Promise<boolean>;
 
-    getCompletedSprintsDetails(projectId: string): Promise<Array<Sprint>>;
+    getAllSprintsDetailsInProject(projectId: string): Promise<Array<Sprint>>;
 
     getSprintWithTasks(sprintId: string): Promise<Sprint>;
 

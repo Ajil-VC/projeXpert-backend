@@ -45,7 +45,7 @@ export interface IGetSprintWithIDUsecase {
     execute(sprintId: string): Promise<Sprint>;
 }
 
-export interface IGetCompletedSprintsUsecase {
+export interface IGetAllSprintsDetailsInProject {
     execute(projectId: string): Promise<Array<Sprint>>;
 }
 
