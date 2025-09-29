@@ -97,7 +97,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     async getAllSprintsDetailsInProject(projectId: string): Promise<Array<Sprint>> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
-        const completedSprints: Sprint[] = await SprintModel.find({ projectId: projectIdOb });
+        const completedSprints: Sprint[] = await SprintModel.find({ projectId: projectIdOb, status: { $ne: 'active' } });
 
         if (!completedSprints) throw new Error('Error occured while fetching sprints');
         return completedSprints;
