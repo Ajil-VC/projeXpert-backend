@@ -2,20 +2,18 @@ import { IGetDashBoardUsecase } from "../../../config/Dependency/admin/comapanym
 import { Doughnut } from "../../../domain/entities/additional.interface.ts/doughnut.interface";
 import { SummaryCard } from "../../../domain/entities/additional.interface.ts/summarycard.interface";
 import { IAdminDashboardRepository } from "../../../domain/repositories/adminRepo/dashboard.repo";
-import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 
 
 export class GetDashboardDataUsecase implements IGetDashBoardUsecase {
 
-    constructor(private _dashBoardRepo: IAdminDashboardRepository, private _userRepo: IUserRepository, private _projectRepo: IProjectRepository) { }
+    constructor(private _dashBoardRepo: IAdminDashboardRepository, private _userRepo: IUserRepository) { }
 
     async execute(): Promise<any> {
 
-        const [data, largestEmployer, avgProjectsOnPlans] = await Promise.all([
+        const [data, largestEmployer] = await Promise.all([
             this._dashBoardRepo.getAdminDashboardView(),
-            this._userRepo.largestEmployer(),
-            this._projectRepo.avgProjectsOnPlans()
+            this._userRepo.largestEmployer()
         ]);
 
         const totalMonth = data.subscriptions.length;

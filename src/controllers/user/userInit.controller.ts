@@ -64,7 +64,7 @@ export class UserInitController implements IUserInitController {
         try {
 
             const { notificaionId, removeAll } = req.body;
-            const result = await this._readNotifications.execute(req.user.id, notificaionId, removeAll);
+            await this._readNotifications.execute(req.user.id, notificaionId, removeAll);
             res.status(HttpStatusCode.OK).json({ status: true });
             return;
 

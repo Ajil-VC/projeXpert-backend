@@ -1,7 +1,6 @@
 import { IGetCompanyUsersUsecase } from "../../../config/Dependency/user/team.di";
 import { ITeamRepository } from "../../../domain/repositories/team.repo";
 import { UserResponseDTO } from "../../../dtos/user/userResponseDTO";
-import { User } from "../../../infrastructure/database/models/user.interface";
 import { UserMapper } from "../../../mappers/user/user.mapper";
 
 

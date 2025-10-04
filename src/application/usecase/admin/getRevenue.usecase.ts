@@ -50,8 +50,7 @@ export class RevenueUseCase implements IRevenueUsecase {
 
         } else if (filter === 'date' && endDate && startDate) {
 
-            const now = new Date();
-
+      
             const diffTime = endDate.getTime() - startDate.getTime();
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 

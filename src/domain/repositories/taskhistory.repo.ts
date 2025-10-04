@@ -1,5 +1,4 @@
 import { TaskHistory } from "../../infrastructure/database/models/taskhistory.interface";
-import { TaskAction } from "../entities/types/task.types";
 import { TaskHistoryParams } from "../entities/types/taskHistoryParams";
 
 

@@ -6,16 +6,16 @@ import { Task } from "../../infrastructure/database/models/task.interface";
 export interface IProjectRepository {
 
     createProject(
-        projectName: String,
-        workSpace: String,
-        priority: String,
-        companyId: String,
-        memberId: String
+        projectName: string,
+        workSpace: string,
+        priority: string,
+        companyId: string,
+        memberId: string
     ): Promise<Project>;
 
     retrieveProject(projectId: string): Promise<Project>;
 
-    getProjects(workSpaceId: String, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }>;
+    getProjects(workSpaceId: string, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }>;
 
     getCurProject(workspaceId: string, projectId: string): Promise<any>;
 
@@ -35,6 +35,5 @@ export interface IProjectRepository {
 
     countProjects(companyId: string): Promise<number>;
 
-    avgProjectsOnPlans(): Promise<any>;
 
 }

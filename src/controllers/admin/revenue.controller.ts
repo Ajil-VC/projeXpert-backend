@@ -19,7 +19,7 @@ export class RevenueController implements IRevenueController {
                 filter = 'date';
             }
 
-            let tags = req.query.plans;
+            const tags = req.query.plans;
             let plans: string[] = [];
 
             if (Array.isArray(tags)) {

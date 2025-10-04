@@ -1,14 +1,13 @@
 import { useCaseResult } from "../../application/shared/useCaseResult";
 import { Company } from "../../infrastructure/database/models/company.interface";
-import { WorkSpace } from "../../infrastructure/database/models/workspace.interface";
 
 
 export interface ICompanyRepository {
 
-    activeCompanySubscriptions(): Promise<Number>;
-    getCompanyWithWorkSpace(companyId: String): Promise<Company | null>;
+    activeCompanySubscriptions(): Promise<number>;
+    getCompanyWithWorkSpace(companyId: string): Promise<Company | null>;
 
-    getTotalCompanyCountWithLastJoined(): Promise<{ totalCompanyCount: Number, lastMonthJoinedCount: Number }>;
+    getTotalCompanyCountWithLastJoined(): Promise<{ totalCompanyCount: number, lastMonthJoinedCount: number }>;
 
     findCompanyById(companyId: string): Promise<Company>;
     findCompanyByEmail(email: string): Promise<Company | null>;

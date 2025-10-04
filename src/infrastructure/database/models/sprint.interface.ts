@@ -31,10 +31,10 @@ export interface Sprint extends Document {
     createdBy: ObjectId | Team;
     tasks: ObjectId[] | Array<Task>;
 
-    plannedPoints: Number,
-    completedPoints: Number,
-    velocity: Number,
-    velocitySnapshot: Number,
+    plannedPoints: number,
+    completedPoints: number,
+    velocity: number,
+    velocitySnapshot: number,
     burndownData: BurndownEntry[],
     challenges: Challenge[]
 }

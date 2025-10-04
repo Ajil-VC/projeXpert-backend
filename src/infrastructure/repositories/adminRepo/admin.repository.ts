@@ -1,7 +1,4 @@
 import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.repo";
-import companyModel from "../../database/company.models";
-import { Company } from "../../database/models/company.interface";
-import { companySubscription } from "../../database/models/companySubscription.interface";
 import { User } from "../../database/models/user.interface";
 import userModel from "../../database/user.models";
 import { BaseRepository } from "../base.repository";

@@ -9,11 +9,11 @@ export interface Subscription extends Document {
 
     billingCycle: 'month' | 'year';
 
-    description: String;
+    description: string;
     isActive: boolean;
 
-    stripePriceId: String;
-    stripeProductId: String;
+    stripePriceId: string;
+    stripeProductId: string;
 
     maxWorkspace: number;
     maxProjects: number;

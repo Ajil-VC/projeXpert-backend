@@ -1,5 +1,5 @@
 import mongoose, { model, Schema } from "mongoose";
-import { Attachment, Comment, Task } from "./models/task.interface";
+import { Attachment, Task } from "./models/task.interface";
 
 
 const AttachmentSchema = new Schema<Attachment>({

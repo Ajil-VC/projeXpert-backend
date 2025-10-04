@@ -1,4 +1,4 @@
-import mongoose, { ObjectId, Types } from "mongoose";
+import mongoose from "mongoose";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
 import { Comment, StoryPoint, Task } from "../../database/models/task.interface";
 import taskModel from "../../database/task.models";
@@ -170,7 +170,7 @@ export class TaskRepositoryImp implements ITaskRepository {
 
             if (movingSprintId === 'backlog') {
 
-                const result = await Promise.all([
+                await Promise.all([
                     taskModel.updateMany(
                         { _id: { $in: taskIds } },
                         { $set: { sprintId: null } }
@@ -237,7 +237,7 @@ export class TaskRepositoryImp implements ITaskRepository {
 
     async updateTaskDetails(task: Task, assigneeId: string): Promise<Task> {
 
-        let assigneeIdOb = assigneeId.length == 0 ? null : new mongoose.Types.ObjectId(assigneeId);
+        const assigneeIdOb = assigneeId.length == 0 ? null : new mongoose.Types.ObjectId(assigneeId);
 
         const taskDetails = task;
         const taskId = typeof taskDetails._id === "string" ? new mongoose.Types.ObjectId(taskDetails._id) : null;

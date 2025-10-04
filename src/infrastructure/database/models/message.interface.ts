@@ -12,7 +12,7 @@ export interface Message extends Document {
 
     type: 'text' | 'call',
     callStatus: 'started' | 'ended' | 'missed',
-    duration: Number,
+    duration: number,
 
     createdAt?: Date;
     updatedAt?: Date;

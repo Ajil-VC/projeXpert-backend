@@ -1,5 +1,4 @@
 import { UserDeepEntityDetailed } from "../../domain/entities/userdeep.entity";
-import { UserResponseDetailedDTO } from "../../dtos/user/userDeepResponseDTO";
 export class UserDeepMapper {
     static toDetailedDTO(userDoc: any): UserDeepEntityDetailed {
         return new UserDeepEntityDetailed(

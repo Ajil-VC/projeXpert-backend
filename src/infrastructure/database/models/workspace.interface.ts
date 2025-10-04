@@ -3,7 +3,7 @@ import { Document, ObjectId } from "mongoose";
 export interface WorkSpace extends Document {
 
     _id: ObjectId;
-    name: String;
+    name: string;
     companyId: ObjectId;
     members: ObjectId[];
 

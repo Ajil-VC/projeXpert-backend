@@ -119,11 +119,11 @@ export class StripeController implements IStripeController {
             const item = subscription.items.data[0];
 
             const productId = item.price.product as string;
-            const product = await stripe.products.retrieve(productId);
+            await stripe.products.retrieve(productId);
 
             const currentPeriodEnd = new Date(item.current_period_end * 1000);
 
-            const result = await this._subscribe.execute(
+            await this._subscribe.execute(
                 session.customer_email,
                 customerId,
                 subscriptionId,
@@ -133,9 +133,6 @@ export class StripeController implements IStripeController {
             );
 
         }
-
-        // if (event.type === 'invoice.payment_failed') { ... }
-
         res.status(HttpStatusCode.OK).send({ received: true });
 
     }

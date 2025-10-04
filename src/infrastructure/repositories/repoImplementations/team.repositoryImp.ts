@@ -1,11 +1,9 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { ITeamRepository } from "../../../domain/repositories/team.repo";
 import projectModel from "../../database/project.models";
 import { User } from "../../database/models/user.interface";
 import { Team } from "../../database/models/team.interface";
-import taskModel from "../../database/task.models";
 import userModel from "../../database/user.models";
-import { BaseRepository } from "../base.repository";
 import RolesModel from "../../database/roles.model";
 
 
@@ -95,7 +93,7 @@ export class TeamRepositoryImp implements ITeamRepository {
 
             users = await userModel.find(query).populate('role').skip(skip).limit(limit);
 
-            let totalCount = await userModel.countDocuments(query);
+            const totalCount = await userModel.countDocuments(query);
 
             totalPages = Math.ceil(totalCount / limit);
 

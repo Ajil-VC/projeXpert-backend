@@ -1,6 +1,5 @@
 import { IGetCommentsUsecase } from "../../../config/Dependency/user/task.di";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
-import { Comment } from "../../../infrastructure/database/models/task.interface";
 
 
 export class GetCommentsUseCase implements IGetCommentsUsecase {

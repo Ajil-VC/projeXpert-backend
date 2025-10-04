@@ -32,7 +32,7 @@ export class RegisterUseCase implements IRegisterUsecase {
             const companyIdStatus = await this._companyRepo.createCompany(companyName, email);
 
             if (typeof companyIdStatus == 'string') return { status: false, message: 'Company couldnt create' };
-            let workSpaceId = await this._companyRepo.createWorkspace('Default', companyIdStatus.additional);
+            const workSpaceId = await this._companyRepo.createWorkspace('Default', companyIdStatus.additional);
             if (!workSpaceId || typeof workSpaceId !== 'string') return { status: false, message: 'Workspace probably have not created' };
 
 

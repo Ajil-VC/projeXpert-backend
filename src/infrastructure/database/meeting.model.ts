@@ -1,4 +1,4 @@
-import mongoose, { model, ObjectId, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { Meeting } from "./models/meeting.interface";
 
 

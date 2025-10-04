@@ -17,7 +17,7 @@ export class UserResponseDetailedDTO {
         companyId: string,
         projects: {
             _id: string,
-            name: String,
+            name: string,
             workSpace: string,
             companyId: string,
             members: string[],
@@ -36,7 +36,7 @@ export class UserResponseDetailedDTO {
         companyId: string,
         projects: {
             _id: string,
-            name: String,
+            name: string,
             workSpace: string,
             companyId: string,
             members: string[],

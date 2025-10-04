@@ -16,7 +16,7 @@ export class SprintMiddleware {
         return async (req: Request, res: Response, next: NextFunction) => {
             try {
 
-                let id =
+                const id =
                     req.body?.completingSprintId ||
                     req.body?.issueId ||
                     req.body?.parentId ||

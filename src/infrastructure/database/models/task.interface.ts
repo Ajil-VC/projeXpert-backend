@@ -1,7 +1,6 @@
 import { Document, ObjectId } from "mongoose";
 import { Team } from "./team.interface";
 import { Sprint } from "./sprint.interface";
-import { User } from "./user.interface";
 
 
 export interface Attachment {
@@ -40,7 +39,7 @@ export interface Task extends Document {
     storyPoints: StoryPoint;
 
     sprintId: ObjectId | Sprint;     // Logical grouping for sprints
-    sprintNumber: Number; //Only for sprints
+    sprintNumber: number; //Only for sprints
     parentId: ObjectId;     // for subtasks
     subtasks: ObjectId[];
     projectId: ObjectId;

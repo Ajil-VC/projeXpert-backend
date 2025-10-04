@@ -1,5 +1,4 @@
 import { Document, ObjectId } from "mongoose";
-import { Team } from "./team.interface";
 
 
 

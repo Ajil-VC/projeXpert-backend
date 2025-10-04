@@ -5,7 +5,7 @@ import { Project } from "./project.interface";
 interface WorkSpace extends Document {
 
     _id: ObjectId;
-    name: String;
+    name: string;
     companyId: ObjectId;
     members: ObjectId[];
 
@@ -21,10 +21,10 @@ interface WorkSpace extends Document {
 export interface PopulatedUser extends Document {
 
     _id: ObjectId;
-    name: String;
-    email: String;
-    password: String;
-    profilePicUrl: String;
+    name: string;
+    email: string;
+    password: string;
+    profilePicUrl: string;
     role: 'admin' | 'user';
     companyId: ObjectId | Company;
     workspaceIds: ObjectId[];

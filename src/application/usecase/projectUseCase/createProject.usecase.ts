@@ -8,7 +8,7 @@ export class createProjectUseCase implements ICreateProjectUsecase {
 
     constructor(private _projectRepo: IProjectRepository) { }
 
-    async execute(projectName: String, workSpace: String, priority: String, user: DecodedData): Promise<Project | null> {
+    async execute(projectName: string, workSpace: string, priority: string, user: DecodedData): Promise<Project | null> {
 
         const createdProject = await this._projectRepo
             .createProject(projectName, workSpace, priority, user.companyId, user.id);

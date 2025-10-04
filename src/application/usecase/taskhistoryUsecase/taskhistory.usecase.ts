@@ -1,5 +1,4 @@
 import { ITaskHistoryUsecase } from "../../../config/Dependency/user/taskhistory.di";
-import { TaskAction } from "../../../domain/entities/types/task.types";
 import { TaskHistoryParams } from "../../../domain/entities/types/taskHistoryParams";
 import { ITaskHistoryRepository } from "../../../domain/repositories/taskhistory.repo";
 
@@ -11,7 +10,7 @@ export class TaskHistoryUsecase implements ITaskHistoryUsecase {
 
     async execute(params: TaskHistoryParams): Promise<void> {
 
-        const result = await this._taskHistoryRepo.addHistory(params);
+        await this._taskHistoryRepo.addHistory(params);
     }
 
 

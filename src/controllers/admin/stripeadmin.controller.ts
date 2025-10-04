@@ -73,9 +73,8 @@ export class StripeAdminController implements IStripeAdminController {
 
         try {
 
-            const { name, price, billingCycle, description, maxWorkspace, maxProjects, maxMembers, canUseVideoCall } = req.body;
+            const { name, price, billingCycle, description, maxWorkspace, maxProjects, maxMembers } = req.body;
 
-            // const videoCall = canUseVideoCall === 'true' ? true : false;
             const videoCall = true;
             const product = await stripe.products.create({
                 name,

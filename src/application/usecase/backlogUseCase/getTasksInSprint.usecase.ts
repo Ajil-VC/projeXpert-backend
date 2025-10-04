@@ -1,7 +1,6 @@
 import { IGetSprintWithTasksUsecase } from "../../../config/Dependency/user/backlog.di";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
-import { Task } from "../../../infrastructure/database/models/task.interface";
 
 
 export class GetSprintWithTasksUsecase implements IGetSprintWithTasksUsecase {

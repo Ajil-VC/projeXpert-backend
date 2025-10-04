@@ -1,5 +1,4 @@
 
-import { Permissions, Roles } from "../../infrastructure/database/models/role.interface";
 import { Attachment, User } from "../../infrastructure/database/models/user.interface";
 
 export interface IUserRepository {

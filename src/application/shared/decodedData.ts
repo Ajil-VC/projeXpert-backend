@@ -2,9 +2,9 @@
 
 export interface DecodedData {
 
-    id: String,
-    email: String,
-    name: String,
-    role: String,
-    companyId: String
+    id: string,
+    email: string,
+    name: string,
+    role: string,
+    companyId: string
 }

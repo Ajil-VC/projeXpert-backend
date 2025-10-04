@@ -5,6 +5,7 @@ import { PlanPolicy } from "../../application/usecase/subscriptionUseCase/planpo
 import { RESPONSE_MESSAGES } from "../../config/response-messages.constant";
 
 
+/* eslint-disable @typescript-eslint/no-namespace */
 declare global {
     namespace Express {
         interface Request {
@@ -12,7 +13,7 @@ declare global {
         }
     }
 }
-
+/* eslint-enable @typescript-eslint/no-namespace */
 
 export class PlanPolicyMiddleware {
 

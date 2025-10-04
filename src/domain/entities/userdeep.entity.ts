@@ -18,7 +18,7 @@ export class UserDeepEntityDetailed {
             companyId: string,
             projects: {
                 _id: string,
-                name: String,
+                name: string,
                 workSpace: string,
                 companyId: string,
                 members: string[],
@@ -37,7 +37,7 @@ export class UserDeepEntityDetailed {
             companyId: string,
             projects: {
                 _id: string,
-                name: String,
+                name: string,
                 workSpace: string,
                 companyId: string,
                 members: string[],

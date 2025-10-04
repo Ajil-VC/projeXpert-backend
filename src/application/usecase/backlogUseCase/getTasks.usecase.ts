@@ -1,4 +1,4 @@
-import { Task } from "../../../infrastructure/database/models/task.interface";
+
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import { IGetTasksUsecase } from "../../../config/Dependency/user/backlog.di";
 import { Permissions } from "../../../infrastructure/database/models/role.interface";

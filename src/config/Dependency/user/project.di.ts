@@ -9,11 +9,11 @@ export interface IGetWorkspaceUsecase {
 }
 
 export interface ICreateProjectUsecase {
-    execute(projectName: String, workSpace: String, priority: String, user: DecodedData): Promise<Project | null>
+    execute(projectName: string, workSpace: string, priority: string, user: DecodedData): Promise<Project | null>
 }
 
 export interface IGetProjectsinWorkspaceUsecase {
-    execute(workSpaceId: String, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }>;
+    execute(workSpaceId: string, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }>;
 }
 
 export interface IGetCurrentProjectUsecase {

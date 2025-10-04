@@ -1,7 +1,6 @@
 import mongoose, { Types } from "mongoose";
 import { IWorkspaceRepository } from "../../../domain/repositories/workspace.repo";
 import companyModel from "../../database/company.models";
-import { Company } from "../../database/models/company.interface";
 import { WorkSpace } from "../../database/models/workspace.interface";
 import { useCaseResult } from "../../../application/shared/useCaseResult";
 import workSpaceModel from "../../database/workspace.models";

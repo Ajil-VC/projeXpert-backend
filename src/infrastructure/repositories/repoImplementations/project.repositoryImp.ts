@@ -8,7 +8,6 @@ import userModel from "../../database/user.models";
 import { Task } from "../../database/models/task.interface";
 import taskModel from "../../database/task.models";
 import { BaseRepository } from "../base.repository";
-import companyModel from "../../database/company.models";
 
 
 export class projectRepositoryImp extends BaseRepository<Project> implements IProjectRepository {
@@ -71,7 +70,7 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
         const workspaceWithProjects = unknownData as Array<Project>
         if (!workspaceWithProjects) throw new Error('Projects not available.');
 
-        for (let project of workspaceWithProjects) {
+        for (const project of workspaceWithProjects) {
             const proId = project._id as unknown;
             if (projectIdOb.equals(new mongoose.Types.ObjectId(proId as string))) {
                 return project;
@@ -192,7 +191,7 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
     }
 
 
-    async getProjects(workSpaceId: String, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }> {
+    async getProjects(workSpaceId: string, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }> {
 
         if (typeof workSpaceId !== 'string') throw new Error('Workspace Id is not valid string');
         const workSpaceObjectId = new mongoose.Types.ObjectId(workSpaceId);
@@ -216,11 +215,11 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
     }
 
     async createProject(
-        projectName: String,
-        workSpace: String,
-        priority: String,
-        companyId: String,
-        memberId: String
+        projectName: string,
+        workSpace: string,
+        priority: string,
+        companyId: string,
+        memberId: string
     ): Promise<Project> {
 
         if (typeof workSpace !== 'string') throw new Error("Workspace id is not valid string");
@@ -255,11 +254,4 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
         return createdProject;
     }
 
-
-    async avgProjectsOnPlans(): Promise<any> {
-
-
-
-        // throw new Error("Couldnt find out  the data.");
-    }
 }

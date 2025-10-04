@@ -5,8 +5,8 @@ import { Attachment } from "./user.interface";
 export interface Team {
 
     _id: ObjectId;
-    name: String;
-    email: String,
+    name: string;
+    email: string,
 
     profilePicUrl: Attachment,
     role: ObjectId,

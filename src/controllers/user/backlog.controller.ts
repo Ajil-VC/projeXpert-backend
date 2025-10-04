@@ -260,7 +260,7 @@ export class BacklogController implements IBacklogController {
             if (result.epicId) {
 
                 const epicId = typeof result.epicId === 'string' ? result.epicId : result.epicId?._id.toString();
-                const updateEpicProgress = await this._epicProgress.execute(epicId);
+                await this._epicProgress.execute(epicId);
             }
 
 
@@ -525,7 +525,7 @@ export class BacklogController implements IBacklogController {
             }
             if (result.epicId) {
                 const epicId = typeof result.epicId === 'string' ? result.epicId : result.epicId?.toString();
-                const updateEpicProgress = await this._epicProgress.execute(epicId);
+                await this._epicProgress.execute(epicId);
             }
 
             res.status(HttpStatusCode.OK).json({ status: true, message: RESPONSE_MESSAGES.TASK.UPDATED, result });
@@ -543,7 +543,7 @@ export class BacklogController implements IBacklogController {
     ) {
         const days: { date: Date; remainingPoints: number }[] = [];
 
-        let current = new Date(startDate);
+        const current = new Date(startDate);
 
         for (let i = 0; i < duration; i++) {
             days.push({

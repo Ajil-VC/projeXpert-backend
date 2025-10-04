@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { config } from "../../config/config";
 
 
-// Extend the Request interface to include the user property
+/* eslint-disable @typescript-eslint/no-namespace */
 declare global {
     namespace Express {
         interface Request {
@@ -11,7 +11,7 @@ declare global {
         }
     }
 }
-
+/* eslint-enable @typescript-eslint/no-namespace */
 
 function verifyToken(token: string, secret: string): Promise<any> {
     return new Promise((resolve, reject) => {

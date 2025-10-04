@@ -14,7 +14,7 @@ export class CompanyRepositoryImp extends BaseRepository<Company> implements ICo
     }
 
 
-    async getTotalCompanyCountWithLastJoined(): Promise<{ totalCompanyCount: Number; lastMonthJoinedCount: Number; }> {
+    async getTotalCompanyCountWithLastJoined(): Promise<{ totalCompanyCount: number; lastMonthJoinedCount: number; }> {
 
         const data = await companyModel.aggregate([
             {
@@ -43,7 +43,7 @@ export class CompanyRepositoryImp extends BaseRepository<Company> implements ICo
     }
 
 
-    async activeCompanySubscriptions(): Promise<Number> {
+    async activeCompanySubscriptions(): Promise<number> {
 
         const result = await companyModel.aggregate([
             {
@@ -69,7 +69,7 @@ export class CompanyRepositoryImp extends BaseRepository<Company> implements ICo
         return await this.findByIdWithPopulateOrThrow(companyId, { path: 'plan' });
     }
 
-    async getCompanyWithWorkSpace(companyId: String): Promise<Company | null> {
+    async getCompanyWithWorkSpace(companyId: string): Promise<Company | null> {
 
         if (typeof companyId !== 'string') return null;
         return await this.findByIdWithPopulateOrThrow(companyId, { path: 'workspaces' });

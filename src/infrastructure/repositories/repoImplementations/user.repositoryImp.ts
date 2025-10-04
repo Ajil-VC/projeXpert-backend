@@ -4,8 +4,6 @@ import mongoose from "mongoose";
 import { Attachment, User } from "../../database/models/user.interface";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 import userModel from "../../database/user.models";
-import { Roles } from "../../database/models/role.interface";
-import RolesModel from "../../database/roles.model";
 
 export class userRepositoryImp implements IUserRepository {
 
@@ -13,7 +11,7 @@ export class userRepositoryImp implements IUserRepository {
     async updateUserProfile(file: Attachment | null, userId: string, name: string): Promise<User> {
 
         const userIdOb = new mongoose.Types.ObjectId(userId);
-        let query: { profilePicUrl?: Attachment, name?: string } = {};
+        const query: { profilePicUrl?: Attachment, name?: string } = {};
         if (file) {
             query.profilePicUrl = file;
         }

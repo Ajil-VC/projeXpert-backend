@@ -404,7 +404,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
         const epicIdOb = epicId ? new mongoose.Types.ObjectId(epicId) : null;
 
-        let sprintId = taskGroup === 'backlog' ? null : new mongoose.Types.ObjectId(taskGroup);
+        const sprintId = taskGroup === 'backlog' ? null : new mongoose.Types.ObjectId(taskGroup);
 
         const newTask = new taskModel({
             title: issueName,
@@ -435,7 +435,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
 
         if (!isKanban) {
 
-            let query: any = { projectId: projectIdOb, type: { $ne: 'subtask' } };
+            const query: any = { projectId: projectIdOb, type: { $ne: 'subtask' } };
 
             const tasks = await taskModel.find(query)
                 .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })

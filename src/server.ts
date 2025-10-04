@@ -1,6 +1,6 @@
 
 
-import express, { Request, Response } from 'express';
+import express from 'express';
 import connectDB from './config/connectDB';
 import morgan from 'morgan';
 import cors from 'cors';

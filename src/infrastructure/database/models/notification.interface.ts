@@ -10,7 +10,7 @@ export interface Notification extends Document {
     type: "task" | "message",
     message: string,
     link: string,
-    data: Object,
+    data: object,
     read: boolean,
     createdAt: Date
 }
