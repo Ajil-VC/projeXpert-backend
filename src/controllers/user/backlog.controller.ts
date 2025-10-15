@@ -543,9 +543,13 @@ export class BacklogController implements IBacklogController {
     ) {
         const days: { date: Date; remainingPoints: number }[] = [];
 
-        const current = new Date(startDate);
+        const start = new Date(startDate);
 
         for (let i = 0; i < duration; i++) {
+
+            const current = new Date(start);
+            current.setDate(start.getDate() + i);
+
             days.push({
                 date: current,
                 remainingPoints: 0
@@ -573,6 +577,7 @@ export class BacklogController implements IBacklogController {
             }
 
             const burnDownData = this.generateSprintDays(startDate, duration);
+     
             const result = await this._startSprintUsecase.execute(sprintId, sprintName, duration, startDate, goal, description, burnDownData);
             await this._setSprintPoints.execute(result._id as unknown as string);
             await this._addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'started sprint', sprintName)
