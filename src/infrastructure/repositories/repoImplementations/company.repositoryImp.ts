@@ -88,17 +88,16 @@ export class CompanyRepositoryImp extends BaseRepository<Company> implements ICo
     }
 
 
-    async changeCompanyStatus(companyId: string, status: boolean): Promise<any> {
+    async changeCompanyStatus(companyId: string, status: boolean): Promise<boolean> {
 
         const companyIdOb = new mongoose.Types.ObjectId(companyId);
         const result = await companyModel.updateOne({ _id: companyIdOb }, { $set: { isBlocked: status } });
 
         if (result.modifiedCount === 0) {
-
             throw new Error('Status couldnt udpate.');
         }
 
-        return result;
+        return true;
 
     }
 

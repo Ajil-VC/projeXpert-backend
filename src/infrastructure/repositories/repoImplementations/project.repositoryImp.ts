@@ -1,7 +1,7 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import projectModel from "../../database/project.models";
-import { Project } from "../../database/models/project.interface";
+import { PopulatedProject, Project } from "../../database/models/project.interface";
 import workSpaceModel from "../../database/workspace.models";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 import userModel from "../../database/user.models";
@@ -58,7 +58,7 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
         return availableTasks;
     }
 
-    async getCurProject(workspaceId: string, projectId: string): Promise<any> {
+    async getCurProject(workspaceId: string, projectId: string): Promise<Project | null> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
         const workSpaceIdOb = new mongoose.Types.ObjectId(workspaceId);
@@ -135,7 +135,7 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
     }
 
 
-    async updateProject(projectId: string, projectName: string, status: string, priority: string): Promise<Project> {
+    async updateProject(projectId: string, projectName: string, status: string, priority: string): Promise<PopulatedProject> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
 

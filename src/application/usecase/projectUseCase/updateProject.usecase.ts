@@ -1,6 +1,7 @@
 import { IUpdateProjectUsecase } from "../../../config/Dependency/user/project.di";
 import { IProjectRepository } from "../../../domain/repositories/project.repo";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
+import { PopulatedProject } from "../../../infrastructure/database/models/project.interface";
 
 
 export class UpdateProjectUseCase implements IUpdateProjectUsecase {
@@ -14,7 +15,7 @@ export class UpdateProjectUseCase implements IUpdateProjectUsecase {
         status: string,
         priority: string,
         members: Array<{ email: string, role: string }>,
-        adminEmail: string): Promise<any> {
+        adminEmail: string): Promise<PopulatedProject> {
 
         const isRoleChanged = this._userRepo.updateRole(members, adminEmail);
         const isUpdated = this._projectRepo.updateProject(projectId, projectName, status, priority);

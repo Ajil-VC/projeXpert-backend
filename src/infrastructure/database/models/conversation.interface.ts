@@ -1,5 +1,6 @@
 
 import { Document, ObjectId } from "mongoose";
+import { Team } from "./team.interface";
 
 export interface Conversation extends Document {
 
@@ -17,3 +18,6 @@ export interface Conversation extends Document {
 
 }
 
+export interface PopulatedConversation extends Omit<Conversation, 'participants'> {
+    participants: Team[];
+}

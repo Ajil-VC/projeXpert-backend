@@ -1,5 +1,6 @@
 
 import { ObjectId, Document } from "mongoose";
+import { Team } from "./team.interface";
 
 export interface Project extends Document {
 
@@ -14,4 +15,8 @@ export interface Project extends Document {
     createdAt?: Date;
     updatedAt?: Date;
 
+}
+
+export interface PopulatedProject extends Omit<Project, 'members'> {
+    members: Team[];
 }

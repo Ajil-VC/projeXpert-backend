@@ -16,6 +16,9 @@ export interface Comment {
     createdAt: Date;
     updatedAt: Date;
 }
+export interface PopulatedComment extends Omit<Comment, 'userId'> {
+    userId: Team;
+}
 
 export type StoryPoint = 0 | 1 | 2 | 3 | 5 | 8 | 13 | 21;
 

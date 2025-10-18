@@ -15,6 +15,6 @@ export interface ICompanyRepository {
     createWorkspace(name: string, companyId: string): Promise<string | useCaseResult>;
 
     updateCompanyDetails(company: Company): Promise<Company>;
-    changeCompanyStatus(companyId: string, status: boolean): Promise<any>;
+    changeCompanyStatus(companyId: string, status: boolean): Promise<boolean>;
 
 }

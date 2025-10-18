@@ -10,6 +10,7 @@ export class SelectWorkspaceUsecase implements ISelectWorkspaceUsecase {
 
     async execute(workspaceId: string, userId: string): Promise<WorkSpace> {
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [user, workspace] = await Promise.all([
             this._userRepo.updateDefaultWorkspace(workspaceId, userId),
             this._workspace.getWorkspace(workspaceId)

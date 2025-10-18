@@ -52,17 +52,17 @@ export class userRepositoryImp implements IUserRepository {
     }
 
 
-    async changeUserStatus(userId: string, status: boolean): Promise<any> {
+    async changeUserStatus(userId: string, status: boolean): Promise<boolean> {
 
         const userIdOb = new mongoose.Types.ObjectId(userId);
 
-        const userData = await userModel.updateOne({ _id: userIdOb }, { $set: { isBlocked: status } });
+        const result = await userModel.updateOne({ _id: userIdOb }, { $set: { isBlocked: status } });
 
-        if (userData.modifiedCount === 0) {
+        if (result.modifiedCount === 0) {
             throw new Error('Status couldnt udpate.');
         }
 
-        return userData;
+        return true;
     }
 
 

@@ -17,7 +17,7 @@ export interface IGetProjectsinWorkspaceUsecase {
 }
 
 export interface IGetCurrentProjectUsecase {
-    execute(workSpaceId: string, projectId: string): Promise<any>;
+    execute(workSpaceId: string, projectId: string): Promise<Project | null>;
 }
 
 export interface IAddMemberUsecase {

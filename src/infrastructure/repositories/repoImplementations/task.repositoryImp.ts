@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { ITaskRepository } from "../../../domain/repositories/task.repo";
-import { Comment, StoryPoint, Task } from "../../database/models/task.interface";
+import { PopulatedComment, StoryPoint, Task } from "../../database/models/task.interface";
 import taskModel from "../../database/task.models";
 import SprintModel from "../../database/sprint.models";
 import commentModel from "../../database/comment.models";
@@ -74,7 +74,7 @@ export class TaskRepositoryImp implements ITaskRepository {
         return updatedEpic;
     }
 
-    async addComment(userId: string, taskId: string, content: string): Promise<Comment> {
+    async addComment(userId: string, taskId: string, content: string): Promise<PopulatedComment> {
 
         const userIdOb = new mongoose.Types.ObjectId(userId);
         const taskIdOb = new mongoose.Types.ObjectId(taskId);
@@ -99,7 +99,7 @@ export class TaskRepositoryImp implements ITaskRepository {
 
 
 
-    async getCommentsInTask(taskId: string): Promise<Comment[]> {
+    async getCommentsInTask(taskId: string): Promise<PopulatedComment[]> {
 
         const taskIdOb = new mongoose.Types.ObjectId(taskId);
 

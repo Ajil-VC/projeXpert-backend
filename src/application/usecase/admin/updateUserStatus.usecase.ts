@@ -6,7 +6,7 @@ export class changeUserStatusUseCase implements ICompanyManagementUsecase {
 
     constructor(private _userRepo: IUserRepository) { }
 
-    async execute(userId: string, status: boolean): Promise<any> {
+    async execute(userId: string, status: boolean): Promise<boolean> {
 
         const result = await this._userRepo.changeUserStatus(userId, status);
 

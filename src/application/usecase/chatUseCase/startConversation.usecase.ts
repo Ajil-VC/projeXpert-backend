@@ -1,12 +1,13 @@
 import { IChatUsecase } from "../../../config/Dependency/user/chat.di";
 import { IChatRepository } from "../../../domain/repositories/chat.repo";
+import { PopulatedConversation } from "../../../infrastructure/database/models/conversation.interface";
 
 
 export class ChatUseCase implements IChatUsecase {
 
     constructor(private _chatRepo: IChatRepository) { }
 
-    async execute(userId: string, currentUserId: string, companyId: string): Promise<any> {
+    async execute(userId: string, currentUserId: string, companyId: string): Promise<PopulatedConversation> {
 
         const result = await this._chatRepo.startConversation(userId, currentUserId, companyId);
 

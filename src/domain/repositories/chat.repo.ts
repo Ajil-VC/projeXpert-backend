@@ -1,12 +1,12 @@
-import { Conversation } from "../../infrastructure/database/models/conversation.interface";
+import { PopulatedConversation } from "../../infrastructure/database/models/conversation.interface";
 import { Message } from "../../infrastructure/database/models/message.interface";
 
 
 export interface IChatRepository {
 
-    startConversation(recieverId: string, senderId: string, companyId: string): Promise<Conversation>;
+    startConversation(recieverId: string, senderId: string, companyId: string): Promise<PopulatedConversation>;
 
-    getChats(userId: string, companyId: string): Promise<Conversation[]>;
+    getChats(userId: string, companyId: string): Promise<PopulatedConversation[]>;
 
     getMessages(convoId: string): Promise<Message[]>;
 

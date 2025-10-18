@@ -1,5 +1,5 @@
 import { Sprint } from "../../infrastructure/database/models/sprint.interface";
-import { Comment, StoryPoint, Task } from "../../infrastructure/database/models/task.interface";
+import { PopulatedComment, StoryPoint, Task } from "../../infrastructure/database/models/task.interface";
 
 
 
@@ -15,9 +15,9 @@ export interface ITaskRepository {
 
     removeAttachment(publicId: string, taskId: string): Promise<Task>;
 
-    getCommentsInTask(taskId: string): Promise<Comment[]>;
+    getCommentsInTask(taskId: string): Promise<PopulatedComment[]>;
 
-    addComment(userId: string, taskId: string, content: string): Promise<Comment>;
+    addComment(userId: string, taskId: string, content: string): Promise<PopulatedComment>;
 
     getAllTasksUnderEpic(epicId: string): Promise<Task[]>;
 

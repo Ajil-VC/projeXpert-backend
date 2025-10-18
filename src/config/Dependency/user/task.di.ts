@@ -1,6 +1,6 @@
 
 import { Permissions } from "../../../infrastructure/database/models/role.interface";
-import { StoryPoint, Task } from "../../../infrastructure/database/models/task.interface";
+import { PopulatedComment, StoryPoint, Task } from "../../../infrastructure/database/models/task.interface";
 
 
 export interface IUpdateTaskDetailsUsecase {
@@ -16,11 +16,11 @@ export interface ICompleteSprintUsecase {
 }
 
 export interface IGetCommentsUsecase {
-    execute(taskId: string): Promise<Comment[]>;
+    execute(taskId: string): Promise<PopulatedComment[]>;
 }
 
 export interface IAddCommentUsecase {
-    execute(userId: string, taskId: string, content: string): Promise<Comment>;
+    execute(userId: string, taskId: string, content: string): Promise<PopulatedComment>;
 }
 
 export interface IEpicProgressUsecase {

@@ -4,7 +4,7 @@ import { UserResponseDTO } from "../../../dtos/user/userResponseDTO";
 
 
 export interface IGetTeamMembersUsecase {
-    execute(projectId: string | null, userId: string): Promise<Array<Team>>;
+    execute(projectId: string | null, userId: string): Promise<Team[]>;
 }
 
 export interface IGetCompanyUsersUsecase {

@@ -1,5 +1,5 @@
 
-import { Project } from "../../infrastructure/database/models/project.interface";
+import { PopulatedProject, Project } from "../../infrastructure/database/models/project.interface";
 import { Task } from "../../infrastructure/database/models/task.interface";
 
 
@@ -17,7 +17,7 @@ export interface IProjectRepository {
 
     getProjects(workSpaceId: string, limit: number, skip: number, filter: Array<string>): Promise<{ projects: Array<Project>, totalPage: number }>;
 
-    getCurProject(workspaceId: string, projectId: string): Promise<any>;
+    getCurProject(workspaceId: string, projectId: string): Promise<Project | null>;
 
     addMemberToProject(projectId: string, email: string, workSpaceId: string): Promise<Project>;
 
@@ -27,7 +27,7 @@ export interface IProjectRepository {
         projectName: string,
         status: string,
         priority: string
-    ): Promise<Project>;
+    ): Promise<PopulatedProject>;
 
     deleteProject(projectId: string, workSpaceId: string): Promise<boolean>;
 

@@ -8,11 +8,11 @@ export interface IGetDashBoardUsecase {
 
 
 export interface ICompanyManagementUsecase {
-    execute(userId: string, status: boolean): Promise<any>;
+    execute(userId: string, status: boolean): Promise<boolean>;
 }
 
 export interface ICompanyStatusChangeUsecase {
-    execute(companyId: string, status: boolean): Promise<any>;
+    execute(companyId: string, status: boolean): Promise<boolean>;
 }
 
 export interface IGetSubscriptionAdminUsecase {

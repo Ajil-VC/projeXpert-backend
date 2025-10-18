@@ -1,3 +1,4 @@
+import { AdminInitDTO } from "../../../application/DTO/adminInitDTO";
 import { IAdminRepository } from "../../../domain/repositories/adminRepo/admin.repo";
 import { User } from "../../database/models/user.interface";
 import userModel from "../../database/user.models";
@@ -15,7 +16,7 @@ export class AdminRepositoryImp extends BaseRepository<User> implements IAdminRe
         return await this.findByIdOrThrow(adminId, 'Couldnt findout admin details.');
     }
 
-    async getAllCompanyDetails(limit: number, skip: number, searchTerm: string): Promise<{ companyData: any, totalPages: number }> {
+    async getAllCompanyDetails(limit: number, skip: number, searchTerm: string): Promise<AdminInitDTO> {
 
         const [companyData, totalCountResult] = await Promise.all([
 

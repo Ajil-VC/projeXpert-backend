@@ -3,7 +3,7 @@ import { IChatRepository } from "../../../domain/repositories/chat.repo";
 import conversationModel from "../../database/conversation.models";
 import messageModel from "../../database/message.models";
 import { Message } from "../../database/models/message.interface";
-import { Conversation } from "../../database/models/conversation.interface";
+import { PopulatedConversation } from "../../database/models/conversation.interface";
 
 
 
@@ -99,7 +99,7 @@ export class ChatRepositoryImp implements IChatRepository {
     }
 
 
-    async getChats(userId: string, companyId: string): Promise<Conversation[]> {
+    async getChats(userId: string, companyId: string): Promise<PopulatedConversation[]> {
 
         const userIdOb = new mongoose.Types.ObjectId(userId);
         const companyIdOb = new mongoose.Types.ObjectId(companyId);
@@ -117,7 +117,7 @@ export class ChatRepositoryImp implements IChatRepository {
 
     }
 
-    async startConversation(recieverId: string, senderId: string, companyId: string): Promise<Conversation> {
+    async startConversation(recieverId: string, senderId: string, companyId: string): Promise<PopulatedConversation> {
 
         const senderIdOb = new mongoose.Types.ObjectId(senderId);
         const recieverIdOb = new mongoose.Types.ObjectId(recieverId);

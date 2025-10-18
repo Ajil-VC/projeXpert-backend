@@ -7,7 +7,7 @@ export class GetTeamMembers implements IGetTeamMembersUsecase {
 
     constructor(private _teamRepo: ITeamRepository) { }
 
-    async execute(projectId: string | null, userId: string): Promise<Array<Team>> {
+    async execute(projectId: string | null, userId: string): Promise<Team[]> {
 
         const result = await this._teamRepo.getTeamMembers(projectId, userId);
         return result;

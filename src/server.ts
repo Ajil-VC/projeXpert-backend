@@ -17,6 +17,7 @@ import logger from './utils/logger';
 import http from 'http';
 import adminRouter from './routes/adminRoutes';
 import webhookRouter from './routes/webhookRoutes';
+import { AppError } from './shared/errors';
 
 const app = express();
 
@@ -54,8 +55,8 @@ app.use('/api/v1/company', companyRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/admin', adminRouter);
 
-
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((err: AppError, req: express.Request, res: express.Response, next: express.NextFunction) => {
     logger.error(`${req.method} ${req.originalUrl} - ${err.message}`, {
         stack: err.stack,
         status: err.status || 500,

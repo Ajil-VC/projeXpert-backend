@@ -15,7 +15,7 @@ export class SaveVideoCallUsecase {
             const result = await this._chatRepo.saveVideoCallRecord(convoId, senderId, recieverId, type, msgId);
             return result;
         } catch (err) {
-            console.error('Couldnt save the video call record.');
+            console.error('Couldnt save the video call record.',err);
             return null;
         }
     }

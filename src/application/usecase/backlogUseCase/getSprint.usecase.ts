@@ -10,7 +10,7 @@ export class GetSprintsUseCase implements IGetSprintUsecase {
 
     constructor(private _backlogRepository: IBacklogRepository) { }
 
-    async execute(projectId: string, permissions: Array<Permissions>, userId: string, kanban: boolean = false): Promise<any> {
+    async execute(projectId: string, permissions: Array<Permissions>, userId: string, kanban: boolean = false): Promise<boolean | Sprint[]> {
 
         const result = await this._backlogRepository.getSprints(projectId);
         if (!result) throw new Error('Error while getting sprints');
@@ -27,6 +27,7 @@ export class GetSprintsUseCase implements IGetSprintUsecase {
                 return sprint.status !== 'completed'
             } else {
                 // Only filter if all tasks are of type Task, otherwise skip assignment to avoid type errors
+                
                 const filteredTasks = sprint.tasks.filter((task: any) => {
 
                     if (

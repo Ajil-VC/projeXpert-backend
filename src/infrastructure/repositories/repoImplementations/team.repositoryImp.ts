@@ -103,7 +103,7 @@ export class TeamRepositoryImp implements ITeamRepository {
         return { users, totalPages };
     }
 
-    async getTeamMembers(projectId: string | null, userId: string): Promise<any> {
+    async getTeamMembers(projectId: string | null, userId: string): Promise<Team[]> {
 
         const userIdOb = new mongoose.Types.ObjectId(userId);
         let projectIdOb;

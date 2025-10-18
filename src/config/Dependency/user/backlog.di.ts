@@ -38,7 +38,7 @@ export interface ICreateSprintUsecase {
 }
 
 export interface IGetSprintUsecase {
-    execute(projectId: string, permissions: Array<Permissions>, userId: string, kanban: boolean): Promise<any>
+    execute(projectId: string, permissions: Array<Permissions>, userId: string, kanban: boolean): Promise<boolean | Sprint[]>
 }
 
 export interface IGetSprintWithIDUsecase {

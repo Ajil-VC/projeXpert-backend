@@ -35,7 +35,7 @@ export class RegisterUseCase implements IRegisterUsecase {
             const workSpaceId = await this._companyRepo.createWorkspace('Default', companyIdStatus.additional);
             if (!workSpaceId || typeof workSpaceId !== 'string') return { status: false, message: 'Workspace probably have not created' };
 
-
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [ownerRole, adminRole, developerRole] = await Promise.all([
                 this._roleRepo.createRole('Owner',
                     PERMISSIONS as unknown as Permissions[], '', companyIdStatus.additional, false),

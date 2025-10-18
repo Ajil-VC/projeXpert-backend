@@ -11,6 +11,10 @@ export interface Team {
     profilePicUrl: Attachment,
     role: ObjectId,
 
+    isBlocked?: boolean;
+    systemRole?: 'platform-admin' | 'company-user';
+    forceChangePassword?: boolean;
+
     createdAt?: Date,
     updatedAt?: Date,
 

@@ -1,14 +1,15 @@
 
 
+import { PopulatedConversation } from "../../../infrastructure/database/models/conversation.interface";
 import { Message } from "../../../infrastructure/database/models/message.interface";
 
 
 export interface IChatUsecase {
-    execute(userId: string, currentUserId: string, companyId: string): Promise<any>;
+    execute(userId: string, currentUserId: string, companyId: string): Promise<PopulatedConversation>;
 }
 
 export interface IGetChatUsecase {
-    execute(userId: string, companyId: string): Promise<any>;
+    execute(userId: string, companyId: string): Promise<PopulatedConversation[]>;
 }
 
 export interface IGetMessagesUsecase {
@@ -16,5 +17,5 @@ export interface IGetMessagesUsecase {
 }
 
 export interface ISendMessagesUsecase {
-    execute(convoId: string, senderId: string, recieverId: string, message: string): Promise<any>;
+    execute(convoId: string, senderId: string, recieverId: string, message: string): Promise<Message>;
 }

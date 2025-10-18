@@ -5,7 +5,7 @@ export interface IUserRepository {
 
     updateUserProfile(file: Attachment | null, userId: string, name: string): Promise<User>;
 
-    changeUserStatus(userId: string, status: boolean): Promise<any>;
+    changeUserStatus(userId: string, status: boolean): Promise<boolean>;
 
     findByEmail(email: string): Promise<User | null>
 
