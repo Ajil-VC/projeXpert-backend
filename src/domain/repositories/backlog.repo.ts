@@ -1,6 +1,6 @@
 import { Permissions } from "../../infrastructure/database/models/role.interface";
 import { Sprint } from "../../infrastructure/database/models/sprint.interface";
-import { Task } from "../../infrastructure/database/models/task.interface";
+import { DeepPopulatedTask, Task } from "../../infrastructure/database/models/task.interface";
 
 
 export interface IBacklogRepository {
@@ -17,17 +17,17 @@ export interface IBacklogRepository {
 
     createEpic(title: string, description: string, startDate: string, endDate: string, projectId: string, userId: string): Promise<Task | null>;
 
-    getTasks(projectId: string, permissions: Array<Permissions>, userId: string, isKanban?: boolean): Promise<any>;
+    getTasks(projectId: string, permissions: Array<Permissions>, userId: string, isKanban?: boolean): Promise<DeepPopulatedTask>;
 
     removeTask(taskId: string): Promise<boolean>;
 
-    createIssue(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<any>;
+    createIssue(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<Task>;
 
     createSubtask(title: string, type: string, parentId: string, projectId: string): Promise<Task>;
 
-    assignIssue(issueId: string, userId: string): Promise<any>;
+    assignIssue(issueId: string, userId: string): Promise<DeepPopulatedTask | null>;
 
-    createSprint(projectId: string, issueIds: Array<string>, userId: string): Promise<any>;
+    createSprint(projectId: string, issueIds: Array<string>, userId: string): Promise<Sprint>;
 
     getSprints(projectId: string): Promise<Sprint[]>;
 

@@ -1,3 +1,4 @@
+import { Roles } from "../../infrastructure/database/models/role.interface";
 
 
 export class UserDeepEntityDetailed {
@@ -8,7 +9,7 @@ export class UserDeepEntityDetailed {
         public readonly name: string,
         public readonly profilePicUrl: string,
         public readonly email: string,
-        public readonly role: 'admin' | 'user',
+        public readonly role: Roles,
         public readonly forceChangePassword: boolean,
 
         public readonly workspaceIds: {

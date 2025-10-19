@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { ObjectId, TypeExpressionOperatorReturningObjectId } from "mongoose";
 import { ITeamRepository } from "../../../domain/repositories/team.repo";
 import projectModel from "../../database/project.models";
 import { User } from "../../database/models/user.interface";
@@ -59,9 +59,9 @@ export class TeamRepositoryImp implements ITeamRepository {
 
             const userIdOb = new mongoose.Types.ObjectId(userId);
             const query: {
-                companyId: any,
-                _id: any,
-                role?: any,
+                companyId: mongoose.Types.ObjectId,
+                _id: { $nin: Array<mongoose.Types.ObjectId> },
+                role?: { $nin: Array<mongoose.Types.ObjectId> },
                 $and?: any,
                 isBlocked?: boolean,
                 $or?: any

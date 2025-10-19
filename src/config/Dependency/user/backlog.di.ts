@@ -1,5 +1,5 @@
 
-import { Task } from "../../../infrastructure/database/models/task.interface";
+import { DeepPopulatedTask, Task } from "../../../infrastructure/database/models/task.interface";
 import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
 import { TaskResponseDetailedDTO } from "../../../dtos/task/taskResponseDTO";
 import { Permissions } from "../../../infrastructure/database/models/role.interface";
@@ -26,7 +26,7 @@ export interface IUpdateEpicUsecase {
 }
 
 export interface ICreateIssueUsecase {
-    execute(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<any>;
+    execute(projectId: string, issueType: string, issueName: string, taskGroup: string, epicId: string): Promise<Task>;
 }
 
 export interface ICreateSubTasksUsecase {
@@ -54,7 +54,7 @@ export interface IGetSprintWithTasksUsecase {
 }
 
 export interface IGetTasksUsecase {
-    execute(projectId: string, permissions: Array<Permissions>, userId: string, isKanban?: boolean): Promise<any>;
+    execute(projectId: string, permissions: Array<Permissions>, userId: string, isKanban?: boolean): Promise<DeepPopulatedTask>;
 }
 
 export interface IAssignIssueUsecase {

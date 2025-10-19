@@ -6,6 +6,7 @@ import companyModel from "../../database/company.models";
 import { BaseRepository } from "../base.repository";
 import { companySubscription } from "../../database/models/companySubscription.interface";
 import companySubscriptionModel from "../../database/companySubscription.model";
+import { GetPlansDTO } from "../../../application/DTO/getPlansDTO";
 
 
 
@@ -56,7 +57,7 @@ export class SubscriptionImp extends BaseRepository<Subscription> implements ISu
         return plan;
     }
 
-    async getAllPlans(limit: number, skip: number): Promise<{ plans: Subscription[]; totalPage: number; }> {
+    async getAllPlans(limit: number, skip: number): Promise<GetPlansDTO> {
 
         const totalCount = await subscriptionModel.countDocuments({});
 

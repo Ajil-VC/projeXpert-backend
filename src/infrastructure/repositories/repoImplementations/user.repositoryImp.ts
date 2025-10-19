@@ -1,9 +1,10 @@
 
 
 import mongoose from "mongoose";
-import { Attachment, User } from "../../database/models/user.interface";
+import { Attachment, User, UserDeepPopulated } from "../../database/models/user.interface";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
 import userModel from "../../database/user.models";
+import { LargestEmployerDTO } from "../../../application/DTO/adminDashboardDTO";
 
 export class userRepositoryImp implements IUserRepository {
 
@@ -87,9 +88,9 @@ export class userRepositoryImp implements IUserRepository {
     }
 
 
-    async findByEmail(email: string): Promise<User | null> {
+    async findByEmail(email: string): Promise<UserDeepPopulated | null> {
 
-        const isEmailExist: any = await userModel.findOne({ email: email })
+        const isEmailExist = await userModel.findOne({ email: email })
             .populate('workspaceIds')
             .populate('companyId')
             .populate('role')
@@ -137,11 +138,11 @@ export class userRepositoryImp implements IUserRepository {
 
     }
 
-    async findUserById(userId: string): Promise<User | null> {
+    async findUserById(userId: string): Promise<UserDeepPopulated | null> {
 
         const userIdOb = new mongoose.Types.ObjectId(userId);
 
-        const userData: any = await userModel.findOne({ _id: userIdOb })
+        const userData = await userModel.findOne({ _id: userIdOb })
             .populate('workspaceIds')
             .populate('companyId')
             .populate('role')
@@ -152,11 +153,7 @@ export class userRepositoryImp implements IUserRepository {
 
     }
 
-    async largestEmployer(): Promise<Array<{
-        employerCount: number,
-        email: string,
-        companyName: string
-    }>> {
+    async largestEmployer(): Promise<Array<LargestEmployerDTO>> {
 
         const data = await userModel.aggregate([
             {

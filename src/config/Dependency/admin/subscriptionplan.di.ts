@@ -1,4 +1,5 @@
 
+import { GetPlansDTO } from "../../../application/DTO/getPlansDTO";
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
@@ -21,11 +22,11 @@ export interface ISubscriptionPlanUsecase {
 
 
 export interface IGetPlanUsecase {
-    execute(limit: number, skip: number, searchTerm: string): Promise<any>;
+    execute(limit: number, skip: number, searchTerm: string): Promise<GetPlansDTO>;
 }
 
 export interface IDeletePlanUsecase {
-    execute(planId: string): Promise<any>;
+    execute(planId: string): Promise<boolean>;
 }
 
 export interface IChangePlanStatusUsecase {

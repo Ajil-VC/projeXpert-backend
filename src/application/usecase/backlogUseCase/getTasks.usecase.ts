@@ -2,6 +2,7 @@
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import { IGetTasksUsecase } from "../../../config/Dependency/user/backlog.di";
 import { Permissions } from "../../../infrastructure/database/models/role.interface";
+import { DeepPopulatedTask } from "../../../infrastructure/database/models/task.interface";
 
 
 
@@ -10,7 +11,7 @@ export class GetTasksUseCase implements IGetTasksUsecase {
 
     constructor(private _backlogRepo: IBacklogRepository) { }
 
-    async execute(projectId: string, permissions: Array<Permissions>, userId: string, isKanban: boolean = false) {
+    async execute(projectId: string, permissions: Array<Permissions>, userId: string, isKanban: boolean = false): Promise<DeepPopulatedTask> {
 
         if (!isKanban) {
             const result = await this._backlogRepo.getTasks(projectId, permissions, userId);
@@ -26,5 +27,6 @@ export class GetTasksUseCase implements IGetTasksUsecase {
             return activeTasks;
 
         }
+        throw new Error('No Data Available.');
     }
 }

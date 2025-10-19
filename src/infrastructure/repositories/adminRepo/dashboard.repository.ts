@@ -1,3 +1,4 @@
+import { AdminDashboardViewRepoDTO } from "../../../application/DTO/adminDashboardDTO";
 import { ICompanySubscriptionRepository } from "../../../domain/repositories/adminRepo/companysubscription.repo";
 import { IAdminDashboardRepository } from "../../../domain/repositories/adminRepo/dashboard.repo";
 import { ICompanyRepository } from "../../../domain/repositories/company.repo";
@@ -12,7 +13,7 @@ export class DashboardRepositoryImp implements IAdminDashboardRepository {
         private companyRepo: ICompanyRepository
     ) { }
 
-    async getAdminDashboardView(): Promise<any> {
+    async getAdminDashboardView(): Promise<AdminDashboardViewRepoDTO> {
 
         const [
             activeCompanySubscriptions,

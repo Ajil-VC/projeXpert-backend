@@ -22,6 +22,7 @@ import { IAddActivityUsecase } from "../../config/Dependency/user/activity.di";
 import { IGetTaskHistoryUsecase, ITaskHistoryUsecase } from "../../config/Dependency/user/taskhistory.di";
 import { Permissions } from "../../infrastructure/database/models/role.interface";
 import { Sprint } from "../../infrastructure/database/models/sprint.interface";
+import { Task } from "../../infrastructure/database/models/task.interface";
 
 export class BacklogController implements IBacklogController {
 
@@ -259,7 +260,7 @@ export class BacklogController implements IBacklogController {
 
             if (result.epicId) {
 
-                const epicId = typeof result.epicId === 'string' ? result.epicId : result.epicId?._id.toString();
+                const epicId = typeof result.epicId === 'string' ? result.epicId : (result.epicId as Task)?._id.toString();
                 await this._epicProgress.execute(epicId);
             }
 
@@ -577,7 +578,7 @@ export class BacklogController implements IBacklogController {
             }
 
             const burnDownData = this.generateSprintDays(startDate, duration);
-     
+
             const result = await this._startSprintUsecase.execute(sprintId, sprintName, duration, startDate, goal, description, burnDownData);
             await this._setSprintPoints.execute(result._id as unknown as string);
             await this._addActivityUsecase.execute(projectId, req.user.companyId, req.user.id, 'started sprint', sprintName)

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Task } from "../../database/models/task.interface";
+import { DeepPopulatedTask, Task } from "../../database/models/task.interface";
 import { IBacklogRepository } from "../../../domain/repositories/backlog.repo";
 import taskModel from "../../database/task.models";
 import { Team } from "../../database/models/team.interface";
@@ -371,7 +371,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
 
 
 
-    async assignIssue(issueId: string, userId: string): Promise<Task | null> {
+    async assignIssue(issueId: string, userId: string): Promise<DeepPopulatedTask | null> {
 
         const issueIdOb = new mongoose.Types.ObjectId(issueId);
 
@@ -429,13 +429,13 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     }
 
 
-    async getTasks(projectId: string, permissions: Array<Permissions>, userId: string, isKanban = false): Promise<any> {
+    async getTasks(projectId: string, permissions: Array<Permissions>, userId: string, isKanban = false): Promise<DeepPopulatedTask> {
 
         const projectIdOb = new mongoose.Types.ObjectId(projectId);
 
         if (!isKanban) {
 
-            const query: any = { projectId: projectIdOb, type: { $ne: 'subtask' } };
+            const query = { projectId: projectIdOb, type: { $ne: 'subtask' } };
 
             const tasks = await taskModel.find(query)
                 .populate({ path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' })
@@ -446,7 +446,9 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                     populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
                 });
 
-            return tasks;
+            if (!tasks) throw new Error('Couldnt retrieve tasks.');
+
+            return tasks as unknown as DeepPopulatedTask;
 
         } else if (isKanban) {
 
@@ -470,11 +472,13 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                     populate: { path: 'assignedTo', select: '_id name email profilePicUrl role createdAt updatedAt' }
                 });
 
+            if (!tasks) throw new Error('Couldnt retrieve tasks.');
             const activeSprintTasks = tasks.filter(task => task.sprintId !== null);
-            return activeSprintTasks;
+            return activeSprintTasks as unknown as DeepPopulatedTask;
 
         }
 
+        throw new Error('No data Available.');
     }
 
 

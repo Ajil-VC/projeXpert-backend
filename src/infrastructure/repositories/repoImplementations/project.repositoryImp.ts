@@ -43,9 +43,9 @@ export class projectRepositoryImp extends BaseRepository<Project> implements IPr
             throw new Error('Project not found.');
         }
 
-        const query: any = { projectId: projectIdOb };
+        const query: { projectId: mongoose.Types.ObjectId, assignedTo?: mongoose.Types.ObjectId } = { projectId: projectIdOb };
         if (userRole === 'user') {
-            query['assignedTo'] = userIdOb;
+            query.assignedTo = userIdOb;
         }
 
         const availableTasks = await taskModel.find(query)

@@ -1,9 +1,10 @@
 
+import { AdminDashBoardDTO } from "../../../application/DTO/adminDashboardDTO";
 import { companySubscription } from "../../../infrastructure/database/models/companySubscription.interface";
 
 
 export interface IGetDashBoardUsecase {
-    execute(): Promise<any>;
+    execute(): Promise<AdminDashBoardDTO>;
 }
 
 

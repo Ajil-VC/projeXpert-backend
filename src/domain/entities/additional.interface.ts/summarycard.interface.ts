@@ -1,5 +1,5 @@
 export interface SummaryCard {
-    count: number;
+    count: number | string;
     label: string;
     sublabel: string;
     icon: string;

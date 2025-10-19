@@ -1,21 +1,23 @@
 import { IGetDashBoardUsecase } from "../../../config/Dependency/admin/comapanymanage.di";
 import { Doughnut } from "../../../domain/entities/additional.interface.ts/doughnut.interface";
+import { PlanData } from "../../../domain/entities/additional.interface.ts/plandata.interface";
 import { SummaryCard } from "../../../domain/entities/additional.interface.ts/summarycard.interface";
 import { IAdminDashboardRepository } from "../../../domain/repositories/adminRepo/dashboard.repo";
 import { IUserRepository } from "../../../domain/repositories/user.repo";
+import { AdminDashBoardDTO } from "../../DTO/adminDashboardDTO";
 
 
 export class GetDashboardDataUsecase implements IGetDashBoardUsecase {
 
     constructor(private _dashBoardRepo: IAdminDashboardRepository, private _userRepo: IUserRepository) { }
 
-    async execute(): Promise<any> {
+    async execute(): Promise<AdminDashBoardDTO> {
 
         const [data, largestEmployer] = await Promise.all([
             this._dashBoardRepo.getAdminDashboardView(),
             this._userRepo.largestEmployer()
         ]);
-
+        console.log('data', data, 'asdf', largestEmployer);
         const totalMonth = data.subscriptions.length;
         const yearTotalRevenue = data.subscriptions.reduce((acc: number, curr: { count: number, totalAmount: number, month: number }) => {
             acc = acc + curr.totalAmount;
@@ -72,7 +74,7 @@ export class GetDashboardDataUsecase implements IGetDashBoardUsecase {
             data: []
         };
 
-        data.planUsage.forEach((plan: { usageCount: number, planId: any, planName: string, planAmount: number }) => {
+        data.planUsage.forEach((plan: PlanData) => {
             doughnutChart.labels.push(plan.planName);
             doughnutChart.data.push(plan.usageCount)
         })

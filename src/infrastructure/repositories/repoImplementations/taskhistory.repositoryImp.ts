@@ -44,7 +44,7 @@ export class TaskHistoryRepositoryImp implements ITaskHistoryRepository {
         const updatedByOb = new mongoose.Types.ObjectId(updatedBy);
 
         const modelObject: {
-            taskId: any,
+            taskId: mongoose.Types.ObjectId,
             updatedBy: any,
             actionType: TaskAction,
             details: {

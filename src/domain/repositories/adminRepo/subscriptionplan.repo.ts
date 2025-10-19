@@ -1,4 +1,5 @@
 
+import { GetPlansDTO } from "../../../application/DTO/getPlansDTO";
 import { Subscription } from "../../../infrastructure/database/models/subscription.interface";
 
 
@@ -23,5 +24,5 @@ export interface ISubscriptionPlanRepository {
 
     deletePlan(planId: string): Promise<boolean>;
 
-    getAllPlans(limit: number, skip: number, searchTerm: string): Promise<{ plans: Subscription[], totalPage: number }>;
+    getAllPlans(limit: number, skip: number, searchTerm: string): Promise<GetPlansDTO>;
 }

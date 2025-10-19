@@ -1,5 +1,8 @@
 import { Document, ObjectId } from "mongoose";
 import { Company } from "./company.interface";
+import { WorkSpace } from "./workspace.interface";
+import { Roles } from "./role.interface";
+import { Project } from "./project.interface";
 
 export interface Attachment {
     public_id: string;
@@ -27,4 +30,13 @@ export interface User extends Document {
     createdAt?: Date;
     updatedAt?: Date;
 
-}  
+}
+
+
+export interface UserDeepPopulated extends Omit<User, 'workspaceIds' | 'companyId' | 'role' | 'defaultWorkspace'> {
+
+    workspaceIds: WorkSpace;
+    companyId: Company;
+    role: Roles;
+    defaultWorkspace: (Omit<WorkSpace, 'projects'> & { projects: Project[] }) | string;
+}

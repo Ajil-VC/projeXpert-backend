@@ -50,3 +50,14 @@ export interface Task extends Document {
     updatedAt: Date;
     attachments?: Attachment[];
 }
+
+
+
+
+export interface DeepPopulatedTask extends Omit<Task, 'assignedTo' | 'sprintId' | 'epicId' | 'subtasks'> {
+
+    assignedTo: Team;
+    sprintId: Sprint;
+    epicId: Task;
+    subtasks: (Omit<Task, 'assignedTo'> & { assignedTo: Team })[];
+}

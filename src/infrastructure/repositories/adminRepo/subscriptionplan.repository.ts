@@ -3,6 +3,7 @@ import { ISubscriptionPlanRepository } from "../../../domain/repositories/adminR
 import { Subscription } from "../../database/models/subscription.interface";
 import subscriptionModel from "../../database/subscription.models";
 import companySubscriptionModel from "../../database/companySubscription.model";
+import { GetPlansDTO } from "../../../application/DTO/getPlansDTO";
 
 export class SubscriptionPlanImp implements ISubscriptionPlanRepository {
 
@@ -51,7 +52,7 @@ export class SubscriptionPlanImp implements ISubscriptionPlanRepository {
     }
 
 
-    async getAllPlans(limit: number, skip: number, searchTerm: string = ''): Promise<{ plans: Subscription[], totalPage: number }> {
+    async getAllPlans(limit: number, skip: number, searchTerm: string = ''): Promise<GetPlansDTO> {
 
         const [totalCount, allSubscriptionPlans] = await Promise.all([
             subscriptionModel.countDocuments({ name: { $regex: searchTerm, $options: 'i' } }),

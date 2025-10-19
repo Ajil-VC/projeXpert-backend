@@ -1,5 +1,6 @@
 
-import { Attachment, User } from "../../infrastructure/database/models/user.interface";
+import { LargestEmployerDTO } from "../../application/DTO/adminDashboardDTO";
+import { Attachment, User, UserDeepPopulated } from "../../infrastructure/database/models/user.interface";
 
 export interface IUserRepository {
 
@@ -7,7 +8,7 @@ export interface IUserRepository {
 
     changeUserStatus(userId: string, status: boolean): Promise<boolean>;
 
-    findByEmail(email: string): Promise<User | null>
+    findByEmail(email: string): Promise<UserDeepPopulated | null>
 
     createUser(
         email: string,
@@ -21,16 +22,12 @@ export interface IUserRepository {
 
     ): Promise<User | null>
 
-    findUserById(userId: string): Promise<User | null>
+    findUserById(userId: string): Promise<UserDeepPopulated | null>
 
     updateRole(members: Array<{ email: string, role: string }>, adminEmail: string): Promise<boolean>;
 
     updateDefaultWorkspace(workspaceId: string, userId: string): Promise<User>;
 
-    largestEmployer(): Promise<Array<{
-        employerCount: number,
-        email: string,
-        companyName: string
-    }>>;
+    largestEmployer(): Promise<Array<LargestEmployerDTO>>;
 
 }

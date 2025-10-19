@@ -1,3 +1,4 @@
+import { Roles } from "../../infrastructure/database/models/role.interface";
 import { Attachment } from "../../infrastructure/database/models/user.interface";
 
 
@@ -7,7 +8,7 @@ export class UserResponseDetailedDTO {
     name!: string;
     profilePicUrl!: Attachment;
     email!: string;
-    role!: 'admin' | 'user';
+    role!: Roles;
     forceChangePassword!: boolean;
 
     workspaceIds!: {
