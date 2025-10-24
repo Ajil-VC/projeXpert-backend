@@ -32,7 +32,7 @@ export interface IGetTaskUsecase {
 }
 
 export interface ICanChangeStatusUsecase {
-    execute(taskId: string, userId: string, permissions: Array<Permissions>): Promise<{ task: Task, canChange: boolean, notAssignee?: boolean }>;
+    execute(taskId: string, userId: string, permissions: Array<Permissions>): Promise<{ task: Task, canChange: boolean, notAssignee?: boolean, timeUp?: boolean, issue?: string }>;
 }
 
 export interface ISetStoryPointUsecase {

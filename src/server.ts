@@ -78,6 +78,11 @@ app.use((err: AppError, req: express.Request, res: express.Response, next: expre
         return;
     }
 
+    if (err.name === 'TypeError') {
+        res.status(400).json({ status: false, message: 'Unexpected error occured.Try selecting project.' });
+        return;
+    }
+
     if (err.name === "BSONError") {
         res.status(400).json({ status: false, message: "Please re ensure the operation, something is wrong." });
         return;

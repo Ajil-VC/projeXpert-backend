@@ -11,6 +11,31 @@ import { Permissions } from "../../database/models/role.interface";
 
 export class BacklogRepositoryImp implements IBacklogRepository {
 
+    async updateBurnDown(task: Task): Promise<boolean> {
+
+        if (task.status === 'done') {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const sprint = await SprintModel.findOneAndUpdate(
+                { _id: task.sprintId },
+                { $inc: { completedPoints: task.storyPoints } },
+                { new: true }
+            );
+
+            const remainingPoints = sprint.plannedPoints - sprint.completedPoints;
+
+            const updatedStatus = await SprintModel.updateOne(
+                { _id: task.sprintId, "burndownData.date": today },
+                { $set: { "burndownData.$.remainingPoints": remainingPoints } }
+            );
+
+            if (updatedStatus.acknowledged) return true;
+            return false;
+        }
+        return false;
+    }
+
     async setSprintVelocity(sprintId: string, projectId: string): Promise<boolean> {
 
         const sprintOb = new mongoose.Types.ObjectId(sprintId);
@@ -189,6 +214,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         const sprintIdOb = new mongoose.Types.ObjectId(sprintId);
         const endDate = new Date(startDate);
         endDate.setDate(endDate.getDate() + duration - 1);
+
         const updatedSprint = await SprintModel.findByIdAndUpdate({ _id: sprintIdOb }, {
             $set: {
                 name: sprintName,
@@ -197,7 +223,7 @@ export class BacklogRepositoryImp implements IBacklogRepository {
                 status: 'active',
                 goal,
                 description,
-                burnDownData
+                burndownData: burnDownData
             }
         }, { new: true }).populate({ path: 'tasks' });
 
@@ -228,6 +254,8 @@ export class BacklogRepositoryImp implements IBacklogRepository {
         }
 
         const updatedTask = await taskModel.findByIdAndUpdate(taskIdOb, { $set: { status: status } }, { new: true });
+
+
         if (!updatedTask) {
 
             throw new Error("Task couldnt update");

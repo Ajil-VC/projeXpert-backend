@@ -9,9 +9,12 @@ import { Task } from "../../../infrastructure/database/models/task.interface";
 export class CanChangeTaskStatus implements ICanChangeStatusUsecase {
 
     constructor(private _taskRepo: ITaskRepository) { }
-    async execute(taskId: string, userId: string, permissions: Array<Permissions>): Promise<{ task: Task, canChange: boolean, notAssignee?: boolean }> {
+    async execute(taskId: string, userId: string, permissions: Array<Permissions>): Promise<{ task: Task, canChange: boolean, notAssignee?: boolean, timeUp?: boolean, issue?: string }> {
 
         const task = await this._taskRepo.getTask(taskId);
+        if (task.status === 'done') {
+            return { task, canChange: false, issue: 'CLOSED_TASK' }
+        }
         if (!task.parentId) {
 
             if (!task.sprintId) {
@@ -22,6 +25,17 @@ export class CanChangeTaskStatus implements ICanChangeStatusUsecase {
             if (sprint.status !== 'active') {
                 return { task, canChange: false };
             }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const endDate = new Date(sprint.endDate);
+            endDate.setHours(0, 0, 0, 0);
+
+            if (sprint.endDate && endDate < today) {
+                return { task, canChange: false, timeUp: true };
+            }
+
 
             if (task.subtasks.length > 0) {
                 return { task, canChange: false };
@@ -37,6 +51,16 @@ export class CanChangeTaskStatus implements ICanChangeStatusUsecase {
             const sprint = parentTask.sprintId as Sprint;
             if (sprint.status !== 'active') {
                 return { task, canChange: false };
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const endDate = new Date(sprint.endDate);
+            endDate.setHours(0, 0, 0, 0);
+
+            if (sprint.endDate && endDate < today) {
+                return { task, canChange: false, timeUp: true };
             }
 
         }

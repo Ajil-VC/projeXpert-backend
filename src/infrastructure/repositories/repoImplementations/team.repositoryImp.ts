@@ -1,4 +1,4 @@
-import mongoose, { ObjectId, TypeExpressionOperatorReturningObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { ITeamRepository } from "../../../domain/repositories/team.repo";
 import projectModel from "../../database/project.models";
 import { User } from "../../database/models/user.interface";

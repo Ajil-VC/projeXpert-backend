@@ -1,9 +1,11 @@
 
 import { DeepPopulatedTask, Task } from "../../../infrastructure/database/models/task.interface";
 import { Sprint } from "../../../infrastructure/database/models/sprint.interface";
-import { TaskResponseDetailedDTO } from "../../../dtos/task/taskResponseDTO";
 import { Permissions } from "../../../infrastructure/database/models/role.interface";
 
+export interface IUpdateBurnDownUseCase {
+    execute(task: Task): Promise<boolean>;
+}
 
 export interface ISetSprintVelocityUsecase {
     execute(sprintId: string, projectId: string): Promise<boolean>;
@@ -58,7 +60,7 @@ export interface IGetTasksUsecase {
 }
 
 export interface IAssignIssueUsecase {
-    execute(issueId: string, userId: string): Promise<TaskResponseDetailedDTO | null>;
+    execute(issueId: string, userId: string): Promise<DeepPopulatedTask | null>;
 }
 
 export interface IDragDropUsecase {

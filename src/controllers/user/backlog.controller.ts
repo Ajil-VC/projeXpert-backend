@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import {
     IAssignIssueUsecase, IChangeTaskStatusUsecase,
     ICreateEpicUsecase, ICreateIssueUsecase, ICreateSprintUsecase, ICreateSubTasksUsecase,
-    IDragDropUsecase, IGetAllSprintsDetailsInProject, IGetSprintUsecase, IGetSprintWithTasksUsecase, IGetTasksUsecase, IIsActiveSprintUsecase, IRemoveTaskUsecase, ISetSprintVelocityUsecase, ISprintPointsCalculationUsecase, IStartSprintUsecase, IUpdateEpicUsecase
+    IDragDropUsecase, IGetAllSprintsDetailsInProject, IGetSprintUsecase, IGetSprintWithTasksUsecase, IGetTasksUsecase, IIsActiveSprintUsecase, IRemoveTaskUsecase, ISetSprintVelocityUsecase, ISprintPointsCalculationUsecase, IStartSprintUsecase, IUpdateBurnDownUseCase, IUpdateEpicUsecase
 } from "../../config/Dependency/user/backlog.di";
 
 import {
@@ -57,7 +57,8 @@ export class BacklogController implements IBacklogController {
         private _getAllSprintDetailsInProject: IGetAllSprintsDetailsInProject,
         private _getSprintWIthTasks: IGetSprintWithTasksUsecase,
         private _setSprintPoints: ISprintPointsCalculationUsecase,
-        private _setSprintVelocity: ISetSprintVelocityUsecase
+        private _setSprintVelocity: ISetSprintVelocityUsecase,
+        private _updateBurnDownData: IUpdateBurnDownUseCase
 
     ) { }
 
@@ -354,7 +355,7 @@ export class BacklogController implements IBacklogController {
                 const subtaskName = result.parentId ? result.title : undefined;
 
                 await Promise.all([
-                    this._addActivityUsecase.execute(result.projectId, req.user.companyId, req.user.id, 'changed assignee to', result?.assignedTo?.email || null),
+                    this._addActivityUsecase.execute(result.projectId as unknown as string, req.user.companyId, req.user.id, 'changed assignee to', result?.assignedTo?.email || null),
                     this._addTaskHistory.execute({
                         taskId: taskIdToAddHistory,
                         updatedBy: req.user.id,
@@ -487,6 +488,16 @@ export class BacklogController implements IBacklogController {
 
             const taskAndPermission = await this._canChangeStatus.execute(taskId, req.user.id, req.user.role.permissions);
 
+            if (!taskAndPermission.canChange && taskAndPermission.issue === 'CLOSED_TASK') {
+                res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: 'Closed task status cannot be changed.' });
+                return;
+            }
+
+            if (!taskAndPermission.canChange && taskAndPermission.timeUp) {
+                res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: 'Sprint Date is over! Complete the sprint to take further actions.' });
+                return;
+            }
+
             if (!taskAndPermission.canChange && taskAndPermission.notAssignee) {
                 res.status(HttpStatusCode.FORBIDDEN).json({ status: false, message: 'You are not the assignee of this task.' });
                 return;
@@ -508,6 +519,8 @@ export class BacklogController implements IBacklogController {
                 res.status(HttpStatusCode.BAD_REQUEST).json({ status: false, message: 'Subtasks should be completed before moving the task to done' });
                 return;
             }
+
+            await this._updateBurnDownData.execute(result);
 
             const subtaskName = taskAndPermission.task.parentId ? taskAndPermission.task.title : undefined;
             const taskIdToAddHistory = taskAndPermission.task.parentId ? taskAndPermission.task.parentId : taskId;

@@ -1,9 +1,12 @@
+
 import { Permissions } from "../../infrastructure/database/models/role.interface";
 import { Sprint } from "../../infrastructure/database/models/sprint.interface";
 import { DeepPopulatedTask, Task } from "../../infrastructure/database/models/task.interface";
 
 
 export interface IBacklogRepository {
+
+    updateBurnDown(task: Task): Promise<boolean>;
 
     setSprintVelocity(sprintId: string, projectId: string): Promise<boolean>;
 
