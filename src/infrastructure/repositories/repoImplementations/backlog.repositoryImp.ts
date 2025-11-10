@@ -14,22 +14,28 @@ export class BacklogRepositoryImp implements IBacklogRepository {
     async updateBurnDown(task: Task): Promise<boolean> {
 
         if (task.status === 'done') {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+
+            const now = new Date();
+
+            const startOfDay = new Date(now);
+            startOfDay.setUTCHours(18, 30, 0, 0);
+
+            const endOfDay = new Date(now);
+            endOfDay.setUTCHours(18, 29, 59, 999);
+            endOfDay.setDate(endOfDay.getDate() + 1);
 
             const sprint = await SprintModel.findOneAndUpdate(
                 { _id: task.sprintId },
                 { $inc: { completedPoints: task.storyPoints } },
                 { new: true }
             );
-
             const remainingPoints = sprint.plannedPoints - sprint.completedPoints;
 
             const updatedStatus = await SprintModel.updateOne(
-                { _id: task.sprintId, "burndownData.date": today },
+                { _id: task.sprintId, "burndownData.date": { $gte: startOfDay, $lte: endOfDay } },
                 { $set: { "burndownData.$.remainingPoints": remainingPoints } }
             );
-
+            
             if (updatedStatus.acknowledged) return true;
             return false;
         }
