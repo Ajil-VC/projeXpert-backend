@@ -50,7 +50,6 @@ export class StripeController implements IStripeController {
     verifySubscription = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         const sessionId = req.params.sessionId;
-
         try {
 
             const session = await stripe.checkout.sessions.retrieve(sessionId);
@@ -76,7 +75,6 @@ export class StripeController implements IStripeController {
             }
 
             const billingCycle = subscription.items.data[0].price.recurring?.interval || 'monthly';
-
             res.json({ plan: planName, billingCycle });
 
         } catch (err) {
@@ -88,7 +86,7 @@ export class StripeController implements IStripeController {
     webhookHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
         const sig = req.headers['stripe-signature'] as string;
-
+console.log('Inside webhook')
         let event: Stripe.Event;
 
         try {
@@ -133,6 +131,7 @@ export class StripeController implements IStripeController {
             );
 
         }
+        console.log('End of webhook')
         res.status(HttpStatusCode.OK).send({ received: true });
 
     }
@@ -161,7 +160,7 @@ export class StripeController implements IStripeController {
                 success_url: config.STRIPE_SUCCESS_URL,
                 cancel_url: config.STRIPE_CANCEL_URL,
             });
-
+console.log('Session URL ::::::',session.url)
             res.status(HttpStatusCode.OK).json({ url: session.url });
             return;
 
