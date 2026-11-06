@@ -50,6 +50,10 @@ app.use(express.json());
 
 connectDB();
 
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: true, message: 'Backend is healthy!' });
+});
+
 app.use('/api/v1/company', companyRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/admin', adminRouter);
